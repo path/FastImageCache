@@ -1,0 +1,24 @@
+//
+//  FastImageCacheDemo-Prefix.pch
+//  FastImageCacheDemo
+//
+//  Copyright (c) 2013 Path, Inc.
+//  See LICENSE for full license agreement.
+//
+
+#import <Availability.h>
+
+#ifndef FastImageCacheDemo_Prefix_pch
+#define FastImageCacheDemo_Prefix_pch
+
+#ifndef __IPHONE_7_0
+#warning "This project uses features only available in iOS SDK 7.0 and later."
+#endif
+
+#ifdef __OBJC__
+#import <Foundation/Foundation.h>
+#import <QuartzCore/QuartzCore.h>
+#import <UIKit/UIKit.h>
+#endif
+
+#endif
