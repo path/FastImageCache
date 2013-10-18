@@ -1,4 +1,4 @@
-<a href="http://www.path.com/" target="_blank"><img src="https://s3.amazonaws.com/fast-image-cache/readme-resources/path-logo.png" width="25%" height="25%" alt="Path Logo"></a>
+<a href="http://www.path.com/" target="_blank"><img src="https://s3.amazonaws.com/fast-image-cache/readme-resources/path-logo.png" width="227" height="86" alt="Path Logo"></a>
 
 # Fast Image Cache
 
@@ -27,7 +27,7 @@ A significant burden on performance for graphics-rich applications like [Path](h
 
 ## Version History
 
-- [**1.0**](http://github.com/path/FastImageCache/tree/1.0)   (10/12/2013): Initial release
+- [**1.0**](http://github.com/path/FastImageCache/tree/1.0)   (10/18/2013): Initial release
 
 ## What Fast Image Cache Does
 
@@ -97,7 +97,7 @@ There are obvious consequences to this approach, however. Uncompressed image dat
 
 #### Byte Alignment
 
-For high-performance scrolling, it is critical that Core Animation is able to use an image without first having to create a copy. One of the reasons Core Animation would create a copy of an image is improper byte-alignment of the image's underlying CGImageRef. A properly aligned bytes-per-row value must be a multiple of (8 pixels * bytes per pixel). For a typical ARGB image, the aligned bytes-per-row value is a multiple of 32. Every image table is configured such that each image is always properly byte-aligned for Core Animation from the start. As a result, when images are retrieved from an image table, they are already in a form that Core Animation can work with directly without having to create a copy.
+For high-performance scrolling, it is critical that Core Animation is able to use an image without first having to create a copy. One of the reasons Core Animation would create a copy of an image is improper byte-alignment of the image's underlying [`CGImageRef`](http://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&ved=0CCwQFjAA&url=http%3A%2F%2Fdeveloper.apple.com%2Flibrary%2Fios%2Fdocumentation%2Fgraphicsimaging%2FReference%2FCGImage%2FReference%2Freference.html&ei=fG9XUpX_BqWqigLymIG4BQ&usg=AFQjCNHTelntXU5Gw0BQkQqj9HC5iZibyA&sig2=tLY7PDhyockUVlVFbrzyOQ). A properly aligned bytes-per-row value must be a multiple of `8 pixels × bytes per pixel`. For a typical ARGB image, the aligned bytes-per-row value is a multiple of 32. Every image table is configured such that each image is always properly byte-aligned for Core Animation from the start. As a result, when images are retrieved from an image table, they are already in a form that Core Animation can work with directly without having to create a copy.
 
 ## Considerations
 
@@ -107,7 +107,7 @@ Image tables are configured by image formats, which specify (among other things)
 
 Image tables allocate 4 bytes per pixel, so the maximum space occupied by an image table file can be determined as follows:
 
-`4 bytes per pixel` × `image width in pixels` × `image height in pixels` × `maximum number of entries`
+`4 bytes per pixel × image width in pixels × image height in pixels × maximum number of entries`
 
 Applications using Fast Image Cache should carefully consider how many images each image table should contain. When a new image is stored in an image table that is already full, it will replace the least-recently-accessed image.
 
@@ -146,7 +146,7 @@ The `FastImageCacheDemo` Xcode project requires Xcode 5.0 or greater and is conf
 - Clone this repository, or [download the latest archive of `master`](https://github.com/path/FastImageCache/archive/master.zip).
 - From the `FastImageCache` root directory, copy the source files from the inner [`FastImageCache`](./FastImageCache) subdirectory to your Xcode project.
 - Import [`FICImageCache.h`](./FastImageCache/FICImageCache.h) wherever you use the image cache.
-- Import [`FICEntity.h`](./FastImageCache/FICEntity.h) for each class that conforms to [`FICEntity`](https://s3.amazonaws.com/fast-image-cache/documentation/Protocols/FICEntity.html).
+- Import [`FICEntity.h`](./FastImageCache/FICEntity.h) for each class that conforms to `FICEntity`.
 
 ### Initial Configuration
 
@@ -188,7 +188,7 @@ sharedImageCache.formats = imageFormats;
 
 #### Creating Entities
 
-Entities are objects that conform to the [`FICEntity`](https://s3.amazonaws.com/fast-image-cache/documentation/Protocols/FICEntity.html) protocol. Entities uniquely identify entries in an image table, and they are also responsible for drawing the images they wish to store in the image cache. Applications that already have model objects defined (perhaps managed by Core Data) are usually appropriate entity candidates.
+Entities are objects that conform to the `FICEntity` protocol. Entities uniquely identify entries in an image table, and they are also responsible for drawing the images they wish to store in the image cache. Applications that already have model objects defined (perhaps managed by Core Data) are usually appropriate entity candidates.
 
 ```objective-c
 @interface XXUser : NSObject <FICEntity>
@@ -200,7 +200,7 @@ Entities are objects that conform to the [`FICEntity`](https://s3.amazonaws.com/
 @end
 ```
 
-Here is an example implementation of the [`FICEntity`](https://s3.amazonaws.com/fast-image-cache/documentation/Protocols/FICEntity.html) protocol.
+Here is an example implementation of the `FICEntity` protocol.
 
 ```objective-c
 - (NSString *)UUID {
@@ -236,11 +236,11 @@ Here is an example implementation of the [`FICEntity`](https://s3.amazonaws.com/
 }
 ```
 
-Ideally, an entity's [`UUID`](https://s3.amazonaws.com/fast-image-cache/documentation/Protocols/FICEntity.html#//api/name/UUID) should never change. This is why it corresponds nicely with a model object's server-generated ID in the case where an application is working with resources retrieved from an API.
+Ideally, an entity's `UUID` should never change. This is why it corresponds nicely with a model object's server-generated ID in the case where an application is working with resources retrieved from an API.
 
-An entity's [`sourceImageUUID`](https://s3.amazonaws.com/fast-image-cache/documentation/Protocols/FICEntity.html#//api/name/sourceImageUUID) *can* change. For example, if a user updates their profile photo, the URL to that photo should change as well. The [`UUID`](https://s3.amazonaws.com/fast-image-cache/documentation/Protocols/FICEntity.html#//api/name/UUID) remains the same and identifies the same user, but the changed profile photo URL will indicate that there is a new source image.
+An entity's `sourceImageUUID` *can* change. For example, if a user updates their profile photo, the URL to that photo should change as well. The `UUID` remains the same and identifies the same user, but the changed profile photo URL will indicate that there is a new source image.
 
-> **Note**: Often, it is best to hash whatever identifiers are being used to define [`UUID`](https://s3.amazonaws.com/fast-image-cache/documentation/Protocols/FICEntity.html#//api/name/UUID) and [`sourceImageUUID`](https://s3.amazonaws.com/fast-image-cache/documentation/Protocols/FICEntity.html#//api/name/sourceImageUUID). Fast Image Cache provides utility functions to do this. Because hashing can be expensive, it is recommended that the hash be computed only once (or only when the identifier changes) and stored in an instance variable.
+> **Note**: Often, it is best to hash whatever identifiers are being used to define `UUID` and `sourceImageUUID`. Fast Image Cache provides utility functions to do this. Because hashing can be expensive, it is recommended that the hash be computed only once (or only when the identifier changes) and stored in an instance variable.
 
 When the image cache is asked to provide an image for a particular entity and format name, the entity is responsible for providing a URL. The URL need not even point to an actual resource—e.g., the URL might be constructed of a custom URL-scheme—, but it must be a valid URL.
 
@@ -273,12 +273,12 @@ There are a few things to note here.
 
 1. Note that it is an entity and an image format name that uniquely identifies the desired image in the image cache. As a format name uniquely identifies an image table, the entity alone uniquely identifies the desired image data in an image table.
 1. The image cache never returns a [`UIImage`](http://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&ved=0CC0QFjAA&url=http%3A%2F%2Fdeveloper.apple.com%2Flibrary%2Fios%2Fdocumentation%2Fuikit%2Freference%2FUIImage_Class%2F&ei=lG9XUtTdJIm9iwKDq4CACA&usg=AFQjCNEa2LN2puQYOfBRVPaEsvsSawOVMg&sig2=0TzbC6wzT5EdynHsDMIEUw) directly. The requested image is included in the completion block. The return value will indicate whether or not the image already exists in the image cache.
-1. [`-retrieveImageForEntity:withFormatName:completionBlock:`](https://s3.amazonaws.com/fast-image-cache/documentation/Classes/FICImageCache.html#//api/name/retrieveImageForEntity:withFormatName:completionBlock:) is a synchronous method. If the requested image already exists in the image cache, the completion block will be called immediately. There is an asynchronous counterpart to this method called [`-asynchronouslyRetrieveImageForEntity:withFormatName:completionBlock:`](https://s3.amazonaws.com/fast-image-cache/documentation/Classes/FICImageCache.html#//api/name/asynchronouslyRetrieveImageForEntity:withFormatName:completionBlock:).
+1. `-retrieveImageForEntity:withFormatName:completionBlock:` is a synchronous method. If the requested image already exists in the image cache, the completion block will be called immediately. There is an asynchronous counterpart to this method called `-asynchronouslyRetrieveImageForEntity:withFormatName:completionBlock:`.
 1. If a requested image does **not** already exist in the image cache, then the image cache invokes the necessary actions to request the source image for its delegate. Afterwards, perhaps some time later, the completion block will be called.
 
 > **Note**: The distinction of synchronous and asynchronous only applies to the process of retrieving an image that already exists in the image cache. In the case where a synchronous image request is made for an image that does not already exist in the image case, the image cache does **not** block the calling thread until it has an image. The retrieval method will immediately return `NO`, and the completion block will be called later.
 >
-> See the [`FICImageCache` class reference](https://s3.amazonaws.com/fast-image-cache/documentation/Classes/FICImageCache.html) for a thorough explanation of how the execution lifecycle works for image retrieval, especially as it relates to the handling of the completion blocks.
+> See the `FICImageCache` class header for a thorough explanation of how the execution lifecycle works for image retrieval, especially as it relates to the handling of the completion blocks.
 
 ### Providing Source Images to the Image Cache
 
@@ -343,9 +343,7 @@ For example, if a user changes their profile photo, it probably makes sense to p
 
 ## Documentation
 
-Fast Image Cache's header files are fully documented, and [appledoc](http://gentlebytes.com/appledoc/)-generated documentation is available in [HTML form](https://s3.amazonaws.com/fast-image-cache/documentation/index.html).
-
-Fast Image Cache's implementation files are minimally documented where special attention needs to be raised. Otherwise, every effort was made to write self-documenting code.
+Fast Image Cache's header files are fully documented, and [appledoc](http://gentlebytes.com/appledoc/) can be used to generate documentation in various forms, including HTML and Xcode DocSet.
 
 ## Demo Application
 
