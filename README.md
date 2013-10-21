@@ -405,7 +405,8 @@ Michael is an iOS Engineer at Path and has been developing iOS applications sinc
 
 ## Credits
 
-All [demo application](#demo-application) photos were taken from [morgueFile](http://www.morguefile.com) and are used according to the [morgueFile license](http://www.morguefile.com/license/full).
+- All [demo application](#demo-application) photos were taken from [morgueFile](http://www.morguefile.com) and are used according to the [morgueFile license](http://www.morguefile.com/license/full).
+- Fast Image Cache logo illustration by the amazing [Jake Mix](https://twitter.com/jakemix).
 
 ## License
 
