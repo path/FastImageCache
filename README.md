@@ -1,6 +1,6 @@
-<a href="http://www.path.com/" target="_blank"><img src="https://s3.amazonaws.com/fast-image-cache/readme-resources/path-logo.png" width="227" height="86" alt="Path Logo"></a>
+![Fast Image Cache Logo](http://f.cl.ly/items/162R3I2i0w2s371j0W03/logo.png)
 
-# Fast Image Cache
+---
 
 Fast Image Cache is an efficient, persistent, and—above all—fast way to store and retrieve images in your iOS application. Part of any good iOS application's user experience is fast, smooth scrolling, and Fast Image Cache helps make this easier.
 
@@ -143,6 +143,12 @@ The `FastImageCacheDemo` Xcode project requires Xcode 5.0 or greater and is conf
 
 ### Integrating Fast Image Cache
 
+#### CocoaPods
+
+For easy project integration, Fast Image Cache is available as a [CocoaPod](http://cocoapods.org).
+
+#### Manually
+
 - Clone this repository, or [download the latest archive of `master`](https://github.com/path/FastImageCache/archive/master.zip).
 - From the `FastImageCache` root directory, copy the source files from the inner [`FastImageCache`](./FastImageCache) subdirectory to your Xcode project.
 - Import [`FICImageCache.h`](./FastImageCache/FICImageCache.h) wherever you use the image cache.
@@ -204,11 +210,17 @@ Here is an example implementation of the `FICEntity` protocol.
 
 ```objective-c
 - (NSString *)UUID {
-    return _userID;
+    CFUUIDBytes UUIDBytes = FICUUIDBytesFromMD5HashOfString(_userID);
+    NSString *UUID = FICStringWithUUIDBytes(UUIDBytes);
+
+    return UUID;
 }
 
 - (NSString *)sourceImageUUID {
-    return [_userPhotoURL absoluteString];
+    CFUUIDBytes sourceImageUUIDBytes = FICUUIDBytesFromMD5HashOfString([_userPhotoURL absoluteString]);
+    NSString *sourceImageUUID = FICStringWithUUIDBytes(sourceImageUUIDBytes);
+
+    return sourceImageUUID;
 }
 
 - (NSURL *)sourceImageURLWithFormatName:(NSString *)formatName {
@@ -377,7 +389,7 @@ The takeaway is that Fast Image Cache sacrifices disk usage to achieve a faster 
 
 ## Contributors
 
-<a href="https://twitter.com/mallorypaine" target="_blank"><img src="https://s3.amazonaws.com/fast-image-cache/readme-resources/mallorypaine.jpeg" width="85" height="85" alt="Mallory Paine"></a>  
+<a href="https://twitter.com/mallorypaine" target="_blank"><img src="http://www.gravatar.com/avatar/76db5d6bdcb64ac9e86e6a521ab57f03.jpg?s=85" alt="Mallory Paine"></a>  
 **Mallory Paine** — Author and Original API Design  
 <a href="https://twitter.com/mallorypaine" target="_blank">@mallorypaine</a>
 
@@ -385,7 +397,7 @@ Mallory is the Director of Mobile Engineering at Path, previously a member of th
 
 ---
 
-<a href="https://twitter.com/LucasTizma" target="_blank"><img src="https://s3.amazonaws.com/fast-image-cache/readme-resources/michaelpotter.jpeg" width="85" height="85" alt="Michael Potter"></a>  
+<a href="https://twitter.com/LucasTizma" target="_blank"><img src="http://www.gravatar.com/avatar/2005b2ed368913850076bb52cee79713.jpg?s=85" alt="Michael Potter"></a>  
 **Michael Potter** — Documentation and API Refactoring  
 <a href="https://twitter.com/LucasTizma" target="_blank">@LucasTizma</a>
 
