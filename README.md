@@ -172,12 +172,12 @@ smallUserThumbnailImageFormat.maximumCount = 250;
 smallUserThumbnailImageFormat.devices = FICImageFormatDevicePhone;
 
 FICImageFormat *mediumUserThumbnailImageFormat = [[[FICImageFormat alloc] init] autorelease];
-smallUserThumbnailImageFormat.name = XXImageFormatNameUserThumbnailMedium;
-smallUserThumbnailImageFormat.family = XXImageFormatFamilyUserThumbnails;
-smallUserThumbnailImageFormat.imageSize = CGSizeMake(100, 100);
-smallUserThumbnailImageFormat.opaque = YES;
-smallUserThumbnailImageFormat.maximumCount = 250;
-smallUserThumbnailImageFormat.devices = FICImageFormatDevicePhone;
+mediumUserThumbnailImageFormat.name = XXImageFormatNameUserThumbnailMedium;
+mediumUserThumbnailImageFormat.family = XXImageFormatFamilyUserThumbnails;
+mediumUserThumbnailImageFormat.imageSize = CGSizeMake(100, 100);
+mediumUserThumbnailImageFormat.opaque = YES;
+mediumUserThumbnailImageFormat.maximumCount = 250;
+mediumUserThumbnailImageFormat.devices = FICImageFormatDevicePhone;
 
 NSArray *imageFormats = @[smallUserThumbnailImageFormat, mediumUserThumbnailImageFormat];
 ```
