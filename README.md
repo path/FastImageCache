@@ -93,7 +93,7 @@ In like manner, when image data is being stored in an image table, a memory-mapp
 
 In order to avoid expensive image decompression operations, image tables store uncompressed image data in their files. If a source image is compressed, it must first be decompressed for the image table to work with it. **This is a one-time cost.** Furthermore, it is possible to [utilize image format families](#working-with-image-format-families) to perform this decompression exactly once for a collection of similar image formats.
 
-There are obvious consequences to this approach, however. Uncompressed image data requires more disk space, and the difference between compressed and uncompressed file sizes can be significant, especially for image formats like JPEG. For this reason, **Fast Image Cache works best with smaller images**, although there is no API restriction that enforce this.
+There are obvious consequences to this approach, however. Uncompressed image data requires more disk space, and the difference between compressed and uncompressed file sizes can be significant, especially for image formats like JPEG. For this reason, **Fast Image Cache works best with smaller images**, although there is no API restriction that enforces this.
 
 #### Byte Alignment
 
