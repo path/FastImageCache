@@ -19,8 +19,8 @@ extern CGSize const FICDPhotoPixelImageSize;
 @interface FICDPhoto : NSObject <FICEntity>
 
 @property (nonatomic, copy) NSURL *sourceImageURL;
-@property (nonatomic, retain, readonly) UIImage *sourceImage;
-@property (nonatomic, retain, readonly) UIImage *thumbnailImage;
+@property (nonatomic, strong, readonly) UIImage *sourceImage;
+@property (nonatomic, strong, readonly) UIImage *thumbnailImage;
 @property (nonatomic, assign, readonly) BOOL thumbnailImageExists;
 
 // Methods for demonstrating more conventional caching techniques

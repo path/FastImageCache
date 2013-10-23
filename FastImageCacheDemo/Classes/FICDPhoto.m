@@ -57,16 +57,6 @@ CGSize const FICDPhotoPixelImageSize = {1, 1};
     return thumbnailImageExists;
 }
 
-#pragma mark - Object Lifecycle
-
-- (void)dealloc {
-    [_sourceImageURL release];
-    [_UUID release];
-    [_thumbnailFilePath release];
-    
-    [super dealloc];
-}
-
 #pragma mark - Image Helper Functions
 
 static CGMutablePathRef _FICDCreateRoundedRectPath(CGRect rect, CGFloat cornerRadius) {
@@ -131,8 +121,9 @@ static UIImage * _FICDStatusBarImageFromImage(UIImage *image) {
 - (NSString *)_thumbnailFilePath {
     if (!_thumbnailFilePath) {
         NSURL *photoURL = [self sourceImageURL];
-        _thumbnailFilePath = [[NSTemporaryDirectory() stringByAppendingPathComponent:[[photoURL absoluteString] lastPathComponent]] retain];
+        _thumbnailFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[[photoURL absoluteString] lastPathComponent]];
     }
+    
     return _thumbnailFilePath;
 }
 
@@ -177,7 +168,7 @@ static UIImage * _FICDStatusBarImageFromImage(UIImage *image) {
     if (_UUID == nil) {
         // MD5 hashing is expensive enough that we only want to do it once
         CFUUIDBytes UUIDBytes = FICUUIDBytesFromMD5HashOfString([_sourceImageURL absoluteString]);
-        _UUID = [FICStringWithUUIDBytes(UUIDBytes) retain];
+        _UUID = FICStringWithUUIDBytes(UUIDBytes);
     }
     
     return _UUID;
@@ -219,7 +210,7 @@ static UIImage * _FICDStatusBarImageFromImage(UIImage *image) {
         }
     };
     
-    return [[drawingBlock copy] autorelease];
+    return drawingBlock;
 }
 
 @end

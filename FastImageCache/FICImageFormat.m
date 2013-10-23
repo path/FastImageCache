@@ -61,7 +61,7 @@ static NSString *const FICImageFormatDevicesKey = @"devices";
 #pragma mark - Object Lifecycle
 
 + (instancetype)formatWithName:(NSString *)name family:(NSString *)family imageSize:(CGSize)imageSize isOpaque:(BOOL)isOpaque maximumCount:(NSInteger)maximumCount devices:(FICImageFormatDevices)devices {
-    FICImageFormat *imageFormat = [[[FICImageFormat alloc] init] autorelease];
+    FICImageFormat *imageFormat = [[FICImageFormat alloc] init];
     
     [imageFormat setName:name];
     [imageFormat setFamily:family];
@@ -71,13 +71,6 @@ static NSString *const FICImageFormatDevicesKey = @"devices";
     [imageFormat setDevices:devices];
     
     return imageFormat;
-}
-
-- (void)dealloc {
-    [_name release];
-    [_family release];
-    
-    [super dealloc];
 }
 
 #pragma mark - Working with Dictionary Representations

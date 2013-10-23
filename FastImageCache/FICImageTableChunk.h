@@ -42,8 +42,6 @@
 
 /**
  Initializes a new image table chunk.
- 
- @param imageTable The image table to create a chunk from.
 
  @param fileDescriptor The image table's file descriptor to map from.
  
@@ -53,6 +51,6 @@
  
  @return A new image table chunk.
  */
-- (instancetype)initWithImageTable:(FICImageTable *)imageTable fileDescriptor:(int)fileDescriptor index:(NSInteger)index length:(size_t)length;
+- (instancetype)initWithFileDescriptor:(int)fileDescriptor index:(NSInteger)index length:(size_t)length;
 
 @end

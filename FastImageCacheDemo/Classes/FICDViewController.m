@@ -49,7 +49,6 @@
                 FICDPhoto *photo = [[FICDPhoto alloc] init];
                 [photo setSourceImageURL:imageURL];
                 [photos addObject:photo];
-                [photo release];
             }
             
             while ([photos count] < 5000) {
@@ -71,23 +70,15 @@
 - (void)dealloc {
     [_tableView setDelegate:nil];
     [_tableView setDataSource:nil];
-    [_tableView release];
-    
-    [_photos release];
     
     [_noImagesAlertView setDelegate:nil];
-    [_noImagesAlertView release];
-    
-    [_averageFPSLabel release];
- 
-    [super dealloc];
 }
 
 #pragma mark - View Controller Lifecycle
 
 - (void)loadView {
     CGRect viewFrame = [[UIScreen mainScreen] bounds];
-    UIView *view = [[[UIView alloc] initWithFrame:viewFrame] autorelease];
+    UIView *view = [[UIView alloc] initWithFrame:viewFrame];
     [view setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
     [view setBackgroundColor:[UIColor whiteColor]];
     
@@ -115,10 +106,10 @@
     // Configure the navigation item
     UINavigationItem *navigationItem = [self navigationItem];
     
-    UIBarButtonItem *resetBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:@"Reset" style:UIBarButtonItemStyleBordered target:self action:@selector(_reset)] autorelease];
+    UIBarButtonItem *resetBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Reset" style:UIBarButtonItemStyleBordered target:self action:@selector(_reset)];
     [navigationItem setLeftBarButtonItem:resetBarButtonItem];
     
-    UISegmentedControl *segmentedControl = [[[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Conventional", @"Image Table", nil]] autorelease];
+    UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Conventional", @"Image Table", nil]];
     [segmentedControl setSelectedSegmentIndex:0];
     [segmentedControl addTarget:self action:@selector(_segmentedControlValueChanged:) forControlEvents:UIControlEventValueChanged];
     [segmentedControl setSegmentedControlStyle:UISegmentedControlStyleBar];
@@ -135,7 +126,7 @@
         [_tableView addObserver:self forKeyPath:@"averageFPS" options:NSKeyValueObservingOptionNew context:NULL];
     }
     
-    UIBarButtonItem *averageFPSLabelBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:_averageFPSLabel] autorelease];
+    UIBarButtonItem *averageFPSLabelBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:_averageFPSLabel];
     [navigationItem setRightBarButtonItem:averageFPSLabelBarButtonItem];
 }
 
@@ -292,7 +283,10 @@ static UIImage * _FICDColorAveragedImageFromImage(UIImage *image) {
     // Create an image from the bitmap context
     CGImageRef colorAveragedImageRef = CGBitmapContextCreateImage(bitmapContextRef);
     UIImage *colorAveragedImage = [UIImage imageWithCGImage:colorAveragedImageRef];
+    
+    CGColorSpaceRelease(colorSpaceRef);
     CGImageRelease(colorAveragedImageRef);
+    CGContextRelease(bitmapContextRef);
     
     return colorAveragedImage;
 }
@@ -302,7 +296,7 @@ static BOOL _FICDImageIsLight(UIImage *image) {
     
     CGImageRef imageRef = [image CGImage];
     CGDataProviderRef dataProviderRef = CGImageGetDataProvider(imageRef);
-    NSData *pixelData = (NSData *)CGDataProviderCopyData(dataProviderRef);
+    NSData *pixelData = (__bridge_transfer NSData *)CGDataProviderCopyData(dataProviderRef);
     
     if ([pixelData length] > 0) {
         const UInt8 *pixelBytes = [pixelData bytes];
@@ -383,7 +377,7 @@ static BOOL _FICDImageIsLight(UIImage *image) {
         averageFPSColor = [UIColor colorWithHue:(6 / 359.0) saturation:0.99 brightness:0.89 alpha:1];   // Red
     }
     
-    NSMutableAttributedString *mutableAttributedString = [[[NSMutableAttributedString alloc] initWithString:displayString] autorelease];
+    NSMutableAttributedString *mutableAttributedString = [[NSMutableAttributedString alloc] initWithString:displayString];
     [mutableAttributedString addAttribute:NSForegroundColorAttributeName value:averageFPSColor range:NSMakeRange(0, averageFPSStringLength)];
     
     [_averageFPSLabel setAttributedText:mutableAttributedString];
@@ -414,7 +408,7 @@ static BOOL _FICDImageIsLight(UIImage *image) {
     
     FICDPhotosTableViewCell *tableViewCell = (FICDPhotosTableViewCell *)[table dequeueReusableCellWithIdentifier:reuseIdentifier];
     if (tableViewCell == nil) {
-        tableViewCell = [[[FICDPhotosTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier] autorelease];
+        tableViewCell = [[FICDPhotosTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier];
         [tableViewCell setBackgroundColor:[table backgroundColor]];
         [tableViewCell setSelectionStyle:UITableViewCellSelectionStyleNone];
     }

@@ -33,9 +33,6 @@
 
 - (void)dealloc {
     [_displayLink invalidate];
-    [_displayLink release];
-    
-    [super dealloc];
 }
 
 - (void)didMoveToWindow {
@@ -43,7 +40,6 @@
         [self _scrollingStatusDidChange];
     } else {
          [_displayLink invalidate];
-        [_displayLink release];
         _displayLink = nil;
     }
 }
@@ -65,9 +61,10 @@
     
     if (isScrolling) {
         if (_displayLink == nil) {
-            _displayLink = [[CADisplayLink displayLinkWithTarget:self selector:@selector(_screenDidUpdateWhileScrolling:)] retain];
+            _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(_screenDidUpdateWhileScrolling:)];
             [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:UITrackingRunLoopMode];
         }
+        
         _framesInLastInterval = 0;
         _lastLogTime = CFAbsoluteTimeGetCurrent();
         [_displayLink setPaused:NO];

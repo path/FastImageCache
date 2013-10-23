@@ -12,7 +12,7 @@
 
 @interface FICDFullscreenPhotoDisplayController : NSObject
 
-@property (nonatomic, assign) id <FICDFullscreenPhotoDisplayControllerDelegate> delegate;
+@property (nonatomic, weak) id <FICDFullscreenPhotoDisplayControllerDelegate> delegate;
 
 + (instancetype)sharedDisplayController;
 

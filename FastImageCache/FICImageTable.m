@@ -49,7 +49,7 @@ static NSString *const FICImageTableFormatKey = @"format";
     size_t _chunkLength;
     NSInteger _chunkCount;
     
-    CFMutableDictionaryRef _chunkDictionary;
+    NSMapTable *_chunkMapTable;
     NSMutableArray *_recentChunks;
     NSRecursiveLock *_lock;
     
@@ -104,9 +104,9 @@ static NSString *const FICImageTableFormatKey = @"format";
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-        __directoryPath = [[[paths objectAtIndex:0] stringByAppendingPathComponent:@"ImageTables"] retain];
+        __directoryPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"ImageTables"];
         
-        NSFileManager *fileManager = [[[NSFileManager alloc] init] autorelease];
+        NSFileManager *fileManager = [[NSFileManager alloc] init];
         BOOL directoryExists = [fileManager fileExistsAtPath:__directoryPath];
         if (directoryExists == NO) {
             [fileManager createDirectoryAtPath:__directoryPath withIntermediateDirectories:YES attributes:nil error:nil];
@@ -128,7 +128,7 @@ static NSString *const FICImageTableFormatKey = @"format";
         
         _lock = [[NSRecursiveLock alloc] init];
         _imageFormat = [imageFormat copy];
-        _imageFormatDictionary = [[imageFormat dictionaryRepresentation] retain];
+        _imageFormatDictionary = [imageFormat dictionaryRepresentation];
         
         _screenScale = [[UIScreen mainScreen] scale];
         
@@ -136,7 +136,7 @@ static NSString *const FICImageTableFormatKey = @"format";
         _imageRowLength = FICByteAlignForCoreAnimation([_imageFormat pixelSize].width * bytesPerPixel);
         _imageLength = _imageRowLength * (NSInteger)[_imageFormat pixelSize].height;
         
-        _chunkDictionary = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL); // Non-retained keys and values
+        _chunkMapTable = [NSMapTable mapTableWithKeyOptions:NSMapTableStrongMemory valueOptions:NSMapTableWeakMemory];
         
         _indexMap = [[NSMutableDictionary alloc] init];
         _occupiedIndexes = [[NSMutableIndexSet alloc] init];
@@ -176,8 +176,7 @@ static NSString *const FICImageTableFormatKey = @"format";
             // If something goes wrong and we can't open the image table file, then we have no choice but to release and nil self.
             NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s could not open the image table file at path %@. The image table was not created.", __PRETTY_FUNCTION__, _filePath];
             [[FICImageCache sharedImageCache] _logMessage:message];
-            
-            [self release];
+
             self = nil;
         }    
     }
@@ -190,54 +189,32 @@ static NSString *const FICImageTableFormatKey = @"format";
 }
 
 - (void)dealloc {
-    [_imageFormat release];
-    [_filePath release];
-    
-    CFRelease(_chunkDictionary);
-    
-    [_indexMap release];
-    [_occupiedIndexes release];
-    [_MRUEntries release];
-    [_sourceImageMap release];
-    [_imageFormatDictionary release];
-    [_recentChunks release];
-    
     if (_fileDescriptor >= 0) {
         close(_fileDescriptor);
     }
-    
-    [_lock release];
-    
-    [super dealloc];
 }
 
 #pragma mark - Working with Chunks
 
 - (FICImageTableChunk *)_cachedChunkAtIndex:(NSInteger)index {
-    return (FICImageTableChunk *)CFDictionaryGetValue(_chunkDictionary, (const void *)index);
+    FICImageTableChunk *cachedChunk = [_chunkMapTable objectForKey:@(index)];
+    
+    return cachedChunk;
 }
 
 - (void)_setChunk:(FICImageTableChunk *)chunk index:(NSInteger)index {
     if (chunk != nil) {
-        CFDictionarySetValue(_chunkDictionary, (const void *)index, (const void *)chunk);
+        [_chunkMapTable setObject:chunk forKey:@(index)];
     } else {
-        CFDictionaryRemoveValue(_chunkDictionary, (const void *)index);
+        [_chunkMapTable removeObjectForKey:@(index)];
     }
-}
-
-- (void)_cleanupRecentChunks {
-    [_lock lock];
-    
-    [_recentChunks removeAllObjects];
-    
-    [_lock unlock];
 }
 
 - (FICImageTableChunk *)_chunkAtIndex:(NSInteger)index {
     FICImageTableChunk *chunk = nil;
     
     if (index < _chunkCount) {
-        chunk = [[self _cachedChunkAtIndex:index] retain];
+        chunk = [self _cachedChunkAtIndex:index];
         
         if (chunk == nil) {
             size_t chunkLength = _chunkLength;        
@@ -246,7 +223,7 @@ static NSString *const FICImageTableFormatKey = @"format";
                 chunkLength = _fileLength - chunkOffset;
             }
                     
-            chunk = [[FICImageTableChunk alloc] initWithImageTable:self fileDescriptor:_fileDescriptor index:index length:chunkLength];
+            chunk = [[FICImageTableChunk alloc] initWithFileDescriptor:_fileDescriptor index:index length:chunkLength];
             [self _setChunk:chunk index:index];
         }
         
@@ -260,15 +237,7 @@ static NSString *const FICImageTableFormatKey = @"format";
         }
     }
     
-    return [chunk autorelease];
-}
-
-- (void)_chunkWillBeDeallocated:(FICImageTableChunk *)chunk {
-    [_lock lock];
-    
-    [self _setChunk:nil index:[chunk index]];
-    
-    [_lock unlock];
+    return chunk;
 }
 
 #pragma mark - Storing, Retrieving, and Deleting Entries
@@ -351,11 +320,9 @@ static NSString *const FICImageTableFormatKey = @"format";
             } else {
                 [self _entryWasAccessedWithEntityUUID:entityUUID];
                 
-                [entryData retain]; // Released by _FICReleaseImageData
-                
                 // Create CGImageRef whose backing store *is* the mapped image table entry. We avoid a memcpy this way.
                 CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-                CGDataProviderRef dataProvider = CGDataProviderCreateWithData((void *)entryData, [entryData bytes], [entryData imageLength], _FICReleaseImageData);
+                CGDataProviderRef dataProvider = CGDataProviderCreateWithData((__bridge_retained void *)entryData, [entryData bytes], [entryData imageLength], _FICReleaseImageData);
                 
                 CGSize pixelSize = [_imageFormat pixelSize];
                 CGBitmapInfo bitmapInfo;
@@ -386,8 +353,7 @@ static NSString *const FICImageTableFormatKey = @"format";
 }
 
 static void _FICReleaseImageData(void *info, const void *data, size_t size) {
-    FICImageTableEntry *entryData = (FICImageTableEntry *)info;
-    [entryData release];
+    CFRelease(info);
 }
 
 - (void)deleteEntryForEntityUUID:(NSString *)entityUUID {
@@ -452,7 +418,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
         } else {
             _fileLength = fileLength;
             _entryCount = entryCount;
-            _chunkCount = (_entryCount + _entriesPerChunk - 1) / _entriesPerChunk;
+            _chunkCount = _entriesPerChunk > 0 ? ((_entryCount + _entriesPerChunk - 1) / _entriesPerChunk) : 0;
         }
     }
 }
@@ -478,7 +444,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     
     [_lock unlock];
     
-    return [entryData autorelease];
+    return entryData;
 }
 
 - (NSInteger)_nextEntryIndex {
@@ -489,7 +455,6 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     if (index == NSNotFound) {
         index = _entryCount;
     }
-    [unoccupiedIndexes release];
     
     if (index >= [_imageFormat maximumCount] && [_MRUEntries count]) {
         // Evict the oldest/least-recently accessed entry here
@@ -533,10 +498,8 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     if (index == NSNotFound) {
         [_MRUEntries insertObject:entityUUID atIndex:0];
     } else if (index != 0) {
-        [entityUUID retain];
         [_MRUEntries removeObjectAtIndex:index];
         [_MRUEntries insertObject:entityUUID atIndex:0];
-        [entityUUID release];
     }
 }
 

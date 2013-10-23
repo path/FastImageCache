@@ -12,7 +12,7 @@
 #pragma mark Class Extension
 
 @interface FICDFullscreenPhotoDisplayController () <UIGestureRecognizerDelegate> {
-    id <FICDFullscreenPhotoDisplayControllerDelegate> _delegate;
+    __weak id <FICDFullscreenPhotoDisplayControllerDelegate> _delegate;
     BOOL _delegateImplementsWillShowSourceImageForPhotoWithThumbnailImageView;
     BOOL _delegateImplementsDidShowSourceImageForPhotoWithThumbnailImageView;
     BOOL _delegateImplementsWillHideSourceImageForPhotoWithThumbnailImageView;
@@ -96,28 +96,18 @@
 }
 
 - (void)dealloc {
-    [_fullscreenView release];
-    [_backgroundView release];
-    [_thumbnailImageView release];
-    [_originalThumbnailImageViewSuperview release];
-    [_sourceImageView release];
-    [_photo release];
-    
     [_tapGestureRecognizer setDelegate:nil];
-    [_tapGestureRecognizer release];
-    
-    [super dealloc];
 }
 
 #pragma mark - Showing and Hiding a Fullscreen Photo
 
 - (void)showFullscreenPhoto:(FICDPhoto *)photo withThumbnailImageView:(UIImageView *)thumbnailImageView {
     // Stash away the photo
-    _photo = [photo retain];
+    _photo = photo;
 
     // Stash away original thumbnail image view information
-    _thumbnailImageView = [thumbnailImageView retain];
-    _originalThumbnailImageViewSuperview = [[thumbnailImageView superview] retain];
+    _thumbnailImageView = thumbnailImageView;
+    _originalThumbnailImageViewSuperview = [thumbnailImageView superview];
     _originalThumbnailImageViewFrame = [thumbnailImageView frame];
     _originalThumbnailImageViewSubviewIndex = [[[thumbnailImageView superview] subviews] indexOfObject:thumbnailImageView];
     
@@ -183,24 +173,21 @@
         
         [_fullscreenView removeFromSuperview];
         
-        // Clean up photo ownership
-        [_photo release];
+        // Inform the delegate that we just hide a fullscreen photo
+        if (_delegateImplementsDidHideSourceImageForPhotoWithThumbnailImageView) {
+            [_delegate photoDisplayController:self didHideSourceImage:sourceImage forPhoto:_photo withThumbnailImageView:_thumbnailImageView];
+        }
+        
+        // Clean up
         _photo = nil;
         
-        // Clean up thumbnail image view ownership
-        [_thumbnailImageView release];
         _thumbnailImageView = nil;
-        
-        [_originalThumbnailImageViewSuperview release];
         _originalThumbnailImageViewSuperview = nil;
         
         _originalThumbnailImageViewFrame = CGRectZero;
         _originalThumbnailImageViewSubviewIndex = 0;
         
-        // Inform the delegate that we just hide a fullscreen photo
-        if (_delegateImplementsDidHideSourceImageForPhotoWithThumbnailImageView) {
-            [_delegate photoDisplayController:self didHideSourceImage:sourceImage forPhoto:_photo withThumbnailImageView:_thumbnailImageView];
-        }
+        _sourceImageView.image = nil;
     }];
 }
 

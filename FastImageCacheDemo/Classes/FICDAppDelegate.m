@@ -21,15 +21,6 @@
 
 @implementation FICDAppDelegate
 
-#pragma mark - Object Lifeycle
-
-- (void)dealloc {
-    [_window release];
-    [_viewController release];
-    
-    [super dealloc];
-}
-
 #pragma mark - Application Lifecycle
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
@@ -62,11 +53,11 @@
     
     // Configure the window
     CGRect windowFrame = [[UIScreen mainScreen] bounds];
-    UIWindow *window = [[[UIWindow alloc] initWithFrame:windowFrame] autorelease];
+    UIWindow *window = [[UIWindow alloc] initWithFrame:windowFrame];
     [self setWindow:window];
     
-    UIViewController *rootViewController = [[[FICDViewController alloc] init] autorelease];
-    UINavigationController *navigationController = [[[UINavigationController alloc] initWithRootViewController:rootViewController] autorelease];
+    UIViewController *rootViewController = [[FICDViewController alloc] init];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
     
     [[self window] setRootViewController:navigationController];
     [[self window] makeKeyAndVisible];

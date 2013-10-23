@@ -14,7 +14,7 @@
 #pragma mark Class Extension
 
 @interface FICDPhotosTableViewCell () <UIGestureRecognizerDelegate> {
-    id <FICDPhotosTableViewCellDelegate> _delegate;
+    __weak id <FICDPhotosTableViewCellDelegate> _delegate;
     
     NSArray *_photos;
     NSMutableArray *_imageViews;
@@ -36,7 +36,6 @@
 
 - (void)setPhotos:(NSArray *)photos {
     if (photos != _photos) {
-        [_photos release];
         _photos = [photos copy];
         
         // Either create the image views for this cell or clear them out if they already exist
@@ -48,7 +47,6 @@
                 UIImageView *imageView = [[UIImageView alloc] init];
                 [imageView setContentMode:UIViewContentModeScaleAspectFill];
                 [_imageViews addObject:imageView];
-                [imageView release];
             }
         } else {
             for (UIImageView *imageView in _imageViews) {
@@ -85,7 +83,7 @@
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        __reuseIdentifier = [NSStringFromClass([FICDPhotosTableViewCell class]) retain];
+        __reuseIdentifier = NSStringFromClass([FICDPhotosTableViewCell class]);
     });
 
     return __reuseIdentifier;
@@ -127,13 +125,7 @@
 }
 
 - (void)dealloc {
-    [_photos release];
-    [_imageViews release];
-    
     [_tapGestureRecognizer setDelegate:nil];
-    [_tapGestureRecognizer release];
-    
-    [super dealloc];
 }
 
 #pragma mark - Configuring the View Hierarchy

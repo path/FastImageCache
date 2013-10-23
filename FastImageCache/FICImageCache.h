@@ -34,7 +34,7 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
  @discussion The delegate is responsible for asynchronously providing the source image for an entity. Optionally, the delegate can require that all formats in a format
  family for a particular entity be processed. Any errors that occur in the image cache are also communicated back to the delegate.
  */
-@property(nonatomic, assign) id <FICImageCacheDelegate> delegate;
+@property (nonatomic, weak) id <FICImageCacheDelegate> delegate;
 
 ///---------------------------------------
 /// @name Accessing the Shared Image Cache

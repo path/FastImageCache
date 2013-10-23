@@ -10,7 +10,7 @@
 
 @interface FICDAppDelegate : UIResponder <UIApplicationDelegate>
 
-@property (nonatomic, retain) UIWindow *window;
-@property (nonatomic, retain) FICDViewController *viewController;
+@property (nonatomic, strong) UIWindow *window;
+@property (nonatomic, strong) FICDViewController *viewController;
 
 @end

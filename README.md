@@ -27,7 +27,8 @@ A significant burden on performance for graphics-rich applications like [Path](h
 
 ## Version History
 
-- [**1.0**](http://github.com/path/FastImageCache/tree/1.0)   (10/18/2013): Initial release
+- [**1.0**](https://github.com/path/FastImageCache/releases/tag/1.0)   (10/18/2013): Initial release
+- [**1.1**](https://github.com/path/FastImageCache/releases/tag/1.1)   (10/22/2013): Added ARC support and more robust Core Animation byte alignment
 
 ## What Fast Image Cache Does
 
@@ -97,7 +98,7 @@ There are obvious consequences to this approach, however. Uncompressed image dat
 
 #### Byte Alignment
 
-For high-performance scrolling, it is critical that Core Animation is able to use an image without first having to create a copy. One of the reasons Core Animation would create a copy of an image is improper byte-alignment of the image's underlying [`CGImageRef`](http://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&ved=0CCwQFjAA&url=http%3A%2F%2Fdeveloper.apple.com%2Flibrary%2Fios%2Fdocumentation%2Fgraphicsimaging%2FReference%2FCGImage%2FReference%2Freference.html&ei=fG9XUpX_BqWqigLymIG4BQ&usg=AFQjCNHTelntXU5Gw0BQkQqj9HC5iZibyA&sig2=tLY7PDhyockUVlVFbrzyOQ). A properly aligned bytes-per-row value must be a multiple of `8 pixels × bytes per pixel`. For a typical ARGB image, the aligned bytes-per-row value is a multiple of 32. Every image table is configured such that each image is always properly byte-aligned for Core Animation from the start. As a result, when images are retrieved from an image table, they are already in a form that Core Animation can work with directly without having to create a copy.
+For high-performance scrolling, it is critical that Core Animation is able to use an image without first having to create a copy. One of the reasons Core Animation would create a copy of an image is improper byte-alignment of the image's underlying [`CGImageRef`](http://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&ved=0CCwQFjAA&url=http%3A%2F%2Fdeveloper.apple.com%2Flibrary%2Fios%2Fdocumentation%2Fgraphicsimaging%2FReference%2FCGImage%2FReference%2Freference.html&ei=fG9XUpX_BqWqigLymIG4BQ&usg=AFQjCNHTelntXU5Gw0BQkQqj9HC5iZibyA&sig2=tLY7PDhyockUVlVFbrzyOQ). A properly aligned bytes-per-row value must be a multiple of `8 pixels × bytes per pixel`. For a typical ARGB image, the aligned bytes-per-row value is a multiple of 64. Every image table is configured such that each image is always properly byte-aligned for Core Animation from the start. As a result, when images are retrieved from an image table, they are already in a form that Core Animation can work with directly without having to create a copy.
 
 ## Considerations
 
@@ -127,13 +128,13 @@ Image format families can be specified to efficiently make use of a single sourc
 
 ## Requirements
 
-Fast Image Cache requires iOS 5.0 or greater and relies on the following frameworks:
+Fast Image Cache requires iOS 6.0 or greater and relies on the following frameworks:
 
 - Foundation
 - Core Graphics
 - UIKit
 
-> **Note**: Fast Image Cache does **not** use ARC. If your project uses ARC, you must configure Xcode to [disable ARC for Fast Image Cache source files](http://stackoverflow.com/questions/6646052/how-can-i-disable-arc-for-a-single-file-in-a-project).
+> **Note**: As of version 1.1, Fast Image Cache **does** use ARC.
 
 ---
 
@@ -163,7 +164,7 @@ Before the image cache can be used, it needs to be configured. This must occur e
 Each image format corresponds to an image table that the image cache will use. Image formats that can use the same source image to render the images they store in their image tables should belong to the same [image format family](#working-with-image-format-families). See [Image Table Size](#image-table-size) for more information about how to determine an appropriate maximum count.
 
 ```objective-c
-FICImageFormat *smallUserThumbnailImageFormat = [[[FICImageFormat alloc] init] autorelease];
+FICImageFormat *smallUserThumbnailImageFormat = [[FICImageFormat alloc] init];
 smallUserThumbnailImageFormat.name = XXImageFormatNameUserThumbnailSmall;
 smallUserThumbnailImageFormat.family = XXImageFormatFamilyUserThumbnails;
 smallUserThumbnailImageFormat.imageSize = CGSizeMake(50, 50);
@@ -171,7 +172,7 @@ smallUserThumbnailImageFormat.opaque = YES;
 smallUserThumbnailImageFormat.maximumCount = 250;
 smallUserThumbnailImageFormat.devices = FICImageFormatDevicePhone;
 
-FICImageFormat *mediumUserThumbnailImageFormat = [[[FICImageFormat alloc] init] autorelease];
+FICImageFormat *mediumUserThumbnailImageFormat = [[FICImageFormat alloc] init];
 mediumUserThumbnailImageFormat.name = XXImageFormatNameUserThumbnailMedium;
 mediumUserThumbnailImageFormat.family = XXImageFormatFamilyUserThumbnails;
 mediumUserThumbnailImageFormat.imageSize = CGSizeMake(100, 100);
@@ -244,7 +245,7 @@ Here is an example implementation of the [`FICEntity`](https://s3.amazonaws.com/
         UIGraphicsPopContext();
     };
     
-    return [[drawingBlock copy] autorelease];
+    return drawingBlock;
 }
 ```
 

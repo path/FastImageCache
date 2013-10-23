@@ -60,18 +60,12 @@
     self = [super init];
     
     if (self != nil) {
-        _imageTableChunk = [imageTableChunk retain];
+        _imageTableChunk = imageTableChunk;
         _bytes = bytes;
         _length = length;
     }
     
     return self;
-}
-
-- (void)dealloc {
-    [_imageTableChunk release];
-    
-    [super dealloc];
 }
 
 #pragma mark - Other Accessors

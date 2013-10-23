@@ -33,11 +33,11 @@ NSString * FICStringWithUUIDBytes(CFUUIDBytes UUIDBytes) {
     CFUUIDRef UUIDRef = CFUUIDCreateFromUUIDBytes(kCFAllocatorDefault, UUIDBytes);
     
     if (UUIDRef != NULL) {
-        UUIDString = (NSString *)CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
+        UUIDString = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
         CFRelease(UUIDRef);
     }
     
-    return [UUIDString autorelease];
+    return UUIDString;
 }
 
 CFUUIDBytes FICUUIDBytesWithString(NSString *string) {
