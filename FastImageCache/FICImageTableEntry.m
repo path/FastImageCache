@@ -77,7 +77,7 @@
 #pragma mark - Other Accessors
 
 + (NSInteger)metadataVersion {
-    return 7;
+    return 8;
 }
 
 - (FICImageTableEntryMetadata *)_metadata {

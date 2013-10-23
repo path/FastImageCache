@@ -133,7 +133,7 @@ static NSString *const FICImageTableFormatKey = @"format";
         _screenScale = [[UIScreen mainScreen] scale];
         
         int bytesPerPixel = 4;
-        _imageRowLength = FICByteAlignForCoreAnimation([_imageFormat pixelSize].width * bytesPerPixel, bytesPerPixel);
+        _imageRowLength = FICByteAlignForCoreAnimation([_imageFormat pixelSize].width * bytesPerPixel);
         _imageLength = _imageRowLength * (NSInteger)[_imageFormat pixelSize].height;
         
         _chunkDictionary = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL); // Non-retained keys and values

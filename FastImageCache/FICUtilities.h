@@ -9,7 +9,7 @@
 #import "FICImports.h"
 
 size_t FICByteAlign(size_t bytesPerRow, size_t alignment);
-size_t FICByteAlignForCoreAnimation(size_t bytesPerRow, size_t bytesPerPixel);
+size_t FICByteAlignForCoreAnimation(size_t bytesPerRow);
 
 NSString * FICStringWithUUIDBytes(CFUUIDBytes UUIDBytes);
 CFUUIDBytes FICUUIDBytesWithString(NSString *string);
