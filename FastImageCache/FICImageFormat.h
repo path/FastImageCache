@@ -20,6 +20,14 @@ typedef NS_OPTIONS(NSUInteger, FICImageFormatDevices) {
  All images associated with a particular format must have the same image dimentions and opacity preference. You can define the maximum number of entries that an image format can accommodate to
  prevent the image cache from consuming too much disk space. Each `<FICImageTable>` managed by the image cache is associated with a single image format.
  */
+
+
+typedef NS_OPTIONS(NSUInteger, FICImageFormatStyle) {
+    FICImageFormatStyle32BitBGRA,
+    FICImageFormatStyle16BitBGR,
+    FICImageFormatStyle8BitGrayscale,
+};
+
 @interface FICImageFormat : NSObject <NSCopying>
 
 ///------------------------------
@@ -56,10 +64,12 @@ typedef NS_OPTIONS(NSUInteger, FICImageFormatDevices) {
  */
 @property (nonatomic, assign, readonly) CGSize pixelSize;
 
-/**
- Whether or not the bitmap of the image table created by this format needs to include an alpha channel.
- */
-@property (nonatomic, assign, getter = isOpaque) BOOL opaque;
+@property (nonatomic, assign)  FICImageFormatStyle style;
+
+@property (nonatomic, readonly) CGBitmapInfo bitmapInfo;
+@property (nonatomic, readonly) NSInteger bytesPerPixel;
+@property (nonatomic, readonly) NSInteger bitsPerComponent;
+@property (nonatomic, readonly) BOOL isGrayscale;
 
 /**
  The maximum number of entries that an image table can contain for this image format.
@@ -103,6 +113,6 @@ typedef NS_OPTIONS(NSUInteger, FICImageFormatDevices) {
  
  @return An autoreleased instance of `<FICImageFormat>` or one of its subclasses, if any exist.
  */
-+ (instancetype)formatWithName:(NSString *)name family:(NSString *)family imageSize:(CGSize)imageSize isOpaque:(BOOL)isOpaque maximumCount:(NSInteger)maximumCount devices:(FICImageFormatDevices)devices;
++ (instancetype)formatWithName:(NSString *)name family:(NSString *)family imageSize:(CGSize)imageSize style:(FICImageFormatStyle)style maximumCount:(NSInteger)maximumCount devices:(FICImageFormatDevices)devices;
 
 @end

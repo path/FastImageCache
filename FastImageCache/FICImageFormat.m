@@ -16,7 +16,7 @@ static NSString *const FICImageFormatNameKey = @"name";
 static NSString *const FICImageFormatFamilyKey = @"family";
 static NSString *const FICImageFormatWidthKey = @"width";
 static NSString *const FICImageFormatHeightKey = @"height";
-static NSString *const FICImageFormatIsOpaqueKey = @"isOpaque";
+static NSString *const FICImageFormatStyleKey = @"style";
 static NSString *const FICImageFormatMaximumCountKey = @"maximumCount";
 static NSString *const FICImageFormatDevicesKey = @"devices";
 
@@ -27,7 +27,7 @@ static NSString *const FICImageFormatDevicesKey = @"devices";
     NSString *_family;
     CGSize _imageSize;
     CGSize _pixelSize;
-    BOOL _isOpaque;
+    FICImageFormatStyle _style;
     NSInteger _maximumCount;
     FICImageFormatDevices _devices;
 }
@@ -42,7 +42,7 @@ static NSString *const FICImageFormatDevicesKey = @"devices";
 @synthesize family = _family;
 @synthesize imageSize = _imageSize;
 @synthesize pixelSize = _pixelSize;
-@synthesize opaque = _isOpaque;
+@synthesize style = _style;
 @synthesize maximumCount = _maximumCount;
 @synthesize devices = _devices;
 
@@ -58,15 +58,75 @@ static NSString *const FICImageFormatDevicesKey = @"devices";
     }
 }
 
+- (CGBitmapInfo)bitmapInfo {
+    CGBitmapInfo info;
+    switch (_style) {
+        case FICImageFormatStyle32BitBGRA:
+            info = kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host;
+            break;
+        case FICImageFormatStyle16BitBGR:
+            info = kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder16Host;
+            break;
+        case FICImageFormatStyle8BitGrayscale:
+            info = (CGBitmapInfo)kCGImageAlphaNone;
+            break;
+    }
+    return info;
+}
+
+- (NSInteger)bytesPerPixel {
+    NSInteger bytesPerPixel;
+    switch (_style) {
+        case FICImageFormatStyle32BitBGRA:
+            bytesPerPixel = 4;
+            break;
+        case FICImageFormatStyle16BitBGR:
+            bytesPerPixel = 2;
+            break;
+        case FICImageFormatStyle8BitGrayscale:
+            bytesPerPixel = 1;
+            break;
+    }
+    return bytesPerPixel;
+}
+
+- (NSInteger)bitsPerComponent {
+    NSInteger bitsPerComponent;
+    switch (_style) {
+        case FICImageFormatStyle32BitBGRA:
+        case FICImageFormatStyle8BitGrayscale:
+            bitsPerComponent = 8;
+            break;
+        case FICImageFormatStyle16BitBGR:
+            bitsPerComponent = 5;
+            break;
+    }
+    return bitsPerComponent;
+}
+
+- (BOOL)isGrayscale {
+    BOOL isGrayscale;
+    switch (_style) {
+        case FICImageFormatStyle32BitBGRA:
+        case FICImageFormatStyle16BitBGR:
+            isGrayscale = NO;
+            break;
+        case FICImageFormatStyle8BitGrayscale:
+            isGrayscale = YES;
+            break;
+    }
+    return isGrayscale;
+}
+
 #pragma mark - Object Lifecycle
 
-+ (instancetype)formatWithName:(NSString *)name family:(NSString *)family imageSize:(CGSize)imageSize isOpaque:(BOOL)isOpaque maximumCount:(NSInteger)maximumCount devices:(FICImageFormatDevices)devices {
++ (instancetype)formatWithName:(NSString *)name family:(NSString *)family imageSize:(CGSize)imageSize style:(FICImageFormatStyle)style maximumCount:(NSInteger)maximumCount devices:(FICImageFormatDevices)devices {
     FICImageFormat *imageFormat = [[FICImageFormat alloc] init];
     
     [imageFormat setName:name];
     [imageFormat setFamily:family];
     [imageFormat setImageSize:imageSize];
-    [imageFormat setOpaque:isOpaque];
+    [imageFormat setStyle:style];
     [imageFormat setMaximumCount:maximumCount];
     [imageFormat setDevices:devices];
     
@@ -82,7 +142,7 @@ static NSString *const FICImageFormatDevicesKey = @"devices";
     [dictionaryRepresentation setValue:_family forKey:FICImageFormatFamilyKey];
     [dictionaryRepresentation setValue:[NSNumber numberWithUnsignedInteger:_imageSize.width] forKey:FICImageFormatWidthKey];
     [dictionaryRepresentation setValue:[NSNumber numberWithUnsignedInteger:_imageSize.height] forKey:FICImageFormatHeightKey];
-    [dictionaryRepresentation setValue:[NSNumber numberWithBool:_isOpaque] forKey:FICImageFormatIsOpaqueKey];
+    [dictionaryRepresentation setValue:[NSNumber numberWithInt:_style] forKey:FICImageFormatStyleKey];
     [dictionaryRepresentation setValue:[NSNumber numberWithUnsignedInteger:_maximumCount] forKey:FICImageFormatMaximumCountKey];
     [dictionaryRepresentation setValue:[NSNumber numberWithInt:_devices] forKey:FICImageFormatDevicesKey];
     [dictionaryRepresentation setValue:[NSNumber numberWithFloat:[[UIScreen mainScreen] scale]] forKey:FICImageTableScreenScaleKey];
@@ -101,7 +161,7 @@ static NSString *const FICImageFormatDevicesKey = @"devices";
     [imageFormatCopy setName:[self name]];
     [imageFormatCopy setFamily:[self family]];
     [imageFormatCopy setImageSize:[self imageSize]];
-    [imageFormatCopy setOpaque:[self isOpaque]];
+    [imageFormatCopy setStyle:[self style]];
     [imageFormatCopy setMaximumCount:[self maximumCount]];
     [imageFormatCopy setDevices:[self devices]];
     
