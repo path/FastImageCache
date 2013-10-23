@@ -324,6 +324,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = Icon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Launch Image";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Supporting Files/FastImageCacheDemo-Prefix.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/Supporting Files/FastImageCacheDemo-Info.plist";

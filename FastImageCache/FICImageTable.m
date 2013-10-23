@@ -132,9 +132,10 @@ static NSString *const FICImageTableFormatKey = @"format";
         
         _screenScale = [[UIScreen mainScreen] scale];
         
-        int bytesPerPixel = 4;
-        _imageRowLength = FICByteAlignForCoreAnimation([_imageFormat pixelSize].width * bytesPerPixel);
-        _imageLength = _imageRowLength * (NSInteger)[_imageFormat pixelSize].height;
+        CGSize pixelSize = [_imageFormat pixelSize];
+        NSInteger bytesPerPixel = [_imageFormat bytesPerPixel];
+        _imageRowLength = FICByteAlignForCoreAnimation(pixelSize.width * bytesPerPixel);
+        _imageLength = _imageRowLength * (NSInteger)pixelSize.height;
         
         _chunkMapTable = [NSMapTable mapTableWithKeyOptions:NSMapTableStrongMemory valueOptions:NSMapTableWeakMemory];
         
@@ -259,21 +260,16 @@ static NSString *const FICImageTableFormatKey = @"format";
         
         if (newEntryIndex < _entryCount) {
             CGSize pixelSize = [_imageFormat pixelSize];
-            CGBitmapInfo bitmapInfo;
-            if ([_imageFormat isOpaque]) {
-                bitmapInfo = kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Host;
-            } else {
-                bitmapInfo = kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host;
-            }
-            
-            CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+            CGBitmapInfo bitmapInfo = [_imageFormat bitmapInfo];
+            CGColorSpaceRef colorSpace = [_imageFormat isGrayscale] ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
+            NSInteger bitsPerComponent = [_imageFormat bitsPerComponent];
             
             // Create context whose backing store *is* the mapped file data
             FICImageTableEntry *entryData = [self _entryDataAtIndex:newEntryIndex];
-            CGContextRef context = CGBitmapContextCreate([entryData bytes], pixelSize.width, pixelSize.height, 8, _imageRowLength, colorSpace, bitmapInfo);
+            CGContextRef context = CGBitmapContextCreate([entryData bytes], pixelSize.width, pixelSize.height, bitsPerComponent, _imageRowLength, colorSpace, bitmapInfo);
             CGColorSpaceRelease(colorSpace);
             
-            CGContextTranslateCTM(context, 0, [_imageFormat pixelSize].height);
+            CGContextTranslateCTM(context, 0, pixelSize.height);
             CGContextScaleCTM(context, _screenScale, -_screenScale);
             
             // Call drawing block to allow client to draw into the context
@@ -321,18 +317,15 @@ static NSString *const FICImageTableFormatKey = @"format";
                 [self _entryWasAccessedWithEntityUUID:entityUUID];
                 
                 // Create CGImageRef whose backing store *is* the mapped image table entry. We avoid a memcpy this way.
-                CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
                 CGDataProviderRef dataProvider = CGDataProviderCreateWithData((__bridge_retained void *)entryData, [entryData bytes], [entryData imageLength], _FICReleaseImageData);
                 
                 CGSize pixelSize = [_imageFormat pixelSize];
-                CGBitmapInfo bitmapInfo;
-                if ([_imageFormat isOpaque]) {
-                    bitmapInfo = kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Host;
-                } else {
-                    bitmapInfo = kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host;
-                }
-                
-                CGImageRef imageRef = CGImageCreate(pixelSize.width, pixelSize.height, 8, 32, _imageRowLength, colorSpace, bitmapInfo, dataProvider, NULL, false, (CGColorRenderingIntent)0);
+                CGBitmapInfo bitmapInfo = [_imageFormat bitmapInfo];
+                NSInteger bitsPerComponent = [_imageFormat bitsPerComponent];
+                NSInteger bitsPerPixel = [_imageFormat bytesPerPixel] * 8;
+                CGColorSpaceRef colorSpace = [_imageFormat isGrayscale] ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
+
+                CGImageRef imageRef = CGImageCreate(pixelSize.width, pixelSize.height, bitsPerComponent, bitsPerPixel, _imageRowLength, colorSpace, bitmapInfo, dataProvider, NULL, false, (CGColorRenderingIntent)0);
                 CGDataProviderRelease(dataProvider);
                 CGColorSpaceRelease(colorSpace);
                 

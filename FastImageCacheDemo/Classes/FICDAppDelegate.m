@@ -30,7 +30,7 @@
     NSInteger squareImageFormatMaximumCount = 400;
     FICImageFormatDevices squareImageFormatDevices = FICImageFormatDevicePhone | FICImageFormatDevicePad;
     
-    FICImageFormat *squareImageFormat = [FICImageFormat formatWithName:FICDPhotoSquareImageFormatName family:FICDPhotoImageFormatFamily imageSize:FICDPhotoSquareImageSize isOpaque:NO
+    FICImageFormat *squareImageFormat = [FICImageFormat formatWithName:FICDPhotoSquareImageFormatName family:FICDPhotoImageFormatFamily imageSize:FICDPhotoSquareImageSize style:FICImageFormatStyle32BitBGRA
         maximumCount:squareImageFormatMaximumCount devices:squareImageFormatDevices];
     
     [mutableImageFormats addObject:squareImageFormat];
@@ -40,7 +40,7 @@
         NSInteger pixelImageFormatMaximumCount = 1000;
         FICImageFormatDevices pixelImageFormatDevices = FICImageFormatDevicePhone | FICImageFormatDevicePad;
         
-        FICImageFormat *pixelImageFormat = [FICImageFormat formatWithName:FICDPhotoPixelImageFormatName family:FICDPhotoImageFormatFamily imageSize:FICDPhotoPixelImageSize isOpaque:YES
+        FICImageFormat *pixelImageFormat = [FICImageFormat formatWithName:FICDPhotoPixelImageFormatName family:FICDPhotoImageFormatFamily imageSize:FICDPhotoPixelImageSize style:FICImageFormatStyle32BitBGRA
             maximumCount:pixelImageFormatMaximumCount devices:pixelImageFormatDevices];
     
         [mutableImageFormats addObject:pixelImageFormat];
