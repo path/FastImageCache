@@ -162,6 +162,8 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
  */
 - (void)deleteImageForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName;
 
+- (void)cancelImageRetrievalForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName;
+    
 ///-----------------------------------
 /// @name Checking for Image Existence
 ///-----------------------------------
@@ -226,6 +228,9 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
 - (void)imageCache:(FICImageCache *)imageCache wantsSourceImageForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName completionBlock:(FICImageRequestCompletionBlock)completionBlock;
 
 @optional
+
+- (void)imageCache:(FICImageCache *)imageCache cancelImageLoadingForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName;
+
 
 /**
  This method is called on the delegate to determine whether or not all formats in a family should be processed right now.

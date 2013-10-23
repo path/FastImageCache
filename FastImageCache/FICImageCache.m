@@ -29,6 +29,7 @@ static NSString *const FICImageCacheEntityKey = @"FICImageCacheEntityKey";
     
     BOOL _delegateImplementsShouldProcessAllFormatsInFamilyForEntity;
     BOOL _delegateImplementsErrorDidOccurWithMessage;
+    BOOL _delegateImplementsCancelImageLoadingForEntityWithFormatName;
 }
 
 @end
@@ -47,6 +48,7 @@ static NSString *const FICImageCacheEntityKey = @"FICImageCacheEntityKey";
         
         _delegateImplementsShouldProcessAllFormatsInFamilyForEntity = [_delegate respondsToSelector:@selector(imageCache:shouldProcessAllFormatsInFamily:forEntity:)];
         _delegateImplementsErrorDidOccurWithMessage = [_delegate respondsToSelector:@selector(imageCache:errorDidOccurWithMessage:)];
+        _delegateImplementsCancelImageLoadingForEntityWithFormatName = [_delegate respondsToSelector:@selector(imageCache:cancelImageLoadingForEntity:withFormatName:)];
     }
 }
 
@@ -367,6 +369,31 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
     
     [imageTable deleteEntryForEntityUUID:entityUUID];
     [imageTable saveMetadata];
+}
+
+- (void)cancelImageRetrievalForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName {
+    NSURL *sourceImageURL = [entity sourceImageURLWithFormatName:formatName];
+    NSMutableDictionary *requestDictionary = [_requests objectForKey:sourceImageURL];
+    if (requestDictionary) {
+        NSString *entityUUID = [entity UUID];
+        NSMutableDictionary *entityRequestsDictionary = [requestDictionary objectForKey:entityUUID];
+        if (entityRequestsDictionary) {
+            NSMutableDictionary *completionBlocksDictionary = [entityRequestsDictionary objectForKey:FICImageCacheCompletionBlocksKey];
+            [completionBlocksDictionary removeObjectForKey:formatName];
+            
+            if ([completionBlocksDictionary count] == 0) {
+                [requestDictionary removeObjectForKey:entityUUID];
+            }
+            
+            if ([requestDictionary count] == 0) {
+                [_requests removeObjectForKey:sourceImageURL];
+                
+                if (_delegateImplementsCancelImageLoadingForEntityWithFormatName) {
+                    [_delegate imageCache:self cancelImageLoadingForEntity:entity withFormatName:formatName];
+                }
+            }
+        }
+    }
 }
 
 - (void)reset {
