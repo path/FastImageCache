@@ -17,7 +17,6 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
 
 static NSString *const FICImageCacheFormatKey = @"FICImageCacheFormatKey";
 static NSString *const FICImageCacheCompletionBlocksKey = @"FICImageCacheCompletionBlocksKey";
-static NSString *const FICImageCacheEntitiesKey = @"FICImageCacheEntitiesKey";
 static NSString *const FICImageCacheEntityKey = @"FICImageCacheEntityKey";
 
 #pragma mark - Class Extension
@@ -192,18 +191,16 @@ static dispatch_queue_t __imageCacheDispatchQueue = NULL;
                 NSMutableDictionary *requestDictionary = [_requests objectForKey:sourceImageURL];
                 if (requestDictionary == nil) {
                     // If we're here, then we aren't currently fetching this image.
-                    NSMutableDictionary *entityRequestsDictionary = [NSMutableDictionary dictionary];
-                    requestDictionary = [NSMutableDictionary dictionaryWithObjectsAndKeys: entityRequestsDictionary, FICImageCacheEntitiesKey, nil];
+                    NSMutableDictionary *requestDictionary = [NSMutableDictionary dictionary];
                     [_requests setObject:requestDictionary forKey:sourceImageURL];
                     
-                    _FICAddCompletionBlockForEntity(formatName, entityRequestsDictionary, entity, completionBlock);
+                    _FICAddCompletionBlockForEntity(formatName, requestDictionary, entity, completionBlock);
                     [_delegate imageCache:self wantsSourceImageForEntity:entity withFormatName:formatName completionBlock:^(UIImage *sourceImage) {
                         [self _imageDidLoad:sourceImage forURL:sourceImageURL];
                     }];
                 } else {
                     // We have an existing request dictionary, which means this URL is currently being fetched.
-                    NSMutableDictionary *entityRequestsDictionary = [requestDictionary objectForKey:FICImageCacheEntitiesKey];
-                    _FICAddCompletionBlockForEntity(formatName, entityRequestsDictionary, entity, completionBlock);
+                    _FICAddCompletionBlockForEntity(formatName, requestDictionary, entity, completionBlock);
                 }
             } else {
                 NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s entity %@ returned a nil source image URL for image format %@.", __PRETTY_FUNCTION__, entity, formatName];
@@ -222,8 +219,7 @@ static dispatch_queue_t __imageCacheDispatchQueue = NULL;
 - (void)_imageDidLoad:(UIImage *)image forURL:(NSURL *)URL {
     NSDictionary *requestDictionary = [_requests objectForKey:URL];
     if (image != nil && requestDictionary != nil) {
-        NSMutableDictionary *entityRequestsDictionary = [requestDictionary objectForKey:FICImageCacheEntitiesKey];
-        for (NSMutableDictionary *entityDictionary in [entityRequestsDictionary allValues]) {
+        for (NSMutableDictionary *entityDictionary in [requestDictionary allValues]) {
             id <FICEntity> entity = [entityDictionary objectForKey:FICImageCacheEntityKey];
             NSString *formatName = [entityDictionary objectForKey:FICImageCacheFormatKey];
             NSDictionary *completionBlocksDictionary = [entityDictionary objectForKey:FICImageCacheCompletionBlocksKey];
