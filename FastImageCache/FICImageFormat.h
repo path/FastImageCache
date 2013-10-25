@@ -24,6 +24,7 @@ typedef NS_OPTIONS(NSUInteger, FICImageFormatDevices) {
 
 typedef NS_OPTIONS(NSUInteger, FICImageFormatStyle) {
     FICImageFormatStyle32BitBGRA,
+    FICImageFormatStyle32BitBGR,
     FICImageFormatStyle16BitBGR,
     FICImageFormatStyle8BitGrayscale,
 };

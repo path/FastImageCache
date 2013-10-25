@@ -64,6 +64,9 @@ static NSString *const FICImageFormatDevicesKey = @"devices";
         case FICImageFormatStyle32BitBGRA:
             info = kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host;
             break;
+        case FICImageFormatStyle32BitBGR:
+            info = kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Host;
+            break;
         case FICImageFormatStyle16BitBGR:
             info = kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder16Host;
             break;
@@ -78,6 +81,7 @@ static NSString *const FICImageFormatDevicesKey = @"devices";
     NSInteger bytesPerPixel;
     switch (_style) {
         case FICImageFormatStyle32BitBGRA:
+        case FICImageFormatStyle32BitBGR:
             bytesPerPixel = 4;
             break;
         case FICImageFormatStyle16BitBGR:
@@ -94,6 +98,7 @@ static NSString *const FICImageFormatDevicesKey = @"devices";
     NSInteger bitsPerComponent;
     switch (_style) {
         case FICImageFormatStyle32BitBGRA:
+        case FICImageFormatStyle32BitBGR:
         case FICImageFormatStyle8BitGrayscale:
             bitsPerComponent = 8;
             break;
@@ -108,6 +113,7 @@ static NSString *const FICImageFormatDevicesKey = @"devices";
     BOOL isGrayscale;
     switch (_style) {
         case FICImageFormatStyle32BitBGRA:
+        case FICImageFormatStyle32BitBGR:
         case FICImageFormatStyle16BitBGR:
             isGrayscale = NO;
             break;
