@@ -18,7 +18,7 @@
 
 @property (nonatomic, assign, readonly, getter = isDisplayingPhoto) BOOL displayingPhoto;
 
-- (void)showFullscreenPhoto:(FICDPhoto *)photo withThumbnailImageView:(UIImageView *)thumbnailImageView;
+- (void)showFullscreenPhoto:(FICDPhoto *)photo forImageFormatName:(NSString *)imageFormatName withThumbnailImageView:(UIImageView *)thumbnailImageView;
 - (void)hideFullscreenPhoto;
 
 @end

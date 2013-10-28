@@ -15,19 +15,18 @@ typedef NS_OPTIONS(NSUInteger, FICImageFormatDevices) {
     FICImageFormatDevicePad = 1 << UIUserInterfaceIdiomPad,
 };
 
-/**
- `FICImageFormat` acts as a definition for the types of images that are stored in the image cache. Each image format must have a unique name, but multiple formats can belong to the same family.
- All images associated with a particular format must have the same image dimentions and opacity preference. You can define the maximum number of entries that an image format can accommodate to
- prevent the image cache from consuming too much disk space. Each `<FICImageTable>` managed by the image cache is associated with a single image format.
- */
-
-
 typedef NS_OPTIONS(NSUInteger, FICImageFormatStyle) {
     FICImageFormatStyle32BitBGRA,
     FICImageFormatStyle32BitBGR,
     FICImageFormatStyle16BitBGR,
     FICImageFormatStyle8BitGrayscale,
 };
+
+/**
+ `FICImageFormat` acts as a definition for the types of images that are stored in the image cache. Each image format must have a unique name, but multiple formats can belong to the same family.
+ All images associated with a particular format must have the same image dimentions and opacity preference. You can define the maximum number of entries that an image format can accommodate to
+ prevent the image cache from consuming too much disk space. Each `<FICImageTable>` managed by the image cache is associated with a single image format.
+ */
 
 @interface FICImageFormat : NSObject <NSCopying>
 
@@ -61,16 +60,20 @@ typedef NS_OPTIONS(NSUInteger, FICImageFormatStyle) {
 @property (nonatomic, assign) CGSize imageSize;
 
 /**
- The size, in pixels, of the images stored in the image table created by this format. This takes into account the screen scale.
+ A bitmask of type `<FICImageFormatStyle>` that defines the style of the image format.
+ 
+ `FICImageFormatStyle` has the following values:
+ 
+ - `FICImageFormatStyle32BitBGRA`: Full-color image format with alpha channel. 8 bits per color component, and 8 bits for the alpha channel.
+ - `FICImageFormatStyle32BitBGR`: Full-color image format with no alpha channel. 8 bits per color component. The remaining 8 bits are unused.
+ - `FICImageFormatStyle16BitBGR`: Reduced-color image format with no alpha channel. 5 bits per color component. The remaining bit is unused.
+ - `FICImageFormatStyle8BitGrayscale`: Grayscale-only image format with no alpha channel.
+ 
+ If you are storing images without an alpha component (e.g., JPEG images), then you should use the `FICImageFormatStyle32BitBGR` style for performance reasons. If you are storing very small images or images
+ without a great deal of color complexity, the `FICImageFormatStyle16BitBGR` style may be sufficient and uses less disk space than the 32-bit styles use. For grayscale-only image formats, the
+ `FICImageFormatStyle8BitGrayscale` style is sufficient and further reduces disk space usage.
  */
-@property (nonatomic, assign, readonly) CGSize pixelSize;
-
 @property (nonatomic, assign)  FICImageFormatStyle style;
-
-@property (nonatomic, readonly) CGBitmapInfo bitmapInfo;
-@property (nonatomic, readonly) NSInteger bytesPerPixel;
-@property (nonatomic, readonly) NSInteger bitsPerComponent;
-@property (nonatomic, readonly) BOOL isGrayscale;
 
 /**
  The maximum number of entries that an image table can contain for this image format.
@@ -85,6 +88,31 @@ typedef NS_OPTIONS(NSUInteger, FICImageFormatStyle) {
  @discussion If the current device is not included in a particular image format, the image cache will not store image data for that device.
  */
 @property (nonatomic, assign) FICImageFormatDevices devices;
+
+/**
+ The size, in pixels, of the images stored in the image table created by this format. This takes into account the screen scale.
+ */
+@property (nonatomic, assign, readonly) CGSize pixelSize;
+
+/**
+ The bitmap info associated with the images created with this image format.
+ */
+@property (nonatomic, assign, readonly) CGBitmapInfo bitmapInfo;
+
+/**
+ The number of bytes each pixel of an image created with this image format occupies.
+ */
+@property (nonatomic, assign, readonly) NSInteger bytesPerPixel;
+
+/**
+ The number of bits each pixel component (e.g., blue, green, red color channels) uses for images created with this image format.
+ */
+@property (nonatomic, assign, readonly) NSInteger bitsPerComponent;
+
+/**
+ Whether or not the the images represented by this image format are grayscale.
+ */
+@property (nonatomic, assign, readonly) BOOL isGrayscale;
 
 /**
  The dictionary representation of this image format.
@@ -106,7 +134,7 @@ typedef NS_OPTIONS(NSUInteger, FICImageFormatStyle) {
  
  @param imageSize The size, in points, of the images stored in the image table created by this format.
  
- @param isOpaque Whether or not the image table's backing bitmap data provider is opaque.
+ @param style The style of the image format. See the `<style>` property description for more information.
  
  @param maximumCount The maximum number of entries that an image table can contain for this image format.
  

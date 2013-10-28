@@ -19,10 +19,14 @@
 @interface FICDViewController () <UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate, FICDPhotosTableViewCellDelegate, FICDFullscreenPhotoDisplayControllerDelegate> {
     FICDTableView *_tableView;
     NSArray *_photos;
+    
+    NSString *_imageFormatName;
+    NSArray *_imageFormatStyleToolbarItems;
+    
     BOOL _usesImageTable;
-    BOOL _reloadTableViewAfterScrollingAnimationEnds;
+    BOOL _shouldReloadTableViewAfterScrollingAnimationEnds;
     BOOL _shouldResetData;
-    NSInteger _selectedSegmentControlIndex;
+    NSInteger _selectedMethodSegmentControlIndex;
     NSInteger _callbackCount;
     UIAlertView *_noImagesAlertView;
     UILabel *_averageFPSLabel;
@@ -109,12 +113,12 @@
     UIBarButtonItem *resetBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Reset" style:UIBarButtonItemStyleBordered target:self action:@selector(_reset)];
     [navigationItem setLeftBarButtonItem:resetBarButtonItem];
     
-    UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Conventional", @"Image Table", nil]];
-    [segmentedControl setSelectedSegmentIndex:0];
-    [segmentedControl addTarget:self action:@selector(_segmentedControlValueChanged:) forControlEvents:UIControlEventValueChanged];
-    [segmentedControl setSegmentedControlStyle:UISegmentedControlStyleBar];
-    [segmentedControl sizeToFit];
-    [navigationItem setTitleView:segmentedControl];
+    UISegmentedControl *methodSegmentedControl = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Conventional", @"Image Table", nil]];
+    [methodSegmentedControl setSelectedSegmentIndex:0];
+    [methodSegmentedControl addTarget:self action:@selector(_methodSegmentedControlValueChanged:) forControlEvents:UIControlEventValueChanged];
+    [methodSegmentedControl setSegmentedControlStyle:UISegmentedControlStyleBar];
+    [methodSegmentedControl sizeToFit];
+    [navigationItem setTitleView:methodSegmentedControl];
     
     // Configure the average FPS label
     if (_averageFPSLabel == nil) {
@@ -128,6 +132,41 @@
     
     UIBarButtonItem *averageFPSLabelBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:_averageFPSLabel];
     [navigationItem setRightBarButtonItem:averageFPSLabelBarButtonItem];
+    
+    // Configure the image format styles toolbar
+    if (_imageFormatStyleToolbarItems == nil) {
+        NSMutableArray *mutableImageFormatStyleToolbarItems = [NSMutableArray array];
+        
+        UIBarButtonItem *flexibleSpaceToolbarItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:NULL];
+        [mutableImageFormatStyleToolbarItems addObject:flexibleSpaceToolbarItem];
+        
+        NSArray *imageFormatStyleSegmentedControlTitles = nil;
+        BOOL userInterfaceIdiomIsPhone = [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone;
+        
+        if (userInterfaceIdiomIsPhone) {
+            imageFormatStyleSegmentedControlTitles = [NSArray arrayWithObjects:@"32BGRA", @"32BGR", @"16BGR", @"8Grayscale", nil];
+        } else {
+            imageFormatStyleSegmentedControlTitles = [NSArray arrayWithObjects:@"32-bit BGRA", @"32-bit BGR", @"16-bit BGR", @"8-bit Grayscale", nil];
+        }
+        
+        UISegmentedControl *imageFormatStyleSegmentedControl = [[UISegmentedControl alloc] initWithItems:imageFormatStyleSegmentedControlTitles];
+        [imageFormatStyleSegmentedControl setSelectedSegmentIndex:0];
+        [imageFormatStyleSegmentedControl addTarget:self action:@selector(_imageFormatStyleSegmentedControlValueChanged:) forControlEvents:UIControlEventValueChanged];
+        [imageFormatStyleSegmentedControl setSegmentedControlStyle:UISegmentedControlStyleBar];
+        [imageFormatStyleSegmentedControl setApportionsSegmentWidthsByContent:userInterfaceIdiomIsPhone];
+        [imageFormatStyleSegmentedControl sizeToFit];
+        
+        UIBarButtonItem *imageFormatStyleSegmentedControlToolbarItem = [[UIBarButtonItem alloc] initWithCustomView:imageFormatStyleSegmentedControl];
+        [mutableImageFormatStyleToolbarItems addObject:imageFormatStyleSegmentedControlToolbarItem];
+        
+        [mutableImageFormatStyleToolbarItems addObject:flexibleSpaceToolbarItem];
+        
+        _imageFormatStyleToolbarItems = [mutableImageFormatStyleToolbarItems copy];
+    }
+    
+    [self setToolbarItems:_imageFormatStyleToolbarItems];
+    
+    _imageFormatName = FICDPhotoSquareImage32BitBGRAFormatName;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -160,11 +199,11 @@
         if (tableViewCurrentContentOffsetY > tableViewTopmostContentOffsetY) {
             [_tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
             
-            _reloadTableViewAfterScrollingAnimationEnds = YES;
+            _shouldReloadTableViewAfterScrollingAnimationEnds = YES;
         }
     }
     
-    if (_reloadTableViewAfterScrollingAnimationEnds == NO) {
+    if (_shouldReloadTableViewAfterScrollingAnimationEnds == NO) {
         // Reset the data now
         if (_shouldResetData) {
             _shouldResetData = NO;
@@ -176,7 +215,9 @@
             }
         }
         
-        _usesImageTable = _selectedSegmentControlIndex == 1;
+        _usesImageTable = _selectedMethodSegmentControlIndex == 1;
+        
+        [[self navigationController] setToolbarHidden:(_usesImageTable == NO) animated:YES];
         
         dispatch_block_t tableViewReloadBlock = ^{
             [_tableView reloadData];
@@ -203,7 +244,7 @@
                     CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
                     FICImageCache *sharedImageCache = [FICImageCache sharedImageCache];
                     
-                    if ([sharedImageCache imageExistsForEntity:photo withFormatName:FICDPhotoSquareImageFormatName] == NO) {
+                    if ([sharedImageCache imageExistsForEntity:photo withFormatName:_imageFormatName] == NO) {
                         if (_callbackCount == 0) {
                             NSLog(@"*** FIC Demo: Fast Image Cache: Generating thumbnails...");
                             
@@ -216,7 +257,7 @@
                         
                         _callbackCount++;
                         
-                        [sharedImageCache asynchronouslyRetrieveImageForEntity:photo withFormatName:FICDPhotoSquareImageFormatName completionBlock:^(id<FICEntity> entity, NSString *formatName, UIImage *image) {
+                        [sharedImageCache asynchronouslyRetrieveImageForEntity:photo withFormatName:_imageFormatName completionBlock:^(id<FICEntity> entity, NSString *formatName, UIImage *image) {
                             _callbackCount--;
                             
                             if (_callbackCount == 0) {
@@ -245,12 +286,28 @@
     [self reloadTableViewAndScrollToTop:YES];
 }
 
-- (void)_segmentedControlValueChanged:(UISegmentedControl *)segmentedControl {
-    _selectedSegmentControlIndex = [segmentedControl selectedSegmentIndex];
+- (void)_methodSegmentedControlValueChanged:(UISegmentedControl *)segmentedControl {
+    _selectedMethodSegmentControlIndex = [segmentedControl selectedSegmentIndex];
     
     // If there's any scrolling momentum, we want to stop it now
     CGPoint tableViewContentOffset = [_tableView contentOffset];
     [_tableView setContentOffset:tableViewContentOffset animated:NO];
+    
+    [self reloadTableViewAndScrollToTop:NO];
+}
+
+- (void)_imageFormatStyleSegmentedControlValueChanged:(UISegmentedControl *)segmentedControl {
+    NSInteger selectedSegmentedControlIndex = [segmentedControl selectedSegmentIndex];
+    
+    if (selectedSegmentedControlIndex == 0) {
+        _imageFormatName = FICDPhotoSquareImage32BitBGRAFormatName;
+    } else if (selectedSegmentedControlIndex == 1) {
+        _imageFormatName = FICDPhotoSquareImage32BitBGRFormatName;
+    } else if (selectedSegmentedControlIndex == 2) {
+        _imageFormatName = FICDPhotoSquareImage16BitBGRFormatName;
+    } else if (selectedSegmentedControlIndex == 3) {
+        _imageFormatName = FICDPhotoSquareImage8BitGrayscaleFormatName;
+    }
     
     [self reloadTableViewAndScrollToTop:NO];
 }
@@ -302,9 +359,9 @@ static BOOL _FICDImageIsLight(UIImage *image) {
         const UInt8 *pixelBytes = [pixelData bytes];
         
         // Whether or not the image format is opaque, the first byte is always the alpha component, followed by RGB.
-        uint8_t pixelR = pixelBytes[1];
-        uint8_t pixelG = pixelBytes[2];
-        uint8_t pixelB = pixelBytes[3];
+        UInt8 pixelR = pixelBytes[1];
+        UInt8 pixelG = pixelBytes[2];
+        UInt8 pixelB = pixelBytes[3];
         
         // Calculate the perceived luminance of the pixel; the human eye favors green, followed by red, then blue.
         double percievedLuminance = 1 - (((0.299 * pixelR) + (0.587 * pixelG) + (0.114 * pixelB)) / 255);
@@ -414,6 +471,7 @@ static BOOL _FICDImageIsLight(UIImage *image) {
     }
     
     [tableViewCell setDelegate:self];
+    [tableViewCell setImageFormatName:_imageFormatName];
     
     NSInteger photosPerRow = [FICDPhotosTableViewCell photosPerRow];
     NSInteger startIndex = [indexPath row] * photosPerRow;
@@ -453,8 +511,8 @@ static BOOL _FICDImageIsLight(UIImage *image) {
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
     [_tableView resetScrollingPerformanceCounters];
 
-    if (_reloadTableViewAfterScrollingAnimationEnds) {
-        _reloadTableViewAfterScrollingAnimationEnds = NO;
+    if (_shouldReloadTableViewAfterScrollingAnimationEnds) {
+        _shouldReloadTableViewAfterScrollingAnimationEnds = NO;
         
         // Add a slight delay before reloading the data
         double delayInSeconds = 0.1;
@@ -476,7 +534,7 @@ static BOOL _FICDImageIsLight(UIImage *image) {
 #pragma mark - FICDPhotosTableViewCellDelegate
 
 - (void)photosTableViewCell:(FICDPhotosTableViewCell *)photosTableViewCell didSelectPhoto:(FICDPhoto *)photo withImageView:(UIImageView *)imageView {
-    [[FICDFullscreenPhotoDisplayController sharedDisplayController] showFullscreenPhoto:photo withThumbnailImageView:imageView];
+    [[FICDFullscreenPhotoDisplayController sharedDisplayController] showFullscreenPhoto:photo forImageFormatName:_imageFormatName withThumbnailImageView:imageView];
 }
 
 #pragma mark - FICDFullscreenPhotoDisplayControllerDelegate

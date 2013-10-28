@@ -13,7 +13,10 @@
 
 NSString *const FICDPhotoImageFormatFamily = @"FICDPhotoImageFormatFamily";
 
-NSString *const FICDPhotoSquareImageFormatName = @"FICDPhotoSquareImageFormatName";
+NSString *const FICDPhotoSquareImage32BitBGRAFormatName = @"FICDPhotoSquareImage32BitBGRAFormatName";
+NSString *const FICDPhotoSquareImage32BitBGRFormatName = @"FICDPhotoSquareImage32BitBGRFormatName";
+NSString *const FICDPhotoSquareImage16BitBGRFormatName = @"FICDPhotoSquareImage16BitBGRFormatName";
+NSString *const FICDPhotoSquareImage8BitGrayscaleFormatName = @"FICDPhotoSquareImage8BitGrayscaleFormatName";
 NSString *const FICDPhotoPixelImageFormatName = @"FICDPhotoPixelImageFormatName";
 
 CGSize const FICDPhotoSquareImageSize = {75, 75};
@@ -188,9 +191,22 @@ static UIImage * _FICDStatusBarImageFromImage(UIImage *image) {
         contextBounds.size = contextSize;
         CGContextClearRect(contextRef, contextBounds);
         
-        if ([formatName isEqualToString:FICDPhotoSquareImageFormatName]) {
+        if ([formatName isEqualToString:FICDPhotoPixelImageFormatName]) {
+            UIImage *statusBarImage = _FICDStatusBarImageFromImage(image);
+            CGContextSetInterpolationQuality(contextRef, kCGInterpolationMedium);
+            
+            UIGraphicsPushContext(contextRef);
+            [statusBarImage drawInRect:contextBounds];
+            UIGraphicsPopContext();
+        } else {
+            if ([formatName isEqualToString:FICDPhotoSquareImage32BitBGRAFormatName] == NO) {
+                // Fill with white for image formats that are opaque
+                CGContextSetFillColorWithColor(contextRef, [[UIColor whiteColor] CGColor]);
+                CGContextFillRect(contextRef, contextBounds);
+            }
+            
             UIImage *squareImage = _FICDSquareImageFromImage(image);
-        
+            
             // Clip to a rounded rect
             CGPathRef path = _FICDCreateRoundedRectPath(contextBounds, 12);
             CGContextAddPath(contextRef, path);
@@ -199,13 +215,6 @@ static UIImage * _FICDStatusBarImageFromImage(UIImage *image) {
             
             UIGraphicsPushContext(contextRef);
             [squareImage drawInRect:contextBounds];
-            UIGraphicsPopContext();
-        } else if ([formatName isEqualToString:FICDPhotoPixelImageFormatName]) {
-            UIImage *statusBarImage = _FICDStatusBarImageFromImage(image);
-            CGContextSetInterpolationQuality(contextRef, kCGInterpolationMedium);
-            
-            UIGraphicsPushContext(contextRef);
-            [statusBarImage drawInRect:contextBounds];
             UIGraphicsPopContext();
         }
     };

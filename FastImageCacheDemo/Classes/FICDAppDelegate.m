@@ -26,21 +26,40 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     NSMutableArray *mutableImageFormats = [NSMutableArray array];
     
-    // Square image format
+    // Square image formats...
     NSInteger squareImageFormatMaximumCount = 400;
     FICImageFormatDevices squareImageFormatDevices = FICImageFormatDevicePhone | FICImageFormatDevicePad;
     
-    FICImageFormat *squareImageFormat = [FICImageFormat formatWithName:FICDPhotoSquareImageFormatName family:FICDPhotoImageFormatFamily imageSize:FICDPhotoSquareImageSize style:FICImageFormatStyle32BitBGRA
+    // ...32-bit BGR
+    FICImageFormat *squareImageFormat32BitBGRA = [FICImageFormat formatWithName:FICDPhotoSquareImage32BitBGRAFormatName family:FICDPhotoImageFormatFamily imageSize:FICDPhotoSquareImageSize style:FICImageFormatStyle32BitBGRA
         maximumCount:squareImageFormatMaximumCount devices:squareImageFormatDevices];
     
-    [mutableImageFormats addObject:squareImageFormat];
+    [mutableImageFormats addObject:squareImageFormat32BitBGRA];
+    
+    // ...32-bit BGR
+    FICImageFormat *squareImageFormat32BitBGR = [FICImageFormat formatWithName:FICDPhotoSquareImage32BitBGRFormatName family:FICDPhotoImageFormatFamily imageSize:FICDPhotoSquareImageSize style:FICImageFormatStyle32BitBGR
+        maximumCount:squareImageFormatMaximumCount devices:squareImageFormatDevices];
+    
+    [mutableImageFormats addObject:squareImageFormat32BitBGR];
+    
+    // ...16-bit BGR
+    FICImageFormat *squareImageFormat16BitBGR = [FICImageFormat formatWithName:FICDPhotoSquareImage16BitBGRFormatName family:FICDPhotoImageFormatFamily imageSize:FICDPhotoSquareImageSize style:FICImageFormatStyle16BitBGR
+        maximumCount:squareImageFormatMaximumCount devices:squareImageFormatDevices];
+    
+    [mutableImageFormats addObject:squareImageFormat16BitBGR];
+    
+    // ...8-bit Grayscale
+    FICImageFormat *squareImageFormat8BitGrayscale = [FICImageFormat formatWithName:FICDPhotoSquareImage8BitGrayscaleFormatName family:FICDPhotoImageFormatFamily imageSize:FICDPhotoSquareImageSize style:FICImageFormatStyle8BitGrayscale
+        maximumCount:squareImageFormatMaximumCount devices:squareImageFormatDevices];
+    
+    [mutableImageFormats addObject:squareImageFormat8BitGrayscale];
     
     if ([UIViewController instancesRespondToSelector:@selector(preferredStatusBarStyle)]) {
         // Pixel image format
         NSInteger pixelImageFormatMaximumCount = 1000;
         FICImageFormatDevices pixelImageFormatDevices = FICImageFormatDevicePhone | FICImageFormatDevicePad;
         
-        FICImageFormat *pixelImageFormat = [FICImageFormat formatWithName:FICDPhotoPixelImageFormatName family:FICDPhotoImageFormatFamily imageSize:FICDPhotoPixelImageSize style:FICImageFormatStyle32BitBGRA
+        FICImageFormat *pixelImageFormat = [FICImageFormat formatWithName:FICDPhotoPixelImageFormatName family:FICDPhotoImageFormatFamily imageSize:FICDPhotoPixelImageSize style:FICImageFormatStyle32BitBGR
             maximumCount:pixelImageFormatMaximumCount devices:pixelImageFormatDevices];
     
         [mutableImageFormats addObject:pixelImageFormat];

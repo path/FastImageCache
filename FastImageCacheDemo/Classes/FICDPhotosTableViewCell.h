@@ -15,6 +15,7 @@
 @property (nonatomic, weak) id <FICDPhotosTableViewCellDelegate> delegate;
 @property (nonatomic, assign) BOOL usesImageTable;
 @property (nonatomic, copy) NSArray *photos;
+@property (nonatomic, copy) NSString *imageFormatName;
 
 + (NSString *)reuseIdentifier;
 + (NSInteger)photosPerRow;

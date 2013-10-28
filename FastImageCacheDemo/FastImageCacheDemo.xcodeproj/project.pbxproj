@@ -20,6 +20,7 @@
 		2E1BC90117C57CDF00836A7E /* FICDViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E1BC8FD17C57CD300836A7E /* FICDViewController.m */; };
 		2E64541017FF24C0001D0531 /* FICDTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E64540F17FF24C0001D0531 /* FICDTableView.m */; };
 		2EA7994417B2A10200684B86 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2EA7993F17B2A10200684B86 /* main.m */; };
+		EB171332181F089F00EB0E24 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB171331181F089F00EB0E24 /* CoreImage.framework */; };
 		EB642D8017DCB1750013D644 /* FICDFullscreenPhotoDisplayController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB642D7F17DCB1750013D644 /* FICDFullscreenPhotoDisplayController.m */; };
 		EB6BD53818079DAB00D762CE /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB6BD53718079DAB00D762CE /* CoreGraphics.framework */; };
 		EB6BD53A18079EA800D762CE /* FICUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E1BC8EE17C57C4700836A7E /* FICUtilities.m */; };
@@ -55,6 +56,7 @@
 		2E64540E17FF24C0001D0531 /* FICDTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICDTableView.h; sourceTree = "<group>"; };
 		2E64540F17FF24C0001D0531 /* FICDTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICDTableView.m; sourceTree = "<group>"; };
 		2EA7993F17B2A10200684B86 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		EB171331181F089F00EB0E24 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
 		EB642D3717DC9C690013D644 /* FastImageCacheDemo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "FastImageCacheDemo-Info.plist"; sourceTree = "<group>"; };
 		EB642D7E17DCB1750013D644 /* FICDFullscreenPhotoDisplayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICDFullscreenPhotoDisplayController.h; sourceTree = "<group>"; };
 		EB642D7F17DCB1750013D644 /* FICDFullscreenPhotoDisplayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICDFullscreenPhotoDisplayController.m; sourceTree = "<group>"; };
@@ -74,6 +76,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB6BD53818079DAB00D762CE /* CoreGraphics.framework in Frameworks */,
+				EB171332181F089F00EB0E24 /* CoreImage.framework in Frameworks */,
 				EBB922BD17DA8E6A00211050 /* QuartzCore.framework in Frameworks */,
 				2E095B1417AEBB1200ECE160 /* UIKit.framework in Frameworks */,
 				2E095B1617AEBB1200ECE160 /* Foundation.framework in Frameworks */,
@@ -105,6 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				EB6BD53718079DAB00D762CE /* CoreGraphics.framework */,
+				EB171331181F089F00EB0E24 /* CoreImage.framework */,
 				2E095B1517AEBB1200ECE160 /* Foundation.framework */,
 				EBB922BC17DA8E6A00211050 /* QuartzCore.framework */,
 				2E095B1317AEBB1200ECE160 /* UIKit.framework */,

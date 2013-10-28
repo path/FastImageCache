@@ -162,6 +162,20 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
  */
 - (void)deleteImageForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName;
 
+///-------------------------------
+/// @name Canceling Image Requests
+///-------------------------------
+
+/**
+ Cancels an active request for an image from the image cache.
+ 
+ @param entity The entity that uniquely identifies the source image.
+ 
+ @param formatName The format name that uniquely identifies which image table to look in for the cached image.
+ 
+ @discussion After this method is called, the completion block of the <[FICImageCacheDelegate imageCache:wantsSourceImageForEntity:withFormatName:completionBlock:]> delegate
+ method for the corresponding entity, if called, does nothing.
+ */
 - (void)cancelImageRetrievalForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName;
     
 ///-----------------------------------
@@ -229,8 +243,21 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
 
 @optional
 
+/**
+ This method is called on the delegate when the image cache has received an image retrieval cancellation request.
+ 
+ @param imageCache The image cache that has received the image retrieval cancellation request.
+ 
+ @param entity The entity that uniquely identifies the source image.
+ 
+ @param formatName The format name that uniquely identifies which image table to look in for the cached image.
+ 
+ @discussion When an image retrieval cancellation request is made to the image cache, it removes all of its internal bookkeeping for requests. However, it is still the
+ delegate's responsibility to cancel whatever logic is it performing to provide a source image to the cache (e.g., a network request).
+ 
+ @see [FICImageCache cancelImageRetrievalForEntity:withFormatName:]
+ */
 - (void)imageCache:(FICImageCache *)imageCache cancelImageLoadingForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName;
-
 
 /**
  This method is called on the delegate to determine whether or not all formats in a family should be processed right now.

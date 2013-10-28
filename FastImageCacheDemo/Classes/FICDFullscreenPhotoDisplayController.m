@@ -9,6 +9,8 @@
 #import "FICDFullscreenPhotoDisplayController.h"
 #import "FICDPhoto.h"
 
+#import <CoreImage/CoreImage.h>
+
 #pragma mark Class Extension
 
 @interface FICDFullscreenPhotoDisplayController () <UIGestureRecognizerDelegate> {
@@ -30,6 +32,8 @@
     FICDPhoto *_photo;
     
     UITapGestureRecognizer *_tapGestureRecognizer;
+    
+    CIContext* _CoreImageContext;
 }
 
 @end
@@ -90,6 +94,8 @@
         
         _tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_tapGestureRecognizerStateDidChange)];
         [_fullscreenView addGestureRecognizer:_tapGestureRecognizer];
+        
+        _CoreImageContext = [CIContext contextWithOptions:nil];
     }
     
     return self;
@@ -101,7 +107,7 @@
 
 #pragma mark - Showing and Hiding a Fullscreen Photo
 
-- (void)showFullscreenPhoto:(FICDPhoto *)photo withThumbnailImageView:(UIImageView *)thumbnailImageView {
+- (void)showFullscreenPhoto:(FICDPhoto *)photo forImageFormatName:(NSString *)imageFormatName withThumbnailImageView:(UIImageView *)thumbnailImageView {
     // Stash away the photo
     _photo = photo;
 
@@ -128,6 +134,20 @@
     
     // Configure the source image view
     UIImage *sourceImage = [photo sourceImage];
+    
+    // Desaturate the source image with Core Image if the image format name is FICDPhotoSquareImage8BitGrayscaleFormatName
+    if ([imageFormatName isEqualToString:FICDPhotoSquareImage8BitGrayscaleFormatName]) {
+        CIFilter *colorControlsFilter = [CIFilter filterWithName:@"CIColorControls"];
+        [colorControlsFilter setValue:[CIImage imageWithCGImage:[sourceImage CGImage]] forKey:kCIInputImageKey];
+        [colorControlsFilter setValue:[NSNumber numberWithFloat:0] forKey:@"inputSaturation"];
+        
+        CIImage *outputCIImage = [colorControlsFilter outputImage];
+        CGImageRef outputImageRef = [_CoreImageContext createCGImage:outputCIImage fromRect:[outputCIImage extent]];
+        sourceImage = [UIImage imageWithCGImage:outputImageRef];
+        
+        CGImageRelease(outputImageRef);
+    }
+    
     [_sourceImageView setImage:sourceImage];
     [_sourceImageView setFrame:convertedThumbnailImageViewFrame];
     [_sourceImageView setAlpha:0];
