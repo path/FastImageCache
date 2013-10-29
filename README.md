@@ -18,6 +18,7 @@ A significant burden on performance for graphics-rich applications like [Path](h
     - [Initial Configuration](#initial-configuration)
     - [Requesting Images from the Image Cache](#requesting-images-from-the-image-cache)
     - [Providing Source Images to the Image Cache](#providing-source-images-to-the-image-cache)
+    - [Cancelling Source Image Requests](#cancelling-source-image-requests)
     - [Working with Image Format Families](#working-with-image-format-families)
 - [Documentation](#documentation)
 - [Demo Application](#demo-application)
@@ -167,21 +168,30 @@ Each image format corresponds to an image table that the image cache will use. I
 FICImageFormat *smallUserThumbnailImageFormat = [[FICImageFormat alloc] init];
 smallUserThumbnailImageFormat.name = XXImageFormatNameUserThumbnailSmall;
 smallUserThumbnailImageFormat.family = XXImageFormatFamilyUserThumbnails;
+smallUserThumbnailImageFormat.style = FICImageFormatStyle16BitBGR;
 smallUserThumbnailImageFormat.imageSize = CGSizeMake(50, 50);
-smallUserThumbnailImageFormat.opaque = YES;
 smallUserThumbnailImageFormat.maximumCount = 250;
 smallUserThumbnailImageFormat.devices = FICImageFormatDevicePhone;
 
 FICImageFormat *mediumUserThumbnailImageFormat = [[FICImageFormat alloc] init];
 mediumUserThumbnailImageFormat.name = XXImageFormatNameUserThumbnailMedium;
 mediumUserThumbnailImageFormat.family = XXImageFormatFamilyUserThumbnails;
+mediumUserThumbnailImageFormat.style = FICImageFormatStyle32BitBGRA;
 mediumUserThumbnailImageFormat.imageSize = CGSizeMake(100, 100);
-mediumUserThumbnailImageFormat.opaque = YES;
 mediumUserThumbnailImageFormat.maximumCount = 250;
 mediumUserThumbnailImageFormat.devices = FICImageFormatDevicePhone;
 
 NSArray *imageFormats = @[smallUserThumbnailImageFormat, mediumUserThumbnailImageFormat];
 ```
+
+An image format's style effectively determines the bit depth of the images stored in an image table. The following styles are currently available:
+
+- 32-bit color plus an alpha component (default)
+- 32-bit color, no alpha component
+- 16-bit color, no alpha component
+- 8-bit grayscale, no alpha component
+
+If the source images lack transparency (e.g., JPEG images), then better Core Animation performance can be achieved by using 32-bit color with no alpha component. If the source images have little color detail, or if the image format's image size is relatively small, it may be sufficient to use 16-bit color with little or no perceptible loss of quality. This results in smaller image table files stored on disk.
 
 #### Configuring the Image Cache
 
@@ -332,7 +342,26 @@ There are two ways to provide source images to the image cache.
     ```
     
 > **Note**: Fast Image Cache does **not** persist source images. See [Source Image Persistence](#source-image-persistence) for more information.
-    
+
+### Cancelling Source Image Requests
+
+If an image request is already in progress, it can be cancelled:
+
+```objective-c
+// We scrolled up far enough that the image we requested in no longer visible; cancel the request
+XXUser *user = [self _currentUser];
+NSString *formatName = XXImageFormatNameUserThumbnailSmall;
+[sharedImageCache cancelImageRetrievalForEntity:user withFormatName:formatName];
+```
+
+When this happens, Fast Image Cache cleans up its internal bookkeeping, and any completion blocks from the corresponding image request will do nothing at this point. However, the image cache's delegate is still responsible for ensuring that any outstanding source image requests (e.g., network requests) are cancelled:
+
+```objective-c
+- (void)imageCache:(FICImageCache *)imageCache cancelImageLoadingForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName {
+    [self _cancelNetworkRequestForSourceImageForEntity:entity withFormatName:formatName];
+}
+```
+
 ### Working with Image Format Families
 
 The advantage of classifying image formats into families is that the image cache's delegate can tell the image cache to process entity source images for **all** image formats in a family when **any** image format in that family is processed.
