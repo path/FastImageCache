@@ -42,9 +42,9 @@ static NSString *const FICImageTableFormatKey = @"format";
     off_t _fileLength;
     
     NSUInteger _entryCount;
-    off_t _entryLength;
+    NSInteger _entryLength;
     NSUInteger _entriesPerChunk;
-    off_t _imageLength;
+    NSInteger _imageLength;
     
     size_t _chunkLength;
     NSInteger _chunkCount;
@@ -134,7 +134,7 @@ static NSString *const FICImageTableFormatKey = @"format";
         
         CGSize pixelSize = [_imageFormat pixelSize];
         NSInteger bytesPerPixel = [_imageFormat bytesPerPixel];
-        _imageRowLength = FICByteAlignForCoreAnimation(pixelSize.width * bytesPerPixel);
+        _imageRowLength = (NSInteger)FICByteAlignForCoreAnimation(pixelSize.width * bytesPerPixel);
         _imageLength = _imageRowLength * (NSInteger)pixelSize.height;
         
         _chunkMapTable = [NSMapTable mapTableWithKeyOptions:NSMapTableStrongMemory valueOptions:NSMapTableWeakMemory];
@@ -156,16 +156,16 @@ static NSString *const FICImageTableFormatKey = @"format";
         if (_fileDescriptor >= 0) {
             // The size of each entry in the table needs to be page-aligned. This will cause each entry to have a page-aligned base
             // address, which will help us avoid Core Animation having to copy our images when we eventually set them on layers.
-            _entryLength = FICByteAlign(_imageLength + sizeof(FICImageTableEntryMetadata), [FICImageTable pageSize]);
+            _entryLength = (NSInteger)FICByteAlign(_imageLength + sizeof(FICImageTableEntryMetadata), [FICImageTable pageSize]);
             
             // Each chunk will map in n entries. Try to keep the chunkLength around 2MB.
             NSInteger goalChunkLength = 2 * (1024 * 1024);
             NSInteger goalEntriesPerChunk = goalChunkLength / _entryLength;
             _entriesPerChunk = MAX(4, goalEntriesPerChunk);
-            _chunkLength = _entryLength * _entriesPerChunk;
+            _chunkLength = (size_t)(_entryLength * _entriesPerChunk);
             
             _fileLength = lseek(_fileDescriptor, 0, SEEK_END);
-            _entryCount = _fileLength / _entryLength;
+            _entryCount = (NSInteger)(_fileLength / _entryLength);
             _chunkCount = (_entryCount + _entriesPerChunk - 1) / _entriesPerChunk;
             
             if ([_indexMap count] > _entryCount) {
@@ -218,10 +218,10 @@ static NSString *const FICImageTableFormatKey = @"format";
         chunk = [self _cachedChunkAtIndex:index];
         
         if (chunk == nil) {
-            size_t chunkLength = _chunkLength;        
+            size_t chunkLength = _chunkLength;
             off_t chunkOffset = index * (off_t)_chunkLength;
             if (chunkOffset + chunkLength > _fileLength) {
-                chunkLength = _fileLength - chunkOffset;
+                chunkLength = (size_t)(_fileLength - chunkOffset);
             }
                     
             chunk = [[FICImageTableChunk alloc] initWithFileDescriptor:_fileDescriptor index:index length:chunkLength];
@@ -423,7 +423,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     
     if (index < _entryCount) {
         off_t entryOffset = index * _entryLength;
-        size_t chunkIndex = entryOffset / _chunkLength;
+        size_t chunkIndex = (size_t)(entryOffset / _chunkLength);
         
         FICImageTableChunk *chunk = [self _chunkAtIndex:chunkIndex];
         if (chunk != nil) {
