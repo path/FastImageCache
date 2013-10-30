@@ -30,6 +30,7 @@ A significant burden on performance for graphics-rich applications like [Path](h
 
 - [**1.0**](https://github.com/path/FastImageCache/releases/tag/1.0)   (10/18/2013): Initial release
 - [**1.1**](https://github.com/path/FastImageCache/releases/tag/1.1)   (10/22/2013): Added ARC support and more robust Core Animation byte alignment
+- [**1.2**](https://github.com/path/FastImageCache/releases/tag/1.2)   (10/30/2013): Added support for image format styles and canceling image requests
 
 ## What Fast Image Cache Does
 
