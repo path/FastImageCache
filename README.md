@@ -18,7 +18,7 @@ A significant burden on performance for graphics-rich applications like [Path](h
     - [Initial Configuration](#initial-configuration)
     - [Requesting Images from the Image Cache](#requesting-images-from-the-image-cache)
     - [Providing Source Images to the Image Cache](#providing-source-images-to-the-image-cache)
-    - [Cancelling Source Image Requests](#cancelling-source-image-requests)
+    - [Canceling Source Image Requests](#canceling-source-image-requests)
     - [Working with Image Format Families](#working-with-image-format-families)
 - [Documentation](#documentation)
 - [Demo Application](#demo-application)
@@ -344,7 +344,7 @@ There are two ways to provide source images to the image cache.
     
 > **Note**: Fast Image Cache does **not** persist source images. See [Source Image Persistence](#source-image-persistence) for more information.
 
-### Cancelling Source Image Requests
+### Canceling Source Image Requests
 
 If an image request is already in progress, it can be cancelled:
 
