@@ -99,6 +99,10 @@
     });
 }
 
+- (BOOL)imageCache:(FICImageCache *)imageCache shouldProcessAllFormatsInFamily:(NSString *)formatFamily forEntity:(id<FICEntity>)entity {
+    return NO;
+}
+
 - (void)imageCache:(FICImageCache *)imageCache errorDidOccurWithMessage:(NSString *)errorMessage {
     NSLog(@"%@", errorMessage);
 }
