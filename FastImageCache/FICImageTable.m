@@ -57,7 +57,7 @@ static NSString *const FICImageTableFormatKey = @"format";
     NSMutableDictionary *_indexMap;         // Key: entity UUID, value: integer index into the table file
     NSMutableDictionary *_sourceImageMap;   // Key: entity UUID, value: source image UUID
     NSMutableIndexSet *_occupiedIndexes;
-    NSMutableArray *_MRUEntries;
+    NSMutableOrderedSet *_MRUEntries;
     NSDictionary *_imageFormatDictionary;
 }
 
@@ -142,7 +142,7 @@ static NSString *const FICImageTableFormatKey = @"format";
         _indexMap = [[NSMutableDictionary alloc] init];
         _occupiedIndexes = [[NSMutableIndexSet alloc] init];
         
-        _MRUEntries = [[NSMutableArray alloc] init];
+        _MRUEntries = [[NSMutableOrderedSet alloc] init];
         _sourceImageMap = [[NSMutableDictionary alloc] init];
         
         _recentChunks = [[NSMutableArray alloc] init];
@@ -243,7 +243,7 @@ static NSString *const FICImageTableFormatKey = @"format";
 
 #pragma mark - Storing, Retrieving, and Deleting Entries
 
-- (void)setEntryForEntityUUID:(NSString *)entityUUID sourceImageUUID:(NSString *)sourceImageUUID imageDrawingBlock:(FICEntityImageDrawingBlock)imageDrawingBlock {
+- (void)setEntryForEntityUUID:(NSUUID *)entityUUID sourceImageUUID:(NSUUID *)sourceImageUUID imageDrawingBlock:(FICEntityImageDrawingBlock)imageDrawingBlock {
     if (entityUUID != nil && sourceImageUUID != nil && imageDrawingBlock != NULL) {
         [_lock lock];
         
@@ -276,8 +276,8 @@ static NSString *const FICImageTableFormatKey = @"format";
             imageDrawingBlock(context, [_imageFormat imageSize]);
             CGContextRelease(context);
             
-            [entryData setEntityUUIDBytes:FICUUIDBytesWithString(entityUUID)];
-            [entryData setSourceImageUUIDBytes:FICUUIDBytesWithString(sourceImageUUID)];
+            [entryData setEntityUUIDBytes:FICUUIDBytesWithUUID(entityUUID)];
+            [entryData setSourceImageUUIDBytes:FICUUIDBytesWithUUID(sourceImageUUID)];
             
             // Update our book-keeping
             [_indexMap setObject:[NSNumber numberWithUnsignedInteger:newEntryIndex] forKey:entityUUID];
@@ -296,7 +296,7 @@ static NSString *const FICImageTableFormatKey = @"format";
     }
 }
 
-- (UIImage *)newImageForEntityUUID:(NSString *)entityUUID sourceImageUUID:(NSString *)sourceImageUUID {
+- (UIImage *)newImageForEntityUUID:(NSUUID *)entityUUID sourceImageUUID:(NSUUID *)sourceImageUUID {
     UIImage *image = nil;
     
     if (entityUUID != nil && sourceImageUUID != nil) {
@@ -304,10 +304,10 @@ static NSString *const FICImageTableFormatKey = @"format";
 
         FICImageTableEntry *entryData = [self _entryDataForEntityUUID:entityUUID];
         if (entryData != nil) {
-            NSString *entryEntityUUID = FICStringWithUUIDBytes([entryData entityUUIDBytes]);
-            NSString *entrySourceImageUUID = FICStringWithUUIDBytes([entryData sourceImageUUIDBytes]);
-            BOOL entityUUIDIsCorrect = entityUUID == nil || [entityUUID isEqualToString:entryEntityUUID];
-            BOOL sourceImageUUIDIsCorrect = sourceImageUUID == nil || [sourceImageUUID isEqualToString:entrySourceImageUUID];
+            NSUUID *entryEntityUUID = FICUUIDWithUUIDBytes([entryData entityUUIDBytes]);
+            NSUUID *entrySourceImageUUID = FICUUIDWithUUIDBytes([entryData sourceImageUUIDBytes]);
+            BOOL entityUUIDIsCorrect = entityUUID == nil || [entityUUID isEqual:entryEntityUUID];
+            BOOL sourceImageUUIDIsCorrect = sourceImageUUID == nil || [sourceImageUUID isEqual:entrySourceImageUUID];
             
             if (entityUUIDIsCorrect == NO || sourceImageUUIDIsCorrect == NO) {
                 // The UUIDs don't match, so we need to invalidate the entry.
@@ -349,7 +349,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     CFRelease(info);
 }
 
-- (void)deleteEntryForEntityUUID:(NSString *)entityUUID {
+- (void)deleteEntryForEntityUUID:(NSUUID *)entityUUID {
     if (entityUUID != nil) {
         [_lock lock];
         
@@ -370,18 +370,18 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
 
 #pragma mark - Checking for Entry Existence
 
-- (BOOL)entryExistsForEntityUUID:(NSString *)entityUUID sourceImageUUID:(NSString *)sourceImageUUID {
+- (BOOL)entryExistsForEntityUUID:(NSUUID *)entityUUID sourceImageUUID:(NSUUID *)sourceImageUUID {
     BOOL imageExists = NO;
 
     [_lock lock];
     
     FICImageTableEntry *entryData = [self _entryDataForEntityUUID:entityUUID];
     if (entryData != nil && sourceImageUUID != nil) {
-        NSString *existingEntityUUID = FICStringWithUUIDBytes([entryData entityUUIDBytes]);
-        BOOL entityUUIDIsCorrect = [entityUUID isEqualToString:existingEntityUUID];
+        NSUUID *existingEntityUUID = FICUUIDWithUUIDBytes([entryData entityUUIDBytes]);
+        BOOL entityUUIDIsCorrect = [entityUUID isEqual:existingEntityUUID];
         
-        NSString *existingSourceImageUUID = FICStringWithUUIDBytes([entryData sourceImageUUIDBytes]);
-        BOOL sourceImageUUIDIsCorrect = [sourceImageUUID isEqualToString:existingSourceImageUUID];
+        NSUUID *existingSourceImageUUID = FICUUIDWithUUIDBytes([entryData sourceImageUUIDBytes]);
+        BOOL sourceImageUUIDIsCorrect = [sourceImageUUID isEqual:existingSourceImageUUID];
         
         if (entityUUIDIsCorrect == NO || sourceImageUUIDIsCorrect == NO) {
             // The source image UUIDs don't match, so the image data should be deleted for this entity.
@@ -458,7 +458,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     return index;
 }
 
-- (NSInteger)_indexOfEntryForEntityUUID:(NSString *)entityUUID {
+- (NSInteger)_indexOfEntryForEntityUUID:(NSUUID *)entityUUID {
     NSInteger index = NSNotFound;
     if (_indexMap != nil && entityUUID != nil) {
         NSNumber *indexNumber = [_indexMap objectForKey:entityUUID];
@@ -471,11 +471,11 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
             index = NSNotFound;
         }
     }
-    
+
     return index;
 }
 
-- (FICImageTableEntry *)_entryDataForEntityUUID:(NSString *)entityUUID {
+- (FICImageTableEntry *)_entryDataForEntityUUID:(NSUUID *)entityUUID {
     FICImageTableEntry *entryData = nil;
     NSInteger index = [self _indexOfEntryForEntityUUID:entityUUID];
     if (index != NSNotFound) {
@@ -485,7 +485,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     return entryData;
 }
 
-- (void)_entryWasAccessedWithEntityUUID:(NSString *)entityUUID {
+- (void)_entryWasAccessedWithEntityUUID:(NSUUID *)entityUUID {
     // Update MRU array
     NSInteger index = [_MRUEntries indexOfObject:entityUUID];
     if (index == NSNotFound) {
@@ -507,7 +507,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
         _MRUEntries, FICImageTableMRUArrayKey,
         _imageFormatDictionary, FICImageTableFormatKey, nil];
     
-    NSData *data = [NSPropertyListSerialization dataWithPropertyList:metadataDictionary format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:metadataDictionary];
     BOOL fileWriteResult = [data writeToFile:[self metadataFilePath] atomically:NO];
     if (fileWriteResult == NO) {
         NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s couldn't write metadata for format %@", __PRETTY_FUNCTION__, [_imageFormat name]];
@@ -521,7 +521,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     NSString *metadataFilePath = [[_filePath stringByDeletingPathExtension] stringByAppendingPathExtension:FICImageTableMetadataFileExtension];
     NSData *metadataData = [NSData dataWithContentsOfMappedFile:metadataFilePath];
     if (metadataData != nil) {
-        NSDictionary *metadataDictionary = (NSDictionary *)[NSPropertyListSerialization propertyListWithData:metadataData options:0 format:NULL error:NULL];
+        NSDictionary *metadataDictionary = (NSDictionary *)[NSKeyedUnarchiver unarchiveObjectWithData:metadataData];
         NSDictionary *formatDictionary = [metadataDictionary objectForKey:FICImageTableFormatKey];
         if ([formatDictionary isEqualToDictionary:_imageFormatDictionary] == NO) {
             // Something about this image format has changed, so the existing metadata is no longer valid. The image table file
@@ -541,7 +541,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
         }
         
         [_sourceImageMap setDictionary:[metadataDictionary objectForKey:FICImageTableContextMapKey]];
-        [_MRUEntries setArray:[metadataDictionary objectForKey:FICImageTableMRUArrayKey]];
+        _MRUEntries = [[metadataDictionary objectForKey:FICImageTableMRUArrayKey] mutableCopy];
     }
 }
 
