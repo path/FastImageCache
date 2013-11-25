@@ -57,7 +57,7 @@ static NSString *const FICImageTableFormatKey = @"format";
     NSMutableDictionary *_indexMap;         // Key: entity UUID, value: integer index into the table file
     NSMutableDictionary *_sourceImageMap;   // Key: entity UUID, value: source image UUID
     NSMutableIndexSet *_occupiedIndexes;
-    NSMutableArray *_MRUEntries;
+    NSMutableOrderedSet *_MRUEntries;
     NSDictionary *_imageFormatDictionary;
 }
 
@@ -142,7 +142,7 @@ static NSString *const FICImageTableFormatKey = @"format";
         _indexMap = [[NSMutableDictionary alloc] init];
         _occupiedIndexes = [[NSMutableIndexSet alloc] init];
         
-        _MRUEntries = [[NSMutableArray alloc] init];
+        _MRUEntries = [[NSMutableOrderedSet alloc] init];
         _sourceImageMap = [[NSMutableDictionary alloc] init];
         
         _recentChunks = [[NSMutableArray alloc] init];
@@ -541,7 +541,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
         }
         
         [_sourceImageMap setDictionary:[metadataDictionary objectForKey:FICImageTableContextMapKey]];
-        [_MRUEntries setArray:[metadataDictionary objectForKey:FICImageTableMRUArrayKey]];
+        _MRUEntries = [[metadataDictionary objectForKey:FICImageTableMRUArrayKey] mutableCopy];
     }
 }
 
