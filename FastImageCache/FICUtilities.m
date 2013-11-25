@@ -28,35 +28,28 @@ inline size_t FICByteAlignForCoreAnimation(size_t bytesPerRow) {
 
 #pragma mark - Strings and UUIDs
 
-NSString * FICStringWithUUIDBytes(CFUUIDBytes UUIDBytes) {
-    NSString *UUIDString = nil;
-    CFUUIDRef UUIDRef = CFUUIDCreateFromUUIDBytes(kCFAllocatorDefault, UUIDBytes);
-    
-    if (UUIDRef != NULL) {
-        UUIDString = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
-        CFRelease(UUIDRef);
-    }
-    
-    return UUIDString;
+NSUUID * FICUUIDWithUUIDBytes(CFUUIDBytes UUIDBytes) {
+    NSUUID *UUID = [[NSUUID alloc] initWithUUIDBytes:(const unsigned char *)&UUIDBytes];
+    return UUID;
 }
 
-CFUUIDBytes FICUUIDBytesWithString(NSString *string) {
+CFUUIDBytes FICUUIDBytesWithUUID(NSUUID *UUID) {
     CFUUIDBytes UUIDBytes;
-    CFUUIDRef UUIDRef = CFUUIDCreateFromString(kCFAllocatorDefault, (CFStringRef)string);
     
-    if (UUIDRef != NULL) {
-        UUIDBytes = CFUUIDGetUUIDBytes(UUIDRef);
-        CFRelease(UUIDRef);
+    if (UUID != nil) {
+        [UUID getUUIDBytes:(unsigned char *)&UUIDBytes];
     }
     
     return UUIDBytes;
 }
 
-CFUUIDBytes FICUUIDBytesFromMD5HashOfString(NSString *MD5Hash) {
-    const char *UTF8String = [MD5Hash UTF8String];
+NSUUID * FICUUIDFromMD5HashOfString(NSString *string) {
+    const char *UTF8String = [string UTF8String];
     CFUUIDBytes UUIDBytes;
     
     CC_MD5(UTF8String, strlen(UTF8String), (unsigned char*)&UUIDBytes);
     
-    return UUIDBytes;
+    NSUUID *UUID = FICUUIDWithUUIDBytes(UUIDBytes);
+
+    return UUID;
 }

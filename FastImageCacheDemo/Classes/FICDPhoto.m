@@ -26,7 +26,7 @@ CGSize const FICDPhotoPixelImageSize = {1, 1};
 
 @interface FICDPhoto () {
     NSURL *_sourceImageURL;
-    NSString *_UUID;
+    NSUUID *_UUID;
     NSString *_thumbnailFilePath;
     BOOL _thumbnailFileExists;
     BOOL _didCheckForThumbnailFile;
@@ -167,17 +167,16 @@ static UIImage * _FICDStatusBarImageFromImage(UIImage *image) {
 
 #pragma mark - FICImageCacheEntity
 
-- (NSString *)UUID {
+- (NSUUID *)UUID {
     if (_UUID == nil) {
         // MD5 hashing is expensive enough that we only want to do it once
-        CFUUIDBytes UUIDBytes = FICUUIDBytesFromMD5HashOfString([_sourceImageURL absoluteString]);
-        _UUID = FICStringWithUUIDBytes(UUIDBytes);
+        _UUID = FICUUIDFromMD5HashOfString([_sourceImageURL absoluteString]);
     }
     
     return _UUID;
 }
 
-- (NSString *)sourceImageUUID {
+- (NSUUID *)sourceImageUUID {
     return [self UUID];
 }
 

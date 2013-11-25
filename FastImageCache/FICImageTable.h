@@ -101,7 +101,7 @@ extern NSString *const FICImageTableScreenScaleKey;
  
  @see [FICEntity drawingBlockForImage:withFormatName:]
  */
-- (void)setEntryForEntityUUID:(NSString *)entityUUID sourceImageUUID:(NSString *)sourceImageUUID imageDrawingBlock:(FICEntityImageDrawingBlock)imageDrawingBlock;
+- (void)setEntryForEntityUUID:(NSUUID *)entityUUID sourceImageUUID:(NSUUID *)sourceImageUUID imageDrawingBlock:(FICEntityImageDrawingBlock)imageDrawingBlock;
 
 /**
  Returns a new image from the image entry data in the image table.
@@ -119,7 +119,7 @@ extern NSString *const FICImageTableScreenScaleKey;
  @note If either the entity UUID or the source image UUID doesn't match the corresponding UUIDs in the entry data, then something has changed. The entry data is deleted for the
  provided entity UUID, and `nil` is returned.
  */
-- (UIImage *)newImageForEntityUUID:(NSString *)entityUUID sourceImageUUID:(NSString *)sourceImageUUID;
+- (UIImage *)newImageForEntityUUID:(NSUUID *)entityUUID sourceImageUUID:(NSUUID *)sourceImageUUID;
 
 /**
  Deletes image entry data in the image table.
@@ -128,7 +128,7 @@ extern NSString *const FICImageTableScreenScaleKey;
  
  @note If `entityUUID` is `nil`, this method does nothing.
  */
-- (void)deleteEntryForEntityUUID:(NSString *)entityUUID;
+- (void)deleteEntryForEntityUUID:(NSUUID *)entityUUID;
 
 ///-----------------------------------
 /// @name Checking for Entry Existence
@@ -148,7 +148,7 @@ extern NSString *const FICImageTableScreenScaleKey;
  @note If either the entity UUID or the source image UUID doesn't match the corresponding UUIDs in the entry data, then something has changed. The entry data is deleted for the
  provided entity UUID, and `NO` is returned.
  */
-- (BOOL)entryExistsForEntityUUID:(NSString *)entityUUID sourceImageUUID:(NSString *)sourceImageUUID;
+- (BOOL)entryExistsForEntityUUID:(NSUUID *)entityUUID sourceImageUUID:(NSUUID *)sourceImageUUID;
 
 ///---------------------------------------
 /// @name Saving an Image Table's Metadata

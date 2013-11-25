@@ -11,7 +11,7 @@
 size_t FICByteAlign(size_t bytesPerRow, size_t alignment);
 size_t FICByteAlignForCoreAnimation(size_t bytesPerRow);
 
-NSString * FICStringWithUUIDBytes(CFUUIDBytes UUIDBytes);
-CFUUIDBytes FICUUIDBytesWithString(NSString *string);
-CFUUIDBytes FICUUIDBytesFromMD5HashOfString(NSString *MD5Hash); // Useful for computing an entity's UUID from a URL, for example
+NSUUID * FICUUIDWithUUIDBytes(CFUUIDBytes UUIDBytes);
+CFUUIDBytes FICUUIDBytesWithUUID(NSUUID *UUID);
+NSUUID * FICUUIDFromMD5HashOfString(NSString *string); // Useful for computing an entity's UUID from a URL, for example
 
