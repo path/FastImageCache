@@ -40,7 +40,7 @@
         _bytes = mmap(NULL, _length, (PROT_READ|PROT_WRITE), (MAP_FILE|MAP_SHARED), fileDescriptor, _fileOffset);
 
         if (_bytes == MAP_FAILED) {
-            _bytes = NULL;
+            self = nil;
         }
     }
     

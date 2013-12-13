@@ -75,6 +75,7 @@
 }
 
 - (FICImageTableEntryMetadata *)_metadata {
+    NSAssert(_bytes, @"Don't return a NULL pointer");
     return (FICImageTableEntryMetadata *)(_bytes + [self imageLength]);
 }
 
