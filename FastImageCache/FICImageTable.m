@@ -162,6 +162,10 @@ static NSString *const FICImageTableFormatKey = @"format";
             NSInteger goalChunkLength = 2 * (1024 * 1024);
             NSInteger goalEntriesPerChunk = goalChunkLength / _entryLength;
             _entriesPerChunk = MAX(4, goalEntriesPerChunk);
+            if ([self _maximumCount] > [_imageFormat maximumCount]) {
+                NSString *message = [NSString stringWithFormat:@"*** FIC Warning: growing desired maximumCount (%d) for format %@ to fill a chunk (%d)", [_imageFormat maximumCount], [_imageFormat name], [self _maximumCount]];
+                [[FICImageCache sharedImageCache] _logMessage:message];
+            }
             _chunkLength = (size_t)(_entryLength * _entriesPerChunk);
             
             _fileLength = lseek(_fileDescriptor, 0, SEEK_END);
@@ -400,6 +404,10 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
 
 #pragma mark - Working with Entries
 
+- (int)_maximumCount {
+    return MAX([_imageFormat maximumCount], _entriesPerChunk);
+}
+
 - (void)_setEntryCount:(NSInteger)entryCount {
     if (entryCount != _entryCount) {        
         off_t fileLength = entryCount * _entryLength;
@@ -449,12 +457,12 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
         index = _entryCount;
     }
     
-    if (index >= [_imageFormat maximumCount] && [_MRUEntries count]) {
+    if (index >= [self _maximumCount] && [_MRUEntries count]) {
         // Evict the oldest/least-recently accessed entry here
         [self deleteEntryForEntityUUID:[_MRUEntries lastObject]];
         index = [self _nextEntryIndex];
     }
-    
+
     return index;
 }
 
