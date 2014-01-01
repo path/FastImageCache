@@ -320,15 +320,21 @@ static NSString *const FICImageTableFormatKey = @"format";
                 [self saveMetadata];
             } else {
                 [self _entryWasAccessedWithEntityUUID:entityUUID];
-                
+
                 // Create CGImageRef whose backing store *is* the mapped image table entry. We avoid a memcpy this way.
                 CGDataProviderRef dataProvider = CGDataProviderCreateWithData((__bridge_retained void *)entryData, [entryData bytes], [entryData imageLength], _FICReleaseImageData);
-                
+
+                [_inUseEntries addObject:entityUUID];
+                __weak FICImageTable *weakSelf = self;
+                [entryData executeBlockOnDealloc:^{
+                    [weakSelf removeInUseForEntityUUID:entityUUID];
+                }];
+
                 CGSize pixelSize = [_imageFormat pixelSize];
                 CGBitmapInfo bitmapInfo = [_imageFormat bitmapInfo];
                 NSInteger bitsPerComponent = [_imageFormat bitsPerComponent];
                 NSInteger bitsPerPixel = [_imageFormat bytesPerPixel] * 8;
-                CGColorSpaceRef colorSpace = [_imageFormat isGrayscale] ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
+                CGColorSpaceRef colorSpace = [_imageFormat isGrayscale] ? CGColorSpaceCreateDeviceGray()    : CGColorSpaceCreateDeviceRGB();
 
                 CGImageRef imageRef = CGImageCreate(pixelSize.width, pixelSize.height, bitsPerComponent, bitsPerPixel, _imageRowLength, colorSpace, bitmapInfo, dataProvider, NULL, false, (CGColorRenderingIntent)0);
                 CGDataProviderRelease(dataProvider);
@@ -352,6 +358,12 @@ static NSString *const FICImageTableFormatKey = @"format";
 
 static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     CFRelease(info);
+}
+
+- (void)removeInUseForEntityUUID:(NSString *)entityUUID {
+    [_lock lock];
+    [_inUseEntries removeObject:entityUUID];
+    [_lock unlock];
 }
 
 - (void)deleteEntryForEntityUUID:(NSString *)entityUUID {
@@ -440,7 +452,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
             off_t entryOffsetInChunk = entryOffset - chunkOffset;
             void *mappedChunkAddress = [chunk bytes];
             void *mappedEntryAddress = mappedChunkAddress + entryOffsetInChunk;
-            entryData = [[FICImageTableEntry alloc] initWithImageTableChunk:chunk bytes:mappedEntryAddress length:_entryLength];
+            entryData = [[FICImageTableEntry alloc] initWithImageTableChunk:chunk bytes:mappedEntryAddress length:_entryLength ];
         }
     }
     
@@ -464,15 +476,15 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
         NSString *oldestEvictableEntityUUID = [self oldestEvictableEntityUUID];
         if (oldestEvictableEntityUUID) {
             [self deleteEntryForEntityUUID:oldestEvictableEntityUUID];
-        index = [self _nextEntryIndex];
-    }
+            index = [self _nextEntryIndex];
+        }
     }
 
     if (index >= [self _maximumCount]) {
         NSString *message = [NSString stringWithFormat:@"FICImageTable - unable to evict entry from table '%@' to make room. New index %d, desired max %d", [_imageFormat name], index, [self _maximumCount]];
         [[FICImageCache sharedImageCache] _logMessage:message];
     }
-
+    
     return index;
 }
 
