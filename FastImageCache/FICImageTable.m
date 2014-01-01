@@ -58,6 +58,7 @@ static NSString *const FICImageTableFormatKey = @"format";
     NSMutableDictionary *_sourceImageMap;   // Key: entity UUID, value: source image UUID
     NSMutableIndexSet *_occupiedIndexes;
     NSMutableArray *_MRUEntries;
+    NSCountedSet *_inUseEntries;
     NSDictionary *_imageFormatDictionary;
 }
 
@@ -143,6 +144,7 @@ static NSString *const FICImageTableFormatKey = @"format";
         _occupiedIndexes = [[NSMutableIndexSet alloc] init];
         
         _MRUEntries = [[NSMutableArray alloc] init];
+        _inUseEntries = [NSCountedSet set];
         _sourceImageMap = [[NSMutableDictionary alloc] init];
         
         _recentChunks = [[NSMutableArray alloc] init];
@@ -256,8 +258,7 @@ static NSString *const FICImageTableFormatKey = @"format";
             newEntryIndex = [self _nextEntryIndex];
             
             if (newEntryIndex >= _entryCount) {
-                NSInteger maximumEntryCount = [_imageFormat maximumCount];
-                NSInteger newEntryCount = MIN(maximumEntryCount, _entryCount + MAX(_entriesPerChunk, newEntryIndex - _entryCount + 1));
+                NSInteger newEntryCount = _entryCount + MAX(_entriesPerChunk, newEntryIndex - _entryCount + 1);
                 [self _setEntryCount:newEntryCount];
             }
         }
@@ -459,11 +460,31 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     
     if (index >= [self _maximumCount] && [_MRUEntries count]) {
         // Evict the oldest/least-recently accessed entry here
-        [self deleteEntryForEntityUUID:[_MRUEntries lastObject]];
+
+        NSString *oldestEvictableEntityUUID = [self oldestEvictableEntityUUID];
+        if (oldestEvictableEntityUUID) {
+            [self deleteEntryForEntityUUID:oldestEvictableEntityUUID];
         index = [self _nextEntryIndex];
+    }
+    }
+
+    if (index >= [self _maximumCount]) {
+        NSString *message = [NSString stringWithFormat:@"FICImageTable - unable to evict entry from table '%@' to make room. New index %d, desired max %d", [_imageFormat name], index, [self _maximumCount]];
+        [[FICImageCache sharedImageCache] _logMessage:message];
     }
 
     return index;
+}
+
+- (NSString *)oldestEvictableEntityUUID {
+    for (uint i = _MRUEntries.count - 1; i; i--) {
+        NSString *candidateUUID = [_MRUEntries objectAtIndex:i];
+        if (![_inUseEntries containsObject:candidateUUID]) {
+            return candidateUUID;
+        }
+    }
+
+    return nil;
 }
 
 - (NSInteger)_indexOfEntryForEntityUUID:(NSString *)entityUUID {
@@ -560,6 +581,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     
     [_indexMap removeAllObjects];
     [_occupiedIndexes removeAllIndexes];
+    [_inUseEntries removeAllObjects];
     [_MRUEntries removeAllObjects];
     [_sourceImageMap removeAllObjects];
     
