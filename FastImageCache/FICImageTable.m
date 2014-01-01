@@ -357,7 +357,7 @@ static NSString *const FICImageTableFormatKey = @"format";
 }
 
 static void _FICReleaseImageData(void *info, const void *data, size_t size) {
-    CFRelease(info);
+    FICImageTableEntry *entry = (__bridge_transfer FICImageTableEntry *)info;
 }
 
 - (void)removeInUseForEntityUUID:(NSString *)entityUUID {
