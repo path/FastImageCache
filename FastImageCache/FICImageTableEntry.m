@@ -59,6 +59,14 @@
 - (id)initWithImageTableChunk:(FICImageTableChunk *)imageTableChunk bytes:(void *)bytes length:(size_t)length {
     self = [super init];
     
+    if (imageTableChunk == nil) {
+        [NSException raise:NSInvalidArgumentException format:@"*** FIC Exception: %s must pass in an image table chunk.", __PRETTY_FUNCTION__];
+    }
+
+    if (bytes == NULL) {
+        [NSException raise:NSInvalidArgumentException format:@"*** FIC Exception: %s must pass in bytes.", __PRETTY_FUNCTION__];
+    }
+    
     if (self != nil) {
         _imageTableChunk = imageTableChunk;
         _bytes = bytes;
