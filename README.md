@@ -424,15 +424,11 @@ The takeaway is that Fast Image Cache sacrifices disk usage to achieve a faster 
 **Mallory Paine** — Author and Original API Design  
 <a href="https://twitter.com/mallorypaine" target="_blank">@mallorypaine</a>
 
-Mallory is the Director of Mobile Engineering at Path, previously a member of the original iOS team at Apple.
-
 ---
 
 <a href="https://twitter.com/LucasTizma" target="_blank"><img src="http://www.gravatar.com/avatar/2005b2ed368913850076bb52cee79713.jpg?s=85" alt="Michael Potter"></a>  
 **Michael Potter** — Documentation and API Refactoring  
 <a href="https://twitter.com/LucasTizma" target="_blank">@LucasTizma</a>
-
-Michael is an iOS Engineer at Path and has been developing iOS applications since the SDK's public release.
 
 ## Credits
 
