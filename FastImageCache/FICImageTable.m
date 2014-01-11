@@ -57,7 +57,7 @@ static NSString *const FICImageTableFormatKey = @"format";
     NSMutableDictionary *_indexMap;         // Key: entity UUID, value: integer index into the table file
     NSMutableDictionary *_sourceImageMap;   // Key: entity UUID, value: source image UUID
     NSMutableIndexSet *_occupiedIndexes;
-    NSMutableArray *_MRUEntries;
+    NSMutableOrderedSet *_MRUEntries;
     NSDictionary *_imageFormatDictionary;
 }
 
@@ -142,7 +142,7 @@ static NSString *const FICImageTableFormatKey = @"format";
         _indexMap = [[NSMutableDictionary alloc] init];
         _occupiedIndexes = [[NSMutableIndexSet alloc] init];
         
-        _MRUEntries = [[NSMutableArray alloc] init];
+        _MRUEntries = [[NSMutableOrderedSet alloc] init];
         _sourceImageMap = [[NSMutableDictionary alloc] init];
         
         _recentChunks = [[NSMutableArray alloc] init];
@@ -501,10 +501,11 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
 - (void)saveMetadata {
     [_lock lock];
     
+    NSArray *mruArray = [_MRUEntries array];
     NSDictionary *metadataDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
         _indexMap, FICImageTableIndexMapKey,
         _sourceImageMap, FICImageTableContextMapKey,
-        _MRUEntries, FICImageTableMRUArrayKey,
+        mruArray, FICImageTableMRUArrayKey,
         _imageFormatDictionary, FICImageTableFormatKey, nil];
     
     NSData *data = [NSPropertyListSerialization dataWithPropertyList:metadataDictionary format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
@@ -541,7 +542,13 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
         }
         
         [_sourceImageMap setDictionary:[metadataDictionary objectForKey:FICImageTableContextMapKey]];
-        [_MRUEntries setArray:[metadataDictionary objectForKey:FICImageTableMRUArrayKey]];
+        
+        [_MRUEntries removeAllObjects];
+        
+        NSArray *mruArray = [metadataDictionary objectForKey:FICImageTableMRUArrayKey];
+        if (mruArray) {
+            [_MRUEntries addObjectsFromArray:mruArray];
+        }
     }
 }
 
