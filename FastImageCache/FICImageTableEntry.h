@@ -69,6 +69,8 @@ typedef struct {
  */
 - (instancetype)initWithImageTableChunk:(FICImageTableChunk *)imageTableChunk bytes:(void *)bytes length:(size_t)length;
 
+- (void)executeBlockOnDealloc:(dispatch_block_t)block;
+
 ///--------------------------------------------
 /// @name Flushing a Modified Image Table Entry
 ///--------------------------------------------
