@@ -21,6 +21,7 @@
     FICImageTableChunk *_imageTableChunk;
     void *_bytes;
     size_t _length;
+    dispatch_block_t _deallocBlock;
 }
 
 @end
@@ -66,6 +67,16 @@
     }
     
     return self;
+}
+
+- (void)executeBlockOnDealloc:(dispatch_block_t)block {
+    _deallocBlock = [block copy];
+}
+
+- (void)dealloc {
+    if (_deallocBlock) {
+        _deallocBlock();
+    }
 }
 
 #pragma mark - Other Accessors
