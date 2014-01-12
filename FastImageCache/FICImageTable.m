@@ -12,6 +12,7 @@
 #import "FICImageTableChunk.h"
 #import "FICImageTableEntry.h"
 #import "FICUtilities.h"
+#import "FICWeakReference.h"
 
 #import "FICImageCache+FICErrorLogging.h"
 
@@ -49,7 +50,7 @@ static NSString *const FICImageTableFormatKey = @"format";
     size_t _chunkLength;
     NSInteger _chunkCount;
     
-    NSMapTable *_chunkMapTable;
+    NSMutableDictionary *_chunkDictionary;
     NSMutableArray *_recentChunks;
     NSRecursiveLock *_lock;
     
@@ -137,7 +138,7 @@ static NSString *const FICImageTableFormatKey = @"format";
         _imageRowLength = (NSInteger)FICByteAlignForCoreAnimation(pixelSize.width * bytesPerPixel);
         _imageLength = _imageRowLength * (NSInteger)pixelSize.height;
         
-        _chunkMapTable = [NSMapTable mapTableWithKeyOptions:NSMapTableStrongMemory valueOptions:NSMapTableWeakMemory];
+        _chunkDictionary = [[NSMutableDictionary alloc] init];
         
         _indexMap = [[NSMutableDictionary alloc] init];
         _occupiedIndexes = [[NSMutableIndexSet alloc] init];
@@ -198,16 +199,26 @@ static NSString *const FICImageTableFormatKey = @"format";
 #pragma mark - Working with Chunks
 
 - (FICImageTableChunk *)_cachedChunkAtIndex:(NSInteger)index {
-    FICImageTableChunk *cachedChunk = [_chunkMapTable objectForKey:@(index)];
+    FICImageTableChunk *cachedChunk = nil;
+    NSNumber *indexNumber = @(index);
+    FICWeakReference *chunkReference = [_chunkDictionary objectForKey:indexNumber];
+    
+    if (chunkReference) {
+        cachedChunk = [chunkReference object];
+        if (!cachedChunk) {
+            [_chunkDictionary removeObjectForKey:indexNumber];
+        }
+    }
     
     return cachedChunk;
 }
 
 - (void)_setChunk:(FICImageTableChunk *)chunk index:(NSInteger)index {
+    NSNumber *indexNumber = @(index);
     if (chunk != nil) {
-        [_chunkMapTable setObject:chunk forKey:@(index)];
+        [_chunkDictionary setObject:[[FICWeakReference alloc] initWithObject:chunk] forKey:indexNumber];
     } else {
-        [_chunkMapTable removeObjectForKey:@(index)];
+        [_chunkDictionary removeObjectForKey:indexNumber];
     }
 }
 
