@@ -56,7 +56,7 @@ CFUUIDBytes FICUUIDBytesFromMD5HashOfString(NSString *MD5Hash) {
     const char *UTF8String = [MD5Hash UTF8String];
     CFUUIDBytes UUIDBytes;
     
-    CC_MD5(UTF8String, strlen(UTF8String), (unsigned char*)&UUIDBytes);
+    CC_MD5(UTF8String, (CC_LONG)strlen(UTF8String), (unsigned char*)&UUIDBytes);
     
     return UUIDBytes;
 }
