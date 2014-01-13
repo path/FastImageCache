@@ -167,7 +167,7 @@ static NSString *const FICImageTableFormatKey = @"format";
             NSInteger goalEntriesPerChunk = goalChunkLength / _entryLength;
             _entriesPerChunk = MAX(4, goalEntriesPerChunk);
             if ([self _maximumCount] > [_imageFormat maximumCount]) {
-                NSString *message = [NSString stringWithFormat:@"*** FIC Warning: growing desired maximumCount (%d) for format %@ to fill a chunk (%d)", [_imageFormat maximumCount], [_imageFormat name], [self _maximumCount]];
+                NSString *message = [NSString stringWithFormat:@"*** FIC Warning: growing desired maximumCount (%ld) for format %@ to fill a chunk (%d)", (long)[_imageFormat maximumCount], [_imageFormat name], [self _maximumCount]];
                 [[FICImageCache sharedImageCache] _logMessage:message];
             }
             _chunkLength = (size_t)(_entryLength * _entriesPerChunk);
@@ -432,7 +432,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
 #pragma mark - Working with Entries
 
 - (int)_maximumCount {
-    return MAX([_imageFormat maximumCount], _entriesPerChunk);
+    return (int)MAX([_imageFormat maximumCount], _entriesPerChunk);
 }
 
 - (void)_setEntryCount:(NSInteger)entryCount {
@@ -495,7 +495,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     }
 
     if (index >= [self _maximumCount]) {
-        NSString *message = [NSString stringWithFormat:@"FICImageTable - unable to evict entry from table '%@' to make room. New index %d, desired max %d", [_imageFormat name], index, [self _maximumCount]];
+        NSString *message = [NSString stringWithFormat:@"FICImageTable - unable to evict entry from table '%@' to make room. New index %ld, desired max %d", [_imageFormat name], (long)index, [self _maximumCount]];
         [[FICImageCache sharedImageCache] _logMessage:message];
     }
     
