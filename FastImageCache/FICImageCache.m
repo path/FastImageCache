@@ -53,7 +53,6 @@ static NSString *const FICImageCacheEntityKey = @"FICImageCacheEntityKey";
 }
 
 static FICImageCache *__imageCache = nil;
-static dispatch_queue_t __imageCacheDispatchQueue = NULL;
 
 #pragma mark - Object Lifecycle
 
@@ -68,15 +67,19 @@ static dispatch_queue_t __imageCacheDispatchQueue = NULL;
     return __imageCache;
 }
 
++ (dispatch_queue_t)dispatchQueue {
+    static dispatch_queue_t __imageCacheDispatchQueue = NULL;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        __imageCacheDispatchQueue = dispatch_queue_create("com.path.FastImageCacheQueue", NULL);
+    });
+    return __imageCacheDispatchQueue;
+}
+
 - (id)init {
     self = [super init];
     
     if (self != nil) {
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            __imageCacheDispatchQueue = dispatch_queue_create("com.path.FastImageCacheQueue", NULL);
-        });
-        
         _formats = [[NSMutableDictionary alloc] init];
         _imageTables = [[NSMutableDictionary alloc] init];
         _requests = [[NSMutableDictionary alloc] init];
@@ -159,7 +162,7 @@ static dispatch_queue_t __imageCacheDispatchQueue = NULL;
     if (loadSynchronously == NO && [imageTable entryExistsForEntityUUID:entityUUID sourceImageUUID:sourceImageUUID]) {
         imageExists = YES;
         
-        dispatch_async(__imageCacheDispatchQueue, ^{
+        dispatch_async([FICImageCache dispatchQueue], ^{
             UIImage *image = [imageTable newImageForEntityUUID:entityUUID sourceImageUUID:sourceImageUUID];
             
             if (completionBlock != nil) {
@@ -332,7 +335,7 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
         NSString *imageFormatName = [imageFormat name];
         FICEntityImageDrawingBlock imageDrawingBlock = [entity drawingBlockForImage:image withFormatName:imageFormatName];
         
-        dispatch_async(__imageCacheDispatchQueue, ^{
+        dispatch_async([FICImageCache dispatchQueue], ^{
             [imageTable setEntryForEntityUUID:entityUUID sourceImageUUID:sourceImageUUID imageDrawingBlock:imageDrawingBlock];
 
             UIImage *resultImage = [imageTable newImageForEntityUUID:entityUUID sourceImageUUID:sourceImageUUID];

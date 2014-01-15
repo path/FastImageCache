@@ -77,7 +77,7 @@
 
 - (void)dealloc {
     for (dispatch_block_t block in _deallocBlocks) {
-        block();
+        dispatch_async([FICImageCache dispatchQueue], block);
     }
 }
 

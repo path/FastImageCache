@@ -45,6 +45,8 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
  */
 + (instancetype)sharedImageCache;
 
++ (dispatch_queue_t)dispatchQueue;
+
 ///---------------------------------
 /// @name Working with Image Formats
 ///---------------------------------
