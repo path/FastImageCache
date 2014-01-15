@@ -20,7 +20,6 @@
 		2E1BC90117C57CDF00836A7E /* FICDViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E1BC8FD17C57CD300836A7E /* FICDViewController.m */; };
 		2E64541017FF24C0001D0531 /* FICDTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E64540F17FF24C0001D0531 /* FICDTableView.m */; };
 		2EA7994417B2A10200684B86 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2EA7993F17B2A10200684B86 /* main.m */; };
-		31F9BA0418822719009630D0 /* FICWeakReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F9BA0318822719009630D0 /* FICWeakReference.m */; };
 		EB171332181F089F00EB0E24 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB171331181F089F00EB0E24 /* CoreImage.framework */; };
 		EB642D8017DCB1750013D644 /* FICDFullscreenPhotoDisplayController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB642D7F17DCB1750013D644 /* FICDFullscreenPhotoDisplayController.m */; };
 		EB6BD53818079DAB00D762CE /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB6BD53718079DAB00D762CE /* CoreGraphics.framework */; };
@@ -57,8 +56,6 @@
 		2E64540E17FF24C0001D0531 /* FICDTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICDTableView.h; sourceTree = "<group>"; };
 		2E64540F17FF24C0001D0531 /* FICDTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICDTableView.m; sourceTree = "<group>"; };
 		2EA7993F17B2A10200684B86 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		31F9BA0218822719009630D0 /* FICWeakReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICWeakReference.h; sourceTree = "<group>"; };
-		31F9BA0318822719009630D0 /* FICWeakReference.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICWeakReference.m; sourceTree = "<group>"; };
 		EB171331181F089F00EB0E24 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
 		EB642D3717DC9C690013D644 /* FastImageCacheDemo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "FastImageCacheDemo-Info.plist"; sourceTree = "<group>"; };
 		EB642D7E17DCB1750013D644 /* FICDFullscreenPhotoDisplayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICDFullscreenPhotoDisplayController.h; sourceTree = "<group>"; };
@@ -148,8 +145,6 @@
 				EB6BD53918079E2D00D762CE /* FICImports.h */,
 				2E1BC8ED17C57C4700836A7E /* FICUtilities.h */,
 				2E1BC8EE17C57C4700836A7E /* FICUtilities.m */,
-				31F9BA0218822719009630D0 /* FICWeakReference.h */,
-				31F9BA0318822719009630D0 /* FICWeakReference.m */,
 			);
 			name = FastImageCache;
 			path = ../FastImageCache;
@@ -248,7 +243,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				31F9BA0418822719009630D0 /* FICWeakReference.m in Sources */,
 				2EA7994417B2A10200684B86 /* main.m in Sources */,
 				2E1BC8F017C57C4700836A7E /* FICImageCache.m in Sources */,
 				2E1BC8F117C57C4700836A7E /* FICImageFormat.m in Sources */,

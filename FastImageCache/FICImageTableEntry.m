@@ -21,7 +21,7 @@
     FICImageTableChunk *_imageTableChunk;
     void *_bytes;
     size_t _length;
-    dispatch_block_t _deallocBlock;
+    NSMutableArray *_deallocBlocks;
 }
 
 @end
@@ -32,6 +32,7 @@
 
 @synthesize bytes = _bytes;
 @synthesize length = _length;
+@synthesize imageTableChunk = _imageTableChunk;
 
 #pragma mark - Property Accessors
 
@@ -64,18 +65,19 @@
         _imageTableChunk = imageTableChunk;
         _bytes = bytes;
         _length = length;
+        _deallocBlocks = [[NSMutableArray alloc] init];
     }
     
     return self;
 }
 
 - (void)executeBlockOnDealloc:(dispatch_block_t)block {
-    _deallocBlock = [block copy];
+    [_deallocBlocks addObject:[block copy]];
 }
 
 - (void)dealloc {
-    if (_deallocBlock) {
-        _deallocBlock();
+    for (dispatch_block_t block in _deallocBlocks) {
+        block();
     }
 }
 

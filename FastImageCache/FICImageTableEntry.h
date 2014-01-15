@@ -52,6 +52,8 @@ typedef struct {
  */
 @property (nonatomic, assign) CFUUIDBytes sourceImageUUIDBytes;
 
+@property (nonatomic, readonly) FICImageTableChunk *imageTableChunk;
+
 ///----------------------------------------
 /// @name Initializing an Image Table Entry
 ///----------------------------------------
