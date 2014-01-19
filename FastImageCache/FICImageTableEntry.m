@@ -108,4 +108,15 @@
     }
 }
 
+- (void)preheat {
+    int pageSize = [FICImageTable pageSize];
+    void *bytes = [self bytes];
+    NSUInteger length = [self length];
+    
+    // Read a byte off of each VM page to force the kernel to page in the data
+    for (NSUInteger i = 0; i < length; i += pageSize) {
+        *((volatile uint8_t *)bytes + i);
+    }
+}
+
 @end

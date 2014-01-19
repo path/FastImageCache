@@ -163,7 +163,7 @@ static FICImageCache *__imageCache = nil;
         imageExists = YES;
         
         dispatch_async([FICImageCache dispatchQueue], ^{
-            UIImage *image = [imageTable newImageForEntityUUID:entityUUID sourceImageUUID:sourceImageUUID];
+            UIImage *image = [imageTable newImageForEntityUUID:entityUUID sourceImageUUID:sourceImageUUID preheatData:YES];
             
             if (completionBlock != nil) {
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -172,7 +172,7 @@ static FICImageCache *__imageCache = nil;
             }
         });
     } else {
-        UIImage *image = [imageTable newImageForEntityUUID:entityUUID sourceImageUUID:sourceImageUUID];
+        UIImage *image = [imageTable newImageForEntityUUID:entityUUID sourceImageUUID:sourceImageUUID preheatData:NO];
         imageExists = image != nil;
         
         dispatch_block_t completionBlockCallingBlock = ^{
@@ -338,7 +338,7 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
         dispatch_async([FICImageCache dispatchQueue], ^{
             [imageTable setEntryForEntityUUID:entityUUID sourceImageUUID:sourceImageUUID imageDrawingBlock:imageDrawingBlock];
 
-            UIImage *resultImage = [imageTable newImageForEntityUUID:entityUUID sourceImageUUID:sourceImageUUID];
+            UIImage *resultImage = [imageTable newImageForEntityUUID:entityUUID sourceImageUUID:sourceImageUUID preheatData:NO];
             
             if (completionBlocks != nil) {
                 dispatch_async(dispatch_get_main_queue(), ^{

@@ -299,7 +299,7 @@ static NSString *const FICImageTableFormatKey = @"format";
     }
 }
 
-- (UIImage *)newImageForEntityUUID:(NSString *)entityUUID sourceImageUUID:(NSString *)sourceImageUUID {
+- (UIImage *)newImageForEntityUUID:(NSString *)entityUUID sourceImageUUID:(NSString *)sourceImageUUID preheatData:(BOOL)preheatData {
     UIImage *image = nil;
     
     if (entityUUID != nil && sourceImageUUID != nil) {
@@ -344,6 +344,10 @@ static NSString *const FICImageTableFormatKey = @"format";
                 } else {
                     NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s could not create a new CGImageRef for entity UUID %@.", __PRETTY_FUNCTION__, entityUUID];
                     [[FICImageCache sharedImageCache] _logMessage:message];
+                }
+                
+                if (image != nil && preheatData) {
+                    [entryData preheat];
                 }
             }
         }

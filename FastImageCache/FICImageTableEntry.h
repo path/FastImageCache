@@ -54,6 +54,8 @@ typedef struct {
 
 @property (nonatomic, readonly) FICImageTableChunk *imageTableChunk;
 
+- (void)preheat;
+
 ///----------------------------------------
 /// @name Initializing an Image Table Entry
 ///----------------------------------------
