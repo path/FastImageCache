@@ -364,6 +364,18 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
     return imageExists;
 }
 
+#pragma mark - Synchronously return Image from Cache without Network Call
+
+- (UIImage *)imageForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName {
+    FICImageTable *imageTable = [_imageTables objectForKey:formatName];
+    NSString *entityUUID = [entity UUID];
+    NSString *sourceImageUUID = [entity sourceImageUUID];
+    
+    UIImage *image = [imageTable newImageForEntityUUID:entityUUID sourceImageUUID:sourceImageUUID preheatData:NO];
+    
+    return image;
+}
+
 #pragma mark - Invalidating Image Data
 
 - (void)deleteImageForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName {

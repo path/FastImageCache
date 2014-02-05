@@ -156,6 +156,21 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
 - (BOOL)asynchronouslyRetrieveImageForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName completionBlock:(FICImageCacheCompletionBlock)completionBlock;
 
 /**
+ Returns an image from the image cache.
+ 
+ @param entity The entity that uniquely identifies the source image.
+ 
+ @param formatName The format name that uniquely identifies which image table to look in for the cached image.
+ 
+ @return The image corresponding to the given entity and formatName.
+ 
+ @note This method can return `nil` if there is no image in the cache yet and will not attempt to load it.
+ 
+ @see [FICImageCache imageExistsForEntity:withFormatName:]
+ */
+- (UIImage *)imageForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName;
+
+/**
  Deletes an image from the image cache.
  
  @param entity The entity that uniquely identifies the source image.
