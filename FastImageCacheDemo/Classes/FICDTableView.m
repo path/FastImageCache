@@ -101,7 +101,7 @@
         // We don't want the logging of scrolling performance to be able to impact the scrolling performance,
         // so move both the logging and the string formatting onto a GCD serial queue.
         dispatch_async(__dispatchQueue, ^{
-            NSLog(@"*** FIC Demo: Last FPS = %d, Average FPS = %.2f", lastFPS, averageFPS);
+            NSLog(@"*** FIC Demo: Last FPS = %ld, Average FPS = %.2f", (long)lastFPS, averageFPS);
         });
         
         _framesInLastInterval = 0;

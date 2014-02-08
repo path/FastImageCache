@@ -239,7 +239,7 @@ static NSString *const FICImageTableFormatKey = @"format";
     }
     
     if (!chunk) {
-        NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s failed to get chunk for index %d.", __PRETTY_FUNCTION__, index];
+        NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s failed to get chunk for index %ld.", __PRETTY_FUNCTION__, (long)index];
         [[FICImageCache sharedImageCache] _logMessage:message];
     }
     
@@ -483,7 +483,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     [_lock unlock];
     
     if (!entryData) {
-        NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s failed to get entry for index %d.", __PRETTY_FUNCTION__, index];
+        NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s failed to get entry for index %ld.", __PRETTY_FUNCTION__, (long)index];
         [[FICImageCache sharedImageCache] _logMessage:message];
     }
     
