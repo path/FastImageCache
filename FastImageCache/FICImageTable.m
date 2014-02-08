@@ -53,6 +53,7 @@ static NSString *const FICImageTableFormatKey = @"format";
     NSCountedSet *_chunkSet;
     
     NSRecursiveLock *_lock;
+    CFMutableDictionaryRef _indexNumbers;
     
     // Image table metadata
     NSMutableDictionary *_indexMap;         // Key: entity UUID, value: integer index into the table file
@@ -129,6 +130,8 @@ static NSString *const FICImageTableFormatKey = @"format";
         }
         
         _lock = [[NSRecursiveLock alloc] init];
+        _indexNumbers = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
+        
         _imageFormat = [imageFormat copy];
         _imageFormatDictionary = [imageFormat dictionaryRepresentation];
         
@@ -268,16 +271,6 @@ static NSString *const FICImageTableFormatKey = @"format";
             // Create context whose backing store *is* the mapped file data
             FICImageTableEntry *entryData = [self _entryDataAtIndex:newEntryIndex];
             if (entryData) {
-                CGContextRef context = CGBitmapContextCreate([entryData bytes], pixelSize.width, pixelSize.height, bitsPerComponent, _imageRowLength, colorSpace, bitmapInfo);
-                CGColorSpaceRelease(colorSpace);
-                
-                CGContextTranslateCTM(context, 0, pixelSize.height);
-                CGContextScaleCTM(context, _screenScale, -_screenScale);
-                
-                // Call drawing block to allow client to draw into the context
-                imageDrawingBlock(context, [_imageFormat imageSize]);
-                CGContextRelease(context);
-                
                 [entryData setEntityUUIDBytes:FICUUIDBytesWithString(entityUUID)];
                 [entryData setSourceImageUUIDBytes:FICUUIDBytesWithString(sourceImageUUID)];
                 
@@ -290,12 +283,32 @@ static NSString *const FICImageTableFormatKey = @"format";
                 [self _entryWasAccessedWithEntityUUID:entityUUID];
                 [self saveMetadata];
                 
-                // Write the data back to the filesystem
-                [entryData flush];
+                // Unique, unchanging pointer for this entry's index
+                NSNumber *indexNumber = [self _numberForEntryAtIndex:newEntryIndex];
+                
+                // Relinquish the image table lock before calling potentially slow imageDrawingBlock to unblock other FIC operations
+                [_lock unlock];
+                
+                CGContextRef context = CGBitmapContextCreate([entryData bytes], pixelSize.width, pixelSize.height, bitsPerComponent, _imageRowLength, colorSpace, bitmapInfo);
+                CGColorSpaceRelease(colorSpace);
+                
+                CGContextTranslateCTM(context, 0, pixelSize.height);
+                CGContextScaleCTM(context, _screenScale, -_screenScale);
+                
+                @synchronized(indexNumber) {
+                    // Call drawing block to allow client to draw into the context
+                    imageDrawingBlock(context, [_imageFormat imageSize]);
+                    CGContextRelease(context);
+                
+                    // Write the data back to the filesystem
+                    [entryData flush];
+                }
+            } else {
+                [_lock unlock];
             }
+        } else {
+            [_lock unlock];
         }
-        
-        [_lock unlock];
     }
 }
 
@@ -562,6 +575,16 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
         [_MRUEntries removeObjectAtIndex:index];
         [_MRUEntries insertObject:entityUUID atIndex:0];
     }
+}
+
+// Unchanging pointer value for a given entry index to synchronize on
+- (NSNumber *)_numberForEntryAtIndex:(NSInteger)index {
+    NSNumber *resultNumber = (__bridge id)CFDictionaryGetValue(_indexNumbers, (const void *)index);
+    if (!resultNumber) {
+        resultNumber = [NSNumber numberWithInteger:index];
+        CFDictionarySetValue(_indexNumbers, (const void *)index, (__bridge void *)resultNumber);
+    }
+    return resultNumber;
 }
 
 #pragma mark - Working with Metadata
