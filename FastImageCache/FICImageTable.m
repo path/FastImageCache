@@ -269,7 +269,6 @@ static NSString *const FICImageTableFormatKey = @"format";
             FICImageTableEntry *entryData = [self _entryDataAtIndex:newEntryIndex];
             if (entryData) {
                 CGContextRef context = CGBitmapContextCreate([entryData bytes], pixelSize.width, pixelSize.height, bitsPerComponent, _imageRowLength, colorSpace, bitmapInfo);
-                CGColorSpaceRelease(colorSpace);
                 
                 CGContextTranslateCTM(context, 0, pixelSize.height);
                 CGContextScaleCTM(context, _screenScale, -_screenScale);
@@ -293,6 +292,7 @@ static NSString *const FICImageTableFormatKey = @"format";
                 // Write the data back to the filesystem
                 [entryData flush];
             }
+            CGColorSpaceRelease(colorSpace);
         }
         
         [_lock unlock];
