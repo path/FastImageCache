@@ -325,42 +325,45 @@ static NSString *const FICImageTableFormatKey = @"format";
             BOOL entityUUIDIsCorrect = entityUUID == nil || [entityUUID isEqualToString:entryEntityUUID];
             BOOL sourceImageUUIDIsCorrect = sourceImageUUID == nil || [sourceImageUUID isEqualToString:entrySourceImageUUID];
             
-            if (entityUUIDIsCorrect == NO || sourceImageUUIDIsCorrect == NO) {
-                // The UUIDs don't match, so we need to invalidate the entry.
-                [self deleteEntryForEntityUUID:entityUUID];
-                [self saveMetadata];
-            } else {
-                [self _entryWasAccessedWithEntityUUID:entityUUID];
-                
-                // Create CGImageRef whose backing store *is* the mapped image table entry. We avoid a memcpy this way.
-                CGDataProviderRef dataProvider = CGDataProviderCreateWithData((__bridge_retained void *)entryData, [entryData bytes], [entryData imageLength], _FICReleaseImageData);
-                
-                [_inUseEntries addObject:entityUUID];
-                __weak FICImageTable *weakSelf = self;
-                [entryData executeBlockOnDealloc:^{
-                    [weakSelf removeInUseForEntityUUID:entityUUID];
-                }];
-
-                CGSize pixelSize = [_imageFormat pixelSize];
-                CGBitmapInfo bitmapInfo = [_imageFormat bitmapInfo];
-                NSInteger bitsPerComponent = [_imageFormat bitsPerComponent];
-                NSInteger bitsPerPixel = [_imageFormat bytesPerPixel] * 8;
-                CGColorSpaceRef colorSpace = [_imageFormat isGrayscale] ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
-
-                CGImageRef imageRef = CGImageCreate(pixelSize.width, pixelSize.height, bitsPerComponent, bitsPerPixel, _imageRowLength, colorSpace, bitmapInfo, dataProvider, NULL, false, (CGColorRenderingIntent)0);
-                CGDataProviderRelease(dataProvider);
-                CGColorSpaceRelease(colorSpace);
-                
-                if (imageRef != NULL) {
-                    image = [[UIImage alloc] initWithCGImage:imageRef scale:_screenScale orientation:UIImageOrientationUp];
-                    CGImageRelease(imageRef);
+            NSNumber *indexNumber = [self _numberForEntryAtIndex:[entryData index]];
+            @synchronized(indexNumber) {
+                if (entityUUIDIsCorrect == NO || sourceImageUUIDIsCorrect == NO) {
+                    // The UUIDs don't match, so we need to invalidate the entry.
+                    [self deleteEntryForEntityUUID:entityUUID];
+                    [self saveMetadata];
                 } else {
-                    NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s could not create a new CGImageRef for entity UUID %@.", __PRETTY_FUNCTION__, entityUUID];
-                    [[FICImageCache sharedImageCache] _logMessage:message];
-                }
-                
-                if (image != nil && preheatData) {
-                    [entryData preheat];
+                    [self _entryWasAccessedWithEntityUUID:entityUUID];
+                    
+                    // Create CGImageRef whose backing store *is* the mapped image table entry. We avoid a memcpy this way.
+                    CGDataProviderRef dataProvider = CGDataProviderCreateWithData((__bridge_retained void *)entryData, [entryData bytes], [entryData imageLength], _FICReleaseImageData);
+                    
+                    [_inUseEntries addObject:entityUUID];
+                    __weak FICImageTable *weakSelf = self;
+                    [entryData executeBlockOnDealloc:^{
+                        [weakSelf removeInUseForEntityUUID:entityUUID];
+                    }];
+                    
+                    CGSize pixelSize = [_imageFormat pixelSize];
+                    CGBitmapInfo bitmapInfo = [_imageFormat bitmapInfo];
+                    NSInteger bitsPerComponent = [_imageFormat bitsPerComponent];
+                    NSInteger bitsPerPixel = [_imageFormat bytesPerPixel] * 8;
+                    CGColorSpaceRef colorSpace = [_imageFormat isGrayscale] ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
+                    
+                    CGImageRef imageRef = CGImageCreate(pixelSize.width, pixelSize.height, bitsPerComponent, bitsPerPixel, _imageRowLength, colorSpace, bitmapInfo, dataProvider, NULL, false, (CGColorRenderingIntent)0);
+                    CGDataProviderRelease(dataProvider);
+                    CGColorSpaceRelease(colorSpace);
+                    
+                    if (imageRef != NULL) {
+                        image = [[UIImage alloc] initWithCGImage:imageRef scale:_screenScale orientation:UIImageOrientationUp];
+                        CGImageRelease(imageRef);
+                    } else {
+                        NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s could not create a new CGImageRef for entity UUID %@.", __PRETTY_FUNCTION__, entityUUID];
+                        [[FICImageCache sharedImageCache] _logMessage:message];
+                    }
+                    
+                    if (image != nil && preheatData) {
+                        [entryData preheat];
+                    }
                 }
             }
         }
@@ -470,6 +473,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
             void *mappedChunkAddress = [chunk bytes];
             void *mappedEntryAddress = mappedChunkAddress + entryOffsetInChunk;
             entryData = [[FICImageTableEntry alloc] initWithImageTableChunk:chunk bytes:mappedEntryAddress length:_entryLength];
+            [entryData setIndex:index];
             
             [_chunkSet addObject:chunk];
             

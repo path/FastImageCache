@@ -22,6 +22,7 @@
     void *_bytes;
     size_t _length;
     NSMutableArray *_deallocBlocks;
+    NSInteger _index;
 }
 
 @end
@@ -33,6 +34,7 @@
 @synthesize bytes = _bytes;
 @synthesize length = _length;
 @synthesize imageTableChunk = _imageTableChunk;
+@synthesize index = _index;
 
 #pragma mark - Property Accessors
 

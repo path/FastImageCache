@@ -54,6 +54,8 @@ typedef struct {
 
 @property (nonatomic, readonly) FICImageTableChunk *imageTableChunk;
 
+@property (nonatomic, assign) NSInteger index;
+
 - (void)preheat;
 
 ///----------------------------------------
