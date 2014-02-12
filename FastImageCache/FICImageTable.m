@@ -330,7 +330,6 @@ static NSString *const FICImageTableFormatKey = @"format";
                 if (entityUUIDIsCorrect == NO || sourceImageUUIDIsCorrect == NO) {
                     // The UUIDs don't match, so we need to invalidate the entry.
                     [self deleteEntryForEntityUUID:entityUUID];
-                    [self saveMetadata];
                 } else {
                     [self _entryWasAccessedWithEntityUUID:entityUUID];
                     
@@ -399,6 +398,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
             if (index != NSNotFound) {
                 [_MRUEntries removeObjectAtIndex:index];
             }
+            [self saveMetadata];
         }
         
         [_lock unlock];
@@ -423,7 +423,6 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
         if (entityUUIDIsCorrect == NO || sourceImageUUIDIsCorrect == NO) {
             // The source image UUIDs don't match, so the image data should be deleted for this entity.
             [self deleteEntryForEntityUUID:entityUUID];
-            [self saveMetadata];
             entryData = nil;
         }
     }

@@ -368,10 +368,8 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
 
 - (void)deleteImageForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName {
     FICImageTable *imageTable = [_imageTables objectForKey:formatName];
-    NSString *entityUUID = [entity UUID];
-    
+    NSString *entityUUID = [entity UUID];    
     [imageTable deleteEntryForEntityUUID:entityUUID];
-    [imageTable saveMetadata];
 }
 
 - (void)cancelImageRetrievalForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName {

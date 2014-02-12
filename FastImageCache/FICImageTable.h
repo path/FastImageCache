@@ -150,20 +150,6 @@ extern NSString *const FICImageTableScreenScaleKey;
  */
 - (BOOL)entryExistsForEntityUUID:(NSString *)entityUUID sourceImageUUID:(NSString *)sourceImageUUID;
 
-///---------------------------------------
-/// @name Saving an Image Table's Metadata
-///---------------------------------------
-
-/**
- Saves the image table's metadata to disk.
- 
- @discussion `FICImageTable` objects load their metadata from disk when they are initialized. If the deserialized dictionary representation for an image table's image format does not
- match the current dictionary representation, then the image table is invalid. The image table is deleted and a new one is created from the modified image format.
- 
- @see [FICImageFormat dictionaryRepresentation]
- */
-- (void)saveMetadata;
-
 ///--------------------------------
 /// @name Resetting the Image Table
 ///--------------------------------
