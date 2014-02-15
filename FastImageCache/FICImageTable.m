@@ -25,9 +25,10 @@ NSString *const FICImageTableScreenScaleKey = @"FICImageTableScreenScaleKey";
 static NSString *const FICImageTableMetadataFileExtension = @"metadata";
 static NSString *const FICImageTableFileExtension = @"imageTable";
 
-static NSString *const FICImageTableIndexMapKey = @"indexMap";
-static NSString *const FICImageTableContextMapKey = @"contextMap";
-static NSString *const FICImageTableMRUArrayKey = @"mruArray";
+static NSString *const FICImageTableMetadataKey = @"metadata";
+static NSString *const FICImageTableMRUIndexKey = @"mruIndex";
+static NSString *const FICImageTableContextUUIDKey = @"contextUUID";
+static NSString *const FICImageTableIndexKey = @"tableIndex";
 static NSString *const FICImageTableFormatKey = @"format";
 
 #pragma mark - Class Extension
@@ -595,11 +596,28 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
 - (void)saveMetadata {
     [_lock lock];
     
+    NSMutableDictionary *entryMetadata = [NSMutableDictionary dictionary];
+    for (NSString *entityUUID in [_indexMap allKeys]) {
+        NSMutableDictionary *entryDict = [entryMetadata objectForKey:entityUUID];
+        if (!entryDict) {
+            entryDict = [[NSMutableDictionary alloc] init];
+            [entryMetadata setObject:entryDict forKey:entityUUID];
+        }
+        NSNumber *tableIndexVal = [_indexMap objectForKey:entityUUID];
+        NSString *contextUUID = [_sourceImageMap objectForKey:entityUUID];
+        NSInteger mruIndex = [_MRUEntries indexOfObject:entityUUID];
+        
+        [entryDict setValue:tableIndexVal forKey:FICImageTableIndexKey];
+        [entryDict setValue:contextUUID forKey:FICImageTableContextUUIDKey];
+        if (mruIndex != NSNotFound) {
+            [entryDict setValue:[NSNumber numberWithInteger:mruIndex] forKey:FICImageTableMRUIndexKey];
+        }
+    }
+    
     NSDictionary *metadataDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-                                        [_indexMap copy], FICImageTableIndexMapKey,
-                                        [_sourceImageMap copy], FICImageTableContextMapKey,
-                                        [[_MRUEntries array] copy], FICImageTableMRUArrayKey,
+                                        entryMetadata, FICImageTableMetadataKey,
                                         [_imageFormatDictionary copy], FICImageTableFormatKey, nil];
+    
     [_lock unlock];
     
     static dispatch_queue_t __metadataQueue = nil;
@@ -635,19 +653,39 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
             [[FICImageCache sharedImageCache] _logMessage:message];
         }
         
-        [_indexMap setDictionary:[metadataDictionary objectForKey:FICImageTableIndexMapKey]];
+        NSDictionary *tableMetadata = [metadataDictionary objectForKey:FICImageTableMetadataKey];
+        NSInteger count = [tableMetadata count];
+        NSMutableArray *mruArray = [NSMutableArray arrayWithCapacity:count];
+        for (NSInteger i = 0; i < count; i++) {
+            [mruArray addObject:[NSNull null]];
+        }
+        NSMutableIndexSet *nullIndexes = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(0, count)];
+        
+        [_indexMap removeAllObjects];
+        [_sourceImageMap removeAllObjects];
+        [_MRUEntries removeAllObjects];
+        
+        for (NSString *entityUUID in [tableMetadata allKeys]) {
+            NSDictionary *entryDict = [tableMetadata objectForKey:entityUUID];
+            [_indexMap setValue:[entryDict objectForKey:FICImageTableIndexKey] forKey:entityUUID];
+            [_sourceImageMap setValue:[entryDict objectForKey:FICImageTableContextUUIDKey] forKey:entityUUID];
+            NSNumber *mruIndexVal = [entryDict objectForKey:FICImageTableMRUIndexKey];
+            if (mruIndexVal) {
+                NSInteger mruIndex = [mruIndexVal integerValue];
+                [mruArray replaceObjectAtIndex:mruIndex withObject:entityUUID];
+                [nullIndexes removeIndex:mruIndex];
+            }
+        }
+        
+        NSUInteger index = [nullIndexes lastIndex];
+        while (index != NSNotFound) {
+            [mruArray removeObjectAtIndex:index];
+            index = [nullIndexes indexLessThanIndex:index];
+        }
+        [_MRUEntries addObjectsFromArray:mruArray];
         
         for (NSNumber *index in [_indexMap allValues]) {
             [_occupiedIndexes addIndex:[index intValue]];
-        }
-        
-        [_sourceImageMap setDictionary:[metadataDictionary objectForKey:FICImageTableContextMapKey]];
-        
-        [_MRUEntries removeAllObjects];
-        
-        NSArray *mruArray = [metadataDictionary objectForKey:FICImageTableMRUArrayKey];
-        if (mruArray) {
-            [_MRUEntries addObjectsFromArray:mruArray];
         }
     }
 }
