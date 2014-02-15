@@ -595,21 +595,27 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
 - (void)saveMetadata {
     [_lock lock];
     
-    NSArray *mruArray = [_MRUEntries array];
     NSDictionary *metadataDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-        _indexMap, FICImageTableIndexMapKey,
-        _sourceImageMap, FICImageTableContextMapKey,
-        mruArray, FICImageTableMRUArrayKey,
-        _imageFormatDictionary, FICImageTableFormatKey, nil];
-    
-    NSData *data = [NSPropertyListSerialization dataWithPropertyList:metadataDictionary format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
-    BOOL fileWriteResult = [data writeToFile:[self metadataFilePath] atomically:NO];
-    if (fileWriteResult == NO) {
-        NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s couldn't write metadata for format %@", __PRETTY_FUNCTION__, [_imageFormat name]];
-        [[FICImageCache sharedImageCache] _logMessage:message];
-    }
-
+                                        [_indexMap copy], FICImageTableIndexMapKey,
+                                        [_sourceImageMap copy], FICImageTableContextMapKey,
+                                        [[_MRUEntries array] copy], FICImageTableMRUArrayKey,
+                                        [_imageFormatDictionary copy], FICImageTableFormatKey, nil];
     [_lock unlock];
+    
+    static dispatch_queue_t __metadataQueue = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        __metadataQueue = dispatch_queue_create("com.path.FastImageCache.ImageTableMetadataQueue", NULL);
+    });
+    
+    dispatch_async(__metadataQueue, ^{
+        NSData *data = [NSPropertyListSerialization dataWithPropertyList:metadataDictionary format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
+        BOOL fileWriteResult = [data writeToFile:[self metadataFilePath] atomically:NO];
+        if (fileWriteResult == NO) {
+            NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s couldn't write metadata for format %@", __PRETTY_FUNCTION__, [_imageFormat name]];
+            [[FICImageCache sharedImageCache] _logMessage:message];
+        }
+    });
 }
 
 - (void)_loadMetadata {
