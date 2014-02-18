@@ -702,7 +702,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
             return;
         }
 
-        NSData *data = [NSPropertyListSerialization dataWithPropertyList:metadataDictionary format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
+        NSData *data = [NSJSONSerialization dataWithJSONObject:metadataDictionary options:kNilOptions error:NULL];
 
         // Cancel disk writing if a new metadata version is queued to be saved
         if (metadataVersion != _metadataVersion) {
@@ -721,7 +721,14 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     NSString *metadataFilePath = [self metadataFilePath];
     NSData *metadataData = [NSData dataWithContentsOfURL:[NSURL fileURLWithPath:metadataFilePath] options:NSDataReadingMappedAlways error:NULL];
     if (metadataData != nil) {
-        NSDictionary *metadataDictionary = (NSDictionary *)[NSPropertyListSerialization propertyListWithData:metadataData options:0 format:NULL error:NULL];
+        NSDictionary *metadataDictionary = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:metadataData options:kNilOptions error:NULL];
+        
+        if (!metadataDictionary) {
+            // The image table was likely previously stored as a .plist
+            // We'll read it into memory as a .plist and later store it (during -saveMetadata) using NSJSONSerialization for performance reasons
+            metadataDictionary = (NSDictionary *)[NSPropertyListSerialization propertyListWithData:metadataData options:0 format:NULL error:NULL];
+        }
+        
         NSDictionary *formatDictionary = [metadataDictionary objectForKey:FICImageTableFormatKey];
         if ([formatDictionary isEqualToDictionary:_imageFormatDictionary] == NO) {
             // Something about this image format has changed, so the existing metadata is no longer valid. The image table file
