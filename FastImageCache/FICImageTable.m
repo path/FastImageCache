@@ -609,7 +609,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     });
     
     dispatch_async(__metadataQueue, ^{
-        NSData *data = [NSPropertyListSerialization dataWithPropertyList:metadataDictionary format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
+        NSData *data = [NSJSONSerialization dataWithJSONObject:metadataDictionary options:kNilOptions error:NULL];
         BOOL fileWriteResult = [data writeToFile:[self metadataFilePath] atomically:NO];
         if (fileWriteResult == NO) {
             NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s couldn't write metadata for format %@", __PRETTY_FUNCTION__, [_imageFormat name]];
@@ -622,7 +622,14 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     NSString *metadataFilePath = [[_filePath stringByDeletingPathExtension] stringByAppendingPathExtension:FICImageTableMetadataFileExtension];
     NSData *metadataData = [NSData dataWithContentsOfMappedFile:metadataFilePath];
     if (metadataData != nil) {
-        NSDictionary *metadataDictionary = (NSDictionary *)[NSPropertyListSerialization propertyListWithData:metadataData options:0 format:NULL error:NULL];
+        NSDictionary *metadataDictionary = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:metadataData options:kNilOptions error:NULL];
+        
+        if (!metadataDictionary) {
+            // The image table was likely previously stored as a .plist
+            // We'll read it into memory as a .plist and later store it (during -saveMetadata) using NSJSONSerialization for performance reasons
+            metadataDictionary = (NSDictionary *)[NSPropertyListSerialization propertyListWithData:metadataData options:0 format:NULL error:NULL];
+        }
+        
         NSDictionary *formatDictionary = [metadataDictionary objectForKey:FICImageTableFormatKey];
         if ([formatDictionary isEqualToDictionary:_imageFormatDictionary] == NO) {
             // Something about this image format has changed, so the existing metadata is no longer valid. The image table file
