@@ -304,6 +304,7 @@ static NSString *const FICImageTableFormatKey = @"format";
                     [entryData flush];
                 }
             } else {
+                CGColorSpaceRelease(colorSpace);
                 [_lock unlock];
             }
         } else {
