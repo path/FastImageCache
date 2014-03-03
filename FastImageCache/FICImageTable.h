@@ -42,7 +42,7 @@ extern NSString *const FICImageTableScreenScaleKey;
 /**
  The image format that describes the image table.
  */
-@property (nonatomic, strong, readonly) FICImageFormat *imageFormat;
+@property (nonatomic, retain, readonly) FICImageFormat *imageFormat;
 
 ///-----------------------------------------------
 /// @name Accessing Information about Image Tables

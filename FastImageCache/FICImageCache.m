@@ -25,7 +25,7 @@ static NSString *const FICImageCacheEntityKey = @"FICImageCacheEntityKey";
     NSMutableDictionary *_formats;
     NSMutableDictionary *_imageTables;
     NSMutableDictionary *_requests;
-    __weak id <FICImageCacheDelegate> _delegate;
+    id <FICImageCacheDelegate> _delegate;
     
     BOOL _delegateImplementsShouldProcessAllFormatsInFamilyForEntity;
     BOOL _delegateImplementsErrorDidOccurWithMessage;
@@ -87,6 +87,14 @@ static FICImageCache *__imageCache = nil;
     return self;
 }
 
+- (void)dealloc {
+    [_formats release];
+    [_imageTables release];
+    [_requests release];
+    
+    [super dealloc];
+}
+
 #pragma mark - Working with Formats
 
 - (void)setFormats:(NSArray *)formats {
@@ -102,6 +110,7 @@ static FICImageCache *__imageCache = nil;
                 // Only initialize an image table for this format if it is needed on the current device.
                 FICImageTable *imageTable = [[FICImageTable alloc] initWithFormat:imageFormat];
                 [_imageTables setObject:imageTable forKey:formatName];
+                [imageTable release];
                 [_formats setObject:imageFormat forKey:formatName];
                 
                 [imageTableFiles addObject:[[imageTable tableFilePath] lastPathComponent]];
@@ -139,7 +148,7 @@ static FICImageCache *__imageCache = nil;
         }
     }
     
-    return [formats copy];
+    return [[formats copy] autorelease];
 }
 
 #pragma mark - Retrieving Images
@@ -170,6 +179,8 @@ static FICImageCache *__imageCache = nil;
                     completionBlock(entity, formatName, image);
                 });
             }
+            
+            [image release];    // Already retained by the block
         });
     } else {
         UIImage *image = [imageTable newImageForEntityUUID:entityUUID sourceImageUUID:sourceImageUUID preheatData:NO];
@@ -185,6 +196,8 @@ static FICImageCache *__imageCache = nil;
                     });
                 }
             }
+            
+            [image release];    // Already retained by the block
         };
         
         if (image == nil && _delegate != nil) {
@@ -262,7 +275,7 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
             [completionBlocks setObject:blocksArray forKey:formatName];
         }
         
-        FICImageCacheCompletionBlock completionBlockCopy = [completionBlock copy];
+        FICImageCacheCompletionBlock completionBlockCopy = [[completionBlock copy] autorelease];
         [blocksArray addObject:completionBlockCopy];
     }
 }
@@ -274,7 +287,7 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
         NSDictionary *completionBlocksDictionary = nil;
         
         if (completionBlock != nil) {
-            completionBlocksDictionary = [NSDictionary dictionaryWithObject:[NSArray arrayWithObject:[completionBlock copy]] forKey:formatName];
+            completionBlocksDictionary = [NSDictionary dictionaryWithObject:[NSArray arrayWithObject:[[completionBlock copy] autorelease]] forKey:formatName];
         }
         
         NSString *entityUUID = [entity UUID];
@@ -348,6 +361,8 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
                     }
                 });
             }
+            
+            [resultImage release];
         });
     }
 }

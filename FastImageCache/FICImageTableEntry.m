@@ -64,7 +64,7 @@
     self = [super init];
     
     if (self != nil) {
-        _imageTableChunk = imageTableChunk;
+        _imageTableChunk = [imageTableChunk retain];
         _bytes = bytes;
         _length = length;
         _deallocBlocks = [[NSMutableArray alloc] init];
@@ -74,13 +74,21 @@
 }
 
 - (void)executeBlockOnDealloc:(dispatch_block_t)block {
-    [_deallocBlocks addObject:[block copy]];
+    if (block) {
+        id blockCopy = [block copy];
+        [_deallocBlocks addObject:blockCopy];
+        [blockCopy release];
+    }
 }
 
 - (void)dealloc {
     for (dispatch_block_t block in _deallocBlocks) {
         dispatch_async([FICImageCache dispatchQueue], block);
     }
+
+    [_imageTableChunk release];
+    [_deallocBlocks release];
+    [super dealloc];
 }
 
 #pragma mark - Other Accessors
