@@ -223,12 +223,23 @@ static FICImageCache *__imageCache = nil;
 
 - (void)_imageDidLoad:(UIImage *)image forURL:(NSURL *)URL {
     NSDictionary *requestDictionary = [_requests objectForKey:URL];
-    if (image != nil && requestDictionary != nil) {
+    if (requestDictionary != nil) {
         for (NSMutableDictionary *entityDictionary in [requestDictionary allValues]) {
             id <FICEntity> entity = [entityDictionary objectForKey:FICImageCacheEntityKey];
             NSString *formatName = [entityDictionary objectForKey:FICImageCacheFormatKey];
             NSDictionary *completionBlocksDictionary = [entityDictionary objectForKey:FICImageCacheCompletionBlocksKey];
-            [self _processImage:image forEntity:entity withFormatName:formatName completionBlocksDictionary:completionBlocksDictionary];
+            if (image != nil){
+                [self _processImage:image forEntity:entity withFormatName:formatName completionBlocksDictionary:completionBlocksDictionary];
+            } else {
+                NSArray *completionBlocks = [completionBlocksDictionary objectForKey:formatName];
+                if (completionBlocks != nil) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        for (FICImageCacheCompletionBlock completionBlock in completionBlocks) {
+                            completionBlock(entity, formatName, nil);
+                        }
+                    });
+                }
+            }
         }
     }
     
