@@ -270,7 +270,7 @@ static NSString *const FICImageTableFormatKey = @"format";
             
             // Create context whose backing store *is* the mapped file data
             FICImageTableEntry *entryData = [self _entryDataAtIndex:newEntryIndex];
-            if (entryData) {
+            if (entryData != nil) {
                 [entryData setEntityUUIDBytes:FICUUIDBytesWithString(entityUUID)];
                 [entryData setSourceImageUUIDBytes:FICUUIDBytesWithString(sourceImageUUID)];
                 
@@ -290,7 +290,6 @@ static NSString *const FICImageTableFormatKey = @"format";
                 [_lock unlock];
                 
                 CGContextRef context = CGBitmapContextCreate([entryData bytes], pixelSize.width, pixelSize.height, bitsPerComponent, _imageRowLength, colorSpace, bitmapInfo);
-                CGColorSpaceRelease(colorSpace);
                 
                 CGContextTranslateCTM(context, 0, pixelSize.height);
                 CGContextScaleCTM(context, _screenScale, -_screenScale);
@@ -306,6 +305,8 @@ static NSString *const FICImageTableFormatKey = @"format";
             } else {
                 [_lock unlock];
             }
+            
+            CGColorSpaceRelease(colorSpace);
         } else {
             [_lock unlock];
         }
