@@ -487,14 +487,16 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
             void *mappedChunkAddress = [chunk bytes];
             void *mappedEntryAddress = mappedChunkAddress + entryOffsetInChunk;
             entryData = [[FICImageTableEntry alloc] initWithImageTableChunk:chunk bytes:mappedEntryAddress length:_entryLength];
-            [entryData setIndex:index];
             
-            [_chunkSet addObject:chunk];
+            if (entryData) {
+                [entryData setIndex:index];
+                [_chunkSet addObject:chunk];
             
-            __weak FICImageTable *weakSelf = self;
-            [entryData executeBlockOnDealloc:^{
-                [weakSelf _entryWasDeallocatedFromChunk:chunk];
-            }];
+                __weak FICImageTable *weakSelf = self;
+                [entryData executeBlockOnDealloc:^{
+                    [weakSelf _entryWasDeallocatedFromChunk:chunk];
+                }];
+            }
         }
     }
     

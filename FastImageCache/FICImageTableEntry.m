@@ -64,10 +64,17 @@
     self = [super init];
     
     if (self != nil) {
-        _imageTableChunk = imageTableChunk;
-        _bytes = bytes;
-        _length = length;
-        _deallocBlocks = [[NSMutableArray alloc] init];
+        // Safety check
+        void *entryMax = bytes + length;
+        void *chunkMax = [imageTableChunk bytes] + [imageTableChunk length];
+        if (entryMax > chunkMax) {
+            self = nil;
+        } else {
+            _imageTableChunk = imageTableChunk;
+            _bytes = bytes;
+            _length = length;
+            _deallocBlocks = [[NSMutableArray alloc] init];
+        }
     }
     
     return self;
