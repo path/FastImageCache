@@ -257,7 +257,11 @@ static NSString *const FICImageTableFormatKey = @"format";
             newEntryIndex = [self _nextEntryIndex];
             
             if (newEntryIndex >= _entryCount) {
-                NSInteger newEntryCount = _entryCount + MAX(_entriesPerChunk, newEntryIndex - _entryCount + 1);
+                // Determine how many chunks we need to support new entry index.
+                // Number of entries should always be a multiple of _entriesPerChunk
+                NSInteger numberOfEntriesRequired = newEntryIndex + 1;
+                NSInteger newChunkCount = _entriesPerChunk > 0 ? ((numberOfEntriesRequired + _entriesPerChunk - 1) / _entriesPerChunk) : 0;
+                NSInteger newEntryCount = newChunkCount * _entriesPerChunk;
                 [self _setEntryCount:newEntryCount];
             }
         }
