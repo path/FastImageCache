@@ -677,6 +677,8 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     [_inUseEntries removeAllObjects];
     [_MRUEntries removeAllObjects];
     [_sourceImageMap removeAllObjects];
+    [_chunkDictionary removeAllObjects];
+    [_chunkSet removeAllObjects];
     
     [self _setEntryCount:0];
     [self saveMetadata];
