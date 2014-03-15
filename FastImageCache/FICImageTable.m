@@ -453,6 +453,16 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
             _fileLength = fileLength;
             _entryCount = entryCount;
             _chunkCount = _entriesPerChunk > 0 ? ((_entryCount + _entriesPerChunk - 1) / _entriesPerChunk) : 0;
+            
+            NSDictionary *chunkDictionary = [_chunkDictionary copy];
+            for (FICImageTableChunk *chunk in [chunkDictionary allValues]) {
+                if ([chunk length] != _chunkLength) {
+                    // Issue 31: https://github.com/path/FastImageCache/issues/31
+                    // Somehow, we have a partial chunk whose length needs to be adjusted
+                    // since we changed our file length.
+                    [self _setChunk:nil index:[chunk index]];
+                }
+            }
         }
     }
 }

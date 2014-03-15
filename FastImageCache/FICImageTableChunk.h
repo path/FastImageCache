@@ -36,6 +36,9 @@
  */
 @property (nonatomic, assign, readonly) off_t fileOffset;
 
+@property (nonatomic, assign, readonly) size_t length;
+
+
 ///----------------------------------------
 /// @name Initializing an Image Table Chunk
 ///----------------------------------------
