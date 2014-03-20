@@ -22,6 +22,12 @@ typedef NS_OPTIONS(NSUInteger, FICImageFormatStyle) {
     FICImageFormatStyle8BitGrayscale,
 };
 
+typedef NS_OPTIONS(NSUInteger, FICImageFormatProtectionMode) {
+    FICImageFormatProtectionModeNone,
+    FICImageFormatProtectionModeComplete,
+    FICImageFormatProtectionModeCompletUntilFirstUserAuthentication,
+};
+
 /**
  `FICImageFormat` acts as a definition for the types of images that are stored in the image cache. Each image format must have a unique name, but multiple formats can belong to the same family.
  All images associated with a particular format must have the same image dimentions and opacity preference. You can define the maximum number of entries that an image format can accommodate to
@@ -114,6 +120,10 @@ typedef NS_OPTIONS(NSUInteger, FICImageFormatStyle) {
  */
 @property (nonatomic, assign, readonly) BOOL isGrayscale;
 
+
+@property (nonatomic, assign) FICImageFormatProtectionMode protectionMode;
+@property (nonatomic, assign, readonly) NSString *protectionModeString;
+
 /**
  The dictionary representation of this image format.
  
@@ -142,6 +152,6 @@ typedef NS_OPTIONS(NSUInteger, FICImageFormatStyle) {
  
  @return An autoreleased instance of `<FICImageFormat>` or one of its subclasses, if any exist.
  */
-+ (instancetype)formatWithName:(NSString *)name family:(NSString *)family imageSize:(CGSize)imageSize style:(FICImageFormatStyle)style maximumCount:(NSInteger)maximumCount devices:(FICImageFormatDevices)devices;
++ (instancetype)formatWithName:(NSString *)name family:(NSString *)family imageSize:(CGSize)imageSize style:(FICImageFormatStyle)style maximumCount:(NSInteger)maximumCount devices:(FICImageFormatDevices)devices protectionMode:(FICImageFormatProtectionMode)protectionMode;
 
 @end

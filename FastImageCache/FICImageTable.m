@@ -62,6 +62,8 @@ static NSString *const FICImageTableFormatKey = @"format";
     NSMutableOrderedSet *_MRUEntries;
     NSCountedSet *_inUseEntries;
     NSDictionary *_imageFormatDictionary;
+    
+    BOOL _isFileDataProtected;
 }
 
 @end
@@ -156,6 +158,19 @@ static NSString *const FICImageTableFormatKey = @"format";
         _filePath = [[self tableFilePath] copy];
         
         [self _loadMetadata];
+        
+        NSFileManager *fileManager = [[NSFileManager alloc] init];
+        if ([fileManager fileExistsAtPath:_filePath] == NO) {
+            NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
+            [attributes setValue:[_imageFormat protectionModeString] forKeyPath:NSFileProtectionKey];
+            [fileManager createFileAtPath:_filePath contents:nil attributes:attributes];
+        }
+       
+        NSDictionary *attributes = [fileManager attributesOfItemAtPath:_filePath error:NULL];
+        NSString *protectionMode = [attributes objectForKey:NSFileProtectionKey];
+        if (protectionMode) {
+            _isFileDataProtected = [protectionMode isEqualToString:NSFileProtectionNone] == NO;
+        }
         
         _fileDescriptor = open([_filePath fileSystemRepresentation], O_RDWR | O_CREAT, 0666);
         
@@ -471,12 +486,24 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     }
 }
 
+// There's inherently a race condition between when you ask whether the data is
+// accessible and when you try to use that data. Sidestep this issue altogether
+// by using NSFileProtectionNone
+- (BOOL)canAccessEntryData {
+    BOOL result = YES;
+    if (_isFileDataProtected) {
+        result = [[UIApplication sharedApplication] isProtectedDataAvailable];
+    }
+    return result;
+}
+
 - (FICImageTableEntry *)_entryDataAtIndex:(NSInteger)index {
     FICImageTableEntry *entryData = nil;
     
     [_lock lock];
-    
-    if (index < _entryCount) {
+
+    BOOL canAccessData = [self canAccessEntryData];
+    if (index < _entryCount && canAccessData) {
         off_t entryOffset = index * _entryLength;
         size_t chunkIndex = (size_t)(entryOffset / _chunkLength);
         
@@ -503,7 +530,12 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     [_lock unlock];
     
     if (!entryData) {
-        NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s failed to get entry for index %ld.", __PRETTY_FUNCTION__, (long)index];
+        NSString *message = nil;
+        if (canAccessData) {
+            message = [NSString stringWithFormat:@"*** FIC Error: %s failed to get entry for index %ld.", __PRETTY_FUNCTION__, (long)index];
+        } else {
+            message = [NSString stringWithFormat:@"*** FIC Error: %s. Cannot get entry data because imageTable's file has data protection enabled and that data is not currently accessible.", __PRETTY_FUNCTION__];
+        }
         [[FICImageCache sharedImageCache] _logMessage:message];
     }
     
