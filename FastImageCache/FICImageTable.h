@@ -79,7 +79,7 @@ extern NSString *const FICImageTableScreenScaleKey;
  
  @warning `FICImageTable` raises an exception if `imageFormat` is `nil`. `FICImageTable`'s implementation of `-init` simply calls through to this initializer, passing `nil` for `imageFormat`.
  */
-- (instancetype)initWithFormat:(FICImageFormat *)imageFormat;
+- (instancetype)initWithFormat:(FICImageFormat *)imageFormat imageCache:(FICImageCache *)imageCache;
 
 ///------------------------------------------------
 /// @name Storing, Retrieving, and Deleting Entries

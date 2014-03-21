@@ -100,7 +100,7 @@ static FICImageCache *__imageCache = nil;
             FICImageFormatDevices devices = [imageFormat devices];
             if (devices & currentDevice) {
                 // Only initialize an image table for this format if it is needed on the current device.
-                FICImageTable *imageTable = [[FICImageTable alloc] initWithFormat:imageFormat];
+                FICImageTable *imageTable = [[FICImageTable alloc] initWithFormat:imageFormat imageCache:self];
                 [_imageTables setObject:imageTable forKey:formatName];
                 [_formats setObject:imageFormat forKey:formatName];
                 

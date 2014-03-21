@@ -9,6 +9,7 @@
 #import "FICImports.h"
 
 @class FICImageTableChunk;
+@class FICImageCache;
 
 typedef struct {
     CFUUIDBytes _entityUUIDBytes;
@@ -53,6 +54,8 @@ typedef struct {
 @property (nonatomic, assign) CFUUIDBytes sourceImageUUIDBytes;
 
 @property (nonatomic, readonly) FICImageTableChunk *imageTableChunk;
+
+@property (nonatomic, weak) FICImageCache *imageCache;
 
 @property (nonatomic, assign) NSInteger index;
 

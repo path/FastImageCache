@@ -35,6 +35,7 @@
 @synthesize length = _length;
 @synthesize imageTableChunk = _imageTableChunk;
 @synthesize index = _index;
+@synthesize imageCache;
 
 #pragma mark - Property Accessors
 
@@ -113,7 +114,7 @@
     
     if (result) {
         NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s msync(%p, %ld) returned %d errno=%d", __PRETTY_FUNCTION__, pageAlignedAddress, bytesToFlush, result, errno];
-        [[FICImageCache sharedImageCache] _logMessage:message];
+        [self.imageCache _logMessage:message];
     }
 }
 
