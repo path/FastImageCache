@@ -136,7 +136,7 @@ static NSString *const FICImageFormatProtectionModeKey = @"protectionMode";
         case FICImageFormatProtectionModeComplete:
             protectionModeString = NSFileProtectionComplete;
             break;
-        case FICImageFormatProtectionModeCompletUntilFirstUserAuthentication:
+        case FICImageFormatProtectionModeCompleteUntilFirstUserAuthentication:
             protectionModeString = NSFileProtectionCompleteUntilFirstUserAuthentication;
             break;
     }

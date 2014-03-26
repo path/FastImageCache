@@ -25,7 +25,7 @@ typedef NS_OPTIONS(NSUInteger, FICImageFormatStyle) {
 typedef NS_OPTIONS(NSUInteger, FICImageFormatProtectionMode) {
     FICImageFormatProtectionModeNone,
     FICImageFormatProtectionModeComplete,
-    FICImageFormatProtectionModeCompletUntilFirstUserAuthentication,
+    FICImageFormatProtectionModeCompleteUntilFirstUserAuthentication,
 };
 
 /**
