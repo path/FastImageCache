@@ -63,7 +63,8 @@ static NSString *const FICImageTableFormatKey = @"format";
     NSCountedSet *_inUseEntries;
     NSDictionary *_imageFormatDictionary;
     
-    BOOL _isFileDataProtected;
+    NSString *_fileDataProtectionMode;
+    BOOL _canAccessData;
 }
 @property(nonatomic, weak) FICImageCache *imageCache;
 @end
@@ -172,10 +173,7 @@ static NSString *const FICImageTableFormatKey = @"format";
         }
        
         NSDictionary *attributes = [fileManager attributesOfItemAtPath:_filePath error:NULL];
-        NSString *protectionMode = [attributes objectForKey:NSFileProtectionKey];
-        if (protectionMode) {
-            _isFileDataProtected = [protectionMode isEqualToString:NSFileProtectionNone] == NO;
-        }
+        _fileDataProtectionMode = [attributes objectForKey:NSFileProtectionKey];
         
         _fileDescriptor = open([_filePath fileSystemRepresentation], O_RDWR | O_CREAT, 0666);
         
@@ -496,8 +494,20 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
 // by using NSFileProtectionNone
 - (BOOL)canAccessEntryData {
     BOOL result = YES;
-    if (_isFileDataProtected) {
+    if ([_fileDataProtectionMode isEqualToString:NSFileProtectionComplete]) {
         result = [[UIApplication sharedApplication] isProtectedDataAvailable];
+    } else if ([_fileDataProtectionMode isEqualToString:NSFileProtectionCompleteUntilFirstUserAuthentication]) {
+        // For "complete until first auth", if we were previously able to access data, then we'll still be able to
+        // access it. If we haven't yet been able to access data, we'll need to try until we are successful.
+        if (_canAccessData == NO) {
+            if ([[UIApplication sharedApplication] isProtectedDataAvailable]) {
+                // we are unlocked, so we're good to go.
+                _canAccessData = YES;
+            } else {
+                // we are locked, so try to access data.
+                _canAccessData = [NSData dataWithContentsOfMappedFile:_filePath] != nil;
+            }
+        }
     }
     return result;
 }
