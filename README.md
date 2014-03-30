@@ -133,7 +133,7 @@ Image format families can be specified to efficiently make use of a single sourc
 
 In iOS 4, Apple introduced data protection. When a user's device is locked or turned off, the disk is encrypted. Files written to disk are protected by default, although applications can manually specify the data protection mode for each file it manages. With the advent of new background modes in iOS 7, applications can now execute in the background briefly even while the device is locked. As a result, data protection can cause issues if applications attempt to access files that are encrypted.
 
-Fast Image Cache lets your specify the data protection mode each of its image tables should use. Be aware that enabling data protection for image table files means that Fast Image Cache might not be able to read or write image data from or to these files when the disk is encrypted.
+Fast Image Cache allows each image format to specify the data protection mode used when creating its backing image table file. Be aware that enabling data protection for image table files means that Fast Image Cache might not be able to read or write image data from or to these files when the disk is encrypted.
 
 ## Requirements
 
