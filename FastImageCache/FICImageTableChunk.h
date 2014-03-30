@@ -36,6 +36,9 @@
  */
 @property (nonatomic, assign, readonly) off_t fileOffset;
 
+/**
+ The length, in bytes, of the chunk.
+ */
 @property (nonatomic, assign, readonly) size_t length;
 
 

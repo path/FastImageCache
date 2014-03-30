@@ -15,14 +15,14 @@ typedef NS_OPTIONS(NSUInteger, FICImageFormatDevices) {
     FICImageFormatDevicePad = 1 << UIUserInterfaceIdiomPad,
 };
 
-typedef NS_OPTIONS(NSUInteger, FICImageFormatStyle) {
+typedef NS_ENUM(NSUInteger, FICImageFormatStyle) {
     FICImageFormatStyle32BitBGRA,
     FICImageFormatStyle32BitBGR,
     FICImageFormatStyle16BitBGR,
     FICImageFormatStyle8BitGrayscale,
 };
 
-typedef NS_OPTIONS(NSUInteger, FICImageFormatProtectionMode) {
+typedef NS_ENUM(NSUInteger, FICImageFormatProtectionMode) {
     FICImageFormatProtectionModeNone,
     FICImageFormatProtectionModeComplete,
     FICImageFormatProtectionModeCompleteUntilFirstUserAuthentication,
@@ -42,6 +42,9 @@ typedef NS_OPTIONS(NSUInteger, FICImageFormatProtectionMode) {
 
 /**
  The name of the image format. Each image format must have a unique name.
+ 
+ @note Since multiple instances of Fast Image Cache can exist in the same application, it is important that image format name's be unique across all instances of `<FICImageCache>`. Reverse DNS naming
+ is recommended (e.g., com.path.PTUserProfilePhotoLargeImageFormat).
  */
 @property (nonatomic, copy) NSString *name;
 
@@ -120,14 +123,34 @@ typedef NS_OPTIONS(NSUInteger, FICImageFormatProtectionMode) {
  */
 @property (nonatomic, assign, readonly) BOOL isGrayscale;
 
-
+/**
+ The data protection mode that image table files will be created with.
+ 
+ `FICImageFormatProtectionMode` has the following values:
+ 
+ - `FICImageFormatProtectionModeNone`: No data protection is used. The image table file backing this image format will always be available for reading and writing.
+ - `FICImageFormatProtectionModeComplete`: Complete data protection is used. As soon as the system enables data protection (i.e., when the device is locked), the image table file backing this image
+ format will not be available for reading and writing. As a result, images of this format should not be requested by Fast Image Cache when executing backgrounded code.
+ - `FICImageFormatProtectionModeCompleteUntilFirstUserAuthentication`: Partial data protection is used. After a device restart, until the user unlocks the device for the first time, complete data
+ protection is in effect. However, after the device has been unlocked for the first time, the image table file backing this image format will remain available for readin and writing. This mode may be
+ a good compromise between encrypting image table files after the device powers down and allowing the files to be accessed successfully by Fast Image Cache, whether or not the device is subsequently
+ locked.
+ 
+ @note Data protection can prevent Fast Image Cache from accessing its image table files to read and write image data. If the image data being stored in Fast Image Cache is not sensitive in nature,
+ consider using `FICImageFormatProtectionModeNone` to prevent any issues accessing image table files when the disk is encrypted.
+ */
 @property (nonatomic, assign) FICImageFormatProtectionMode protectionMode;
+
+/**
+ The string representation of `<protectionMode>`.
+ */
 @property (nonatomic, assign, readonly) NSString *protectionModeString;
 
 /**
  The dictionary representation of this image format.
  
- @discussion Fast Image Cache automatically serializes the image formats that it uses to disk. If an image format ever changes, Fast Image Cache automatically detects the change and invalidates the image table associated with that image format. The image table is then recreated from the updated image format.
+ @discussion Fast Image Cache automatically serializes the image formats that it uses to disk. If an image format ever changes, Fast Image Cache automatically detects the change and invalidates the
+ image table associated with that image format. The image table is then recreated from the updated image format.
  */
 @property (nonatomic, copy, readonly) NSDictionary *dictionaryRepresentation;
 
@@ -150,7 +173,9 @@ typedef NS_OPTIONS(NSUInteger, FICImageFormatProtectionMode) {
  
  @param devices A bitmask of type `<FICImageFormatDevices>` that defines which devices are managed by an image table.
  
- @return An autoreleased instance of `<FICImageFormat>` or one of its subclasses, if any exist.
+ @param protectionMode The data protection mode to use when creating the backing image table file for this image format. See the `<protectionMode>` property description for more information.
+ 
+ @return An autoreleased instance of `FICImageFormat` or one of its subclasses, if any exist.
  */
 + (instancetype)formatWithName:(NSString *)name family:(NSString *)family imageSize:(CGSize)imageSize style:(FICImageFormatStyle)style maximumCount:(NSInteger)maximumCount devices:(FICImageFormatDevices)devices protectionMode:(FICImageFormatProtectionMode)protectionMode;
 

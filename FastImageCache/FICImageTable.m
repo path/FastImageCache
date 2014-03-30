@@ -66,7 +66,9 @@ static NSString *const FICImageTableFormatKey = @"format";
     NSString *_fileDataProtectionMode;
     BOOL _canAccessData;
 }
-@property(nonatomic, weak) FICImageCache *imageCache;
+
+@property (nonatomic, weak) FICImageCache *imageCache;
+
 @end
 
 #pragma mark
