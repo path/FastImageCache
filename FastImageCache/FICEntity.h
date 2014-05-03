@@ -7,6 +7,7 @@
 //
 
 #import "FICImports.h"
+@class FICImageFormat;
 
 typedef void (^FICEntityImageDrawingBlock)(CGContextRef context, CGSize contextSize);
 
@@ -73,5 +74,13 @@ typedef void (^FICEntityImageDrawingBlock)(CGContextRef context, CGSize contextS
  @note This block will always be called from the serial dispatch queue used by the image cache.
  */
 - (FICEntityImageDrawingBlock)drawingBlockForImage:(UIImage *)image withFormatName:(NSString *)formatName;
+
+@optional
+/**
+ Returns the image for a format
+ 
+ @param format The image format that identifies which image table is requesting the source image.
+ */
+- (UIImage *)imageForFormat:(FICImageFormat *)format;
 
 @end

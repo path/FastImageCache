@@ -227,8 +227,6 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
  */
 @protocol FICImageCacheDelegate <NSObject>
 
-@required
-
 /**
  This method is called on the delegate when the image cache needs a source image.
  
@@ -256,8 +254,6 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
  block to provide the image cache with the source image.
  */
 - (void)imageCache:(FICImageCache *)imageCache wantsSourceImageForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName completionBlock:(FICImageRequestCompletionBlock)completionBlock;
-
-@optional
 
 /**
  This method is called on the delegate when the image cache has received an image retrieval cancellation request.
