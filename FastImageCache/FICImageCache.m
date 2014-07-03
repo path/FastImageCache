@@ -153,6 +153,8 @@ static FICImageCache *__imageCache = nil;
 }
 
 - (BOOL)_retrieveImageForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName loadSynchronously:(BOOL)loadSynchronously completionBlock:(FICImageCacheCompletionBlock)completionBlock {
+	NSParameterAssert(formatName);
+	
     BOOL imageExists = NO;
     
     FICImageTable *imageTable = [_imageTables objectForKey:formatName];
