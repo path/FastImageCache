@@ -19,6 +19,7 @@ static NSString *const FICImageFormatHeightKey = @"height";
 static NSString *const FICImageFormatStyleKey = @"style";
 static NSString *const FICImageFormatMaximumCountKey = @"maximumCount";
 static NSString *const FICImageFormatDevicesKey = @"devices";
+static NSString *const FICImageFormatProtectionModeKey = @"protectionMode";
 
 #pragma mark - Class Extension
 
@@ -30,6 +31,7 @@ static NSString *const FICImageFormatDevicesKey = @"devices";
     FICImageFormatStyle _style;
     NSInteger _maximumCount;
     FICImageFormatDevices _devices;
+    FICImageFormatProtectionMode _protectionMode;
 }
 
 @end
@@ -45,6 +47,7 @@ static NSString *const FICImageFormatDevicesKey = @"devices";
 @synthesize style = _style;
 @synthesize maximumCount = _maximumCount;
 @synthesize devices = _devices;
+@synthesize protectionMode = _protectionMode;
 
 #pragma mark - Property Accessors
 
@@ -124,9 +127,25 @@ static NSString *const FICImageFormatDevicesKey = @"devices";
     return isGrayscale;
 }
 
+- (NSString *)protectionModeString {
+    NSString *protectionModeString = nil;
+    switch (_protectionMode) {
+        case FICImageFormatProtectionModeNone:
+            protectionModeString = NSFileProtectionNone;
+            break;
+        case FICImageFormatProtectionModeComplete:
+            protectionModeString = NSFileProtectionComplete;
+            break;
+        case FICImageFormatProtectionModeCompleteUntilFirstUserAuthentication:
+            protectionModeString = NSFileProtectionCompleteUntilFirstUserAuthentication;
+            break;
+    }
+    return protectionModeString;
+}
+
 #pragma mark - Object Lifecycle
 
-+ (instancetype)formatWithName:(NSString *)name family:(NSString *)family imageSize:(CGSize)imageSize style:(FICImageFormatStyle)style maximumCount:(NSInteger)maximumCount devices:(FICImageFormatDevices)devices {
++ (instancetype)formatWithName:(NSString *)name family:(NSString *)family imageSize:(CGSize)imageSize style:(FICImageFormatStyle)style maximumCount:(NSInteger)maximumCount devices:(FICImageFormatDevices)devices protectionMode:(FICImageFormatProtectionMode)protectionMode {
     FICImageFormat *imageFormat = [[FICImageFormat alloc] init];
     
     [imageFormat setName:name];
@@ -135,6 +154,7 @@ static NSString *const FICImageFormatDevicesKey = @"devices";
     [imageFormat setStyle:style];
     [imageFormat setMaximumCount:maximumCount];
     [imageFormat setDevices:devices];
+    [imageFormat setProtectionMode:protectionMode];
     
     return imageFormat;
 }
@@ -151,6 +171,8 @@ static NSString *const FICImageFormatDevicesKey = @"devices";
     [dictionaryRepresentation setValue:[NSNumber numberWithInt:_style] forKey:FICImageFormatStyleKey];
     [dictionaryRepresentation setValue:[NSNumber numberWithUnsignedInteger:_maximumCount] forKey:FICImageFormatMaximumCountKey];
     [dictionaryRepresentation setValue:[NSNumber numberWithInt:_devices] forKey:FICImageFormatDevicesKey];
+    [dictionaryRepresentation setValue:[NSNumber numberWithUnsignedInteger:_protectionMode] forKey:FICImageFormatProtectionModeKey];
+
     [dictionaryRepresentation setValue:[NSNumber numberWithFloat:[[UIScreen mainScreen] scale]] forKey:FICImageTableScreenScaleKey];
     [dictionaryRepresentation setValue:[NSNumber numberWithUnsignedInteger:[FICImageTableEntry metadataVersion]] forKey:FICImageTableEntryDataVersionKey];
     
@@ -170,6 +192,7 @@ static NSString *const FICImageFormatDevicesKey = @"devices";
     [imageFormatCopy setStyle:[self style]];
     [imageFormatCopy setMaximumCount:[self maximumCount]];
     [imageFormatCopy setDevices:[self devices]];
+    [imageFormatCopy setProtectionMode:[self protectionMode]];
     
     return imageFormatCopy;
 }

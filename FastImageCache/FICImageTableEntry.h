@@ -9,6 +9,7 @@
 #import "FICImports.h"
 
 @class FICImageTableChunk;
+@class FICImageCache;
 
 typedef struct {
     CFUUIDBytes _entityUUIDBytes;
@@ -52,15 +53,24 @@ typedef struct {
  */
 @property (nonatomic, assign) CFUUIDBytes sourceImageUUIDBytes;
 
+/**
+ The image table chunk that contains this entry.
+ */
 @property (nonatomic, readonly) FICImageTableChunk *imageTableChunk;
 
+/**
+ A weak reference to the image cache that contains the image table chunk that contains this entry.
+ */
+@property (nonatomic, weak) FICImageCache *imageCache;
+
+/**
+ The index where this entry exists in the image table.
+ */
 @property (nonatomic, assign) NSInteger index;
 
-- (void)preheat;
-
-///----------------------------------------
-/// @name Initializing an Image Table Entry
-///----------------------------------------
+///----------------------------------
+/// @name Image Table Entry Lifecycle
+///----------------------------------
 
 /**
  Initializes a new image table entry from an image table chunk.
@@ -75,7 +85,19 @@ typedef struct {
  */
 - (instancetype)initWithImageTableChunk:(FICImageTableChunk *)imageTableChunk bytes:(void *)bytes length:(size_t)length;
 
+/**
+ Adds a block to be executed when this image table entry is deallocated.
+ 
+ @param block A block that will be called when this image table entry is deallocated.
+ 
+ @note Because of the highly-concurrent nature of Fast Image Cache, image tables must know when any of their entries are about to be deallocated to disassociate them with its internal data structures.
+ */
 - (void)executeBlockOnDealloc:(dispatch_block_t)block;
+
+/**
+ Forces the kernel to page in the memory-mapped, on-disk data backing this entry right away.
+ */
+- (void)preheat;
 
 ///--------------------------------------------
 /// @name Flushing a Modified Image Table Entry

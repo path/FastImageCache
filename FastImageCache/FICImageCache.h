@@ -41,10 +41,24 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
 ///---------------------------------------
 
 /**
- Convenience accessor to retrieve a shared image cache instance.
+ Returns the shared image cache.
+ 
+ @return A shared instance of `FICImageCache`.
+ 
+ @note Fast Image Cache can either be used as a singleton for convenience or can exist as multiple instances. However, all instances of `FICImageCache` will make use of
+ shared resources, such as the same dispatch queue and the same location on disk for storing image tables.
+ 
+ @see [FICImageCache dispatchQueue]
  */
 + (instancetype)sharedImageCache;
 
+/**
+ Returns the shared dispatch queue used by all instances of `FICImageCache`.
+ 
+ @return A generic, shared dispatch queue of type `dispatch_queue_t`.
+ 
+ @note All instances of `FICImageCache` make use a single, shared dispatch queue to do their work.
+ */
 + (dispatch_queue_t)dispatchQueue;
 
 ///---------------------------------

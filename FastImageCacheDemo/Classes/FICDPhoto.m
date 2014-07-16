@@ -13,11 +13,11 @@
 
 NSString *const FICDPhotoImageFormatFamily = @"FICDPhotoImageFormatFamily";
 
-NSString *const FICDPhotoSquareImage32BitBGRAFormatName = @"FICDPhotoSquareImage32BitBGRAFormatName";
-NSString *const FICDPhotoSquareImage32BitBGRFormatName = @"FICDPhotoSquareImage32BitBGRFormatName";
-NSString *const FICDPhotoSquareImage16BitBGRFormatName = @"FICDPhotoSquareImage16BitBGRFormatName";
-NSString *const FICDPhotoSquareImage8BitGrayscaleFormatName = @"FICDPhotoSquareImage8BitGrayscaleFormatName";
-NSString *const FICDPhotoPixelImageFormatName = @"FICDPhotoPixelImageFormatName";
+NSString *const FICDPhotoSquareImage32BitBGRAFormatName = @"com.path.FastImageCacheDemo.FICDPhotoSquareImage32BitBGRAFormatName";
+NSString *const FICDPhotoSquareImage32BitBGRFormatName = @"com.path.FastImageCacheDemo.FICDPhotoSquareImage32BitBGRFormatName";
+NSString *const FICDPhotoSquareImage16BitBGRFormatName = @"com.path.FastImageCacheDemo.FICDPhotoSquareImage16BitBGRFormatName";
+NSString *const FICDPhotoSquareImage8BitGrayscaleFormatName = @"com.path.FastImageCacheDemo.FICDPhotoSquareImage8BitGrayscaleFormatName";
+NSString *const FICDPhotoPixelImageFormatName = @"com.path.FastImageCacheDemo.FICDPhotoPixelImageFormatName";
 
 CGSize const FICDPhotoSquareImageSize = {75, 75};
 CGSize const FICDPhotoPixelImageSize = {1, 1};

@@ -35,6 +35,7 @@
 @synthesize length = _length;
 @synthesize imageTableChunk = _imageTableChunk;
 @synthesize index = _index;
+@synthesize imageCache;
 
 #pragma mark - Property Accessors
 
@@ -64,10 +65,17 @@
     self = [super init];
     
     if (self != nil) {
-        _imageTableChunk = imageTableChunk;
-        _bytes = bytes;
-        _length = length;
-        _deallocBlocks = [[NSMutableArray alloc] init];
+        // Safety check
+        void *entryMax = bytes + length;
+        void *chunkMax = [imageTableChunk bytes] + [imageTableChunk length];
+        if (entryMax > chunkMax) {
+            self = nil;
+        } else {
+            _imageTableChunk = imageTableChunk;
+            _bytes = bytes;
+            _length = length;
+            _deallocBlocks = [[NSMutableArray alloc] init];
+        }
     }
     
     return self;
@@ -106,7 +114,7 @@
     
     if (result) {
         NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s msync(%p, %ld) returned %d errno=%d", __PRETTY_FUNCTION__, pageAlignedAddress, bytesToFlush, result, errno];
-        [[FICImageCache sharedImageCache] _logMessage:message];
+        [self.imageCache _logMessage:message];
     }
 }
 

@@ -75,11 +75,13 @@ extern NSString *const FICImageTableScreenScaleKey;
  
  @param imageFormat The image format that describes the image table.
  
+ @param imageCache The instance of `<FICImageCache>` that owns this image table.
+ 
  @return A new image table.
  
  @warning `FICImageTable` raises an exception if `imageFormat` is `nil`. `FICImageTable`'s implementation of `-init` simply calls through to this initializer, passing `nil` for `imageFormat`.
  */
-- (instancetype)initWithFormat:(FICImageFormat *)imageFormat;
+- (instancetype)initWithFormat:(FICImageFormat *)imageFormat imageCache:(FICImageCache *)imageCache;
 
 ///------------------------------------------------
 /// @name Storing, Retrieving, and Deleting Entries
@@ -110,11 +112,13 @@ extern NSString *const FICImageTableScreenScaleKey;
  
  @param sourceImageUUID The UUID of the source image that represents the actual image data stored in an image table entry. Must not be `nil`.
  
+ @param preheatData A `BOOL` indicating whether or not the entry's image data should be preheated. See `<[FICImageTableEntry preheat]>` for more information.
+ 
  @return A new image created from the entry data stored in the image table or `nil` if something went wrong.
  
  @discussion The `UIImage` returned by this method is initialized by a `CGImageRef` backed directly by mapped file data, so no memory copy occurs.
  
- @note If either of the parameters to this method are `nil`, the return value is `nil`.
+ @note If either of the first two parameters to this method are `nil`, the return value is `nil`.
  
  @note If either the entity UUID or the source image UUID doesn't match the corresponding UUIDs in the entry data, then something has changed. The entry data is deleted for the
  provided entity UUID, and `nil` is returned.

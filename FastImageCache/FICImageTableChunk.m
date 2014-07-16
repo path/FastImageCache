@@ -27,6 +27,7 @@
 
 @synthesize bytes = _bytes;
 @synthesize fileOffset = _fileOffset;
+@synthesize length = _length;
 
 #pragma mark - Object Lifecycle
 

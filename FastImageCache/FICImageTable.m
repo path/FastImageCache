@@ -62,7 +62,12 @@ static NSString *const FICImageTableFormatKey = @"format";
     NSMutableOrderedSet *_MRUEntries;
     NSCountedSet *_inUseEntries;
     NSDictionary *_imageFormatDictionary;
+    
+    NSString *_fileDataProtectionMode;
+    BOOL _canAccessData;
 }
+
+@property (nonatomic, weak) FICImageCache *imageCache;
 
 @end
 
@@ -121,13 +126,18 @@ static NSString *const FICImageTableFormatKey = @"format";
 
 #pragma mark - Object Lifecycle
 
-- (instancetype)initWithFormat:(FICImageFormat *)imageFormat {
+- (instancetype)initWithFormat:(FICImageFormat *)imageFormat imageCache:(FICImageCache *)imageCache {
     self = [super init];
     
     if (self != nil) {
         if (imageFormat == nil) {
             [NSException raise:NSInvalidArgumentException format:@"*** FIC Exception: %s must pass in an image format.", __PRETTY_FUNCTION__];
         }
+        if (imageCache == nil) {
+            [NSException raise:NSInvalidArgumentException format:@"*** FIC Exception: %s must pass in an image cache.", __PRETTY_FUNCTION__];
+        }
+        
+        self.imageCache = imageCache;
         
         _lock = [[NSRecursiveLock alloc] init];
         _indexNumbers = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
@@ -157,6 +167,16 @@ static NSString *const FICImageTableFormatKey = @"format";
         
         [self _loadMetadata];
         
+        NSFileManager *fileManager = [[NSFileManager alloc] init];
+        if ([fileManager fileExistsAtPath:_filePath] == NO) {
+            NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
+            [attributes setValue:[_imageFormat protectionModeString] forKeyPath:NSFileProtectionKey];
+            [fileManager createFileAtPath:_filePath contents:nil attributes:attributes];
+        }
+       
+        NSDictionary *attributes = [fileManager attributesOfItemAtPath:_filePath error:NULL];
+        _fileDataProtectionMode = [attributes objectForKey:NSFileProtectionKey];
+        
         _fileDescriptor = open([_filePath fileSystemRepresentation], O_RDWR | O_CREAT, 0666);
         
         if (_fileDescriptor >= 0) {
@@ -170,7 +190,7 @@ static NSString *const FICImageTableFormatKey = @"format";
             _entriesPerChunk = MAX(4, goalEntriesPerChunk);
             if ([self _maximumCount] > [_imageFormat maximumCount]) {
                 NSString *message = [NSString stringWithFormat:@"*** FIC Warning: growing desired maximumCount (%ld) for format %@ to fill a chunk (%d)", (long)[_imageFormat maximumCount], [_imageFormat name], [self _maximumCount]];
-                [[FICImageCache sharedImageCache] _logMessage:message];
+                [self.imageCache _logMessage:message];
             }
             _chunkLength = (size_t)(_entryLength * _entriesPerChunk);
             
@@ -186,7 +206,7 @@ static NSString *const FICImageTableFormatKey = @"format";
         } else {
             // If something goes wrong and we can't open the image table file, then we have no choice but to release and nil self.
             NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s could not open the image table file at path %@. The image table was not created.", __PRETTY_FUNCTION__, _filePath];
-            [[FICImageCache sharedImageCache] _logMessage:message];
+            [self.imageCache _logMessage:message];
 
             self = nil;
         }    
@@ -196,7 +216,7 @@ static NSString *const FICImageTableFormatKey = @"format";
 }
 
 - (instancetype)init {
-    return [self initWithFormat:nil];
+    return [self initWithFormat:nil imageCache:nil];
 }
 
 - (void)dealloc {
@@ -240,7 +260,7 @@ static NSString *const FICImageTableFormatKey = @"format";
     
     if (!chunk) {
         NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s failed to get chunk for index %ld.", __PRETTY_FUNCTION__, (long)index];
-        [[FICImageCache sharedImageCache] _logMessage:message];
+        [self.imageCache _logMessage:message];
     }
     
     return chunk;
@@ -257,7 +277,11 @@ static NSString *const FICImageTableFormatKey = @"format";
             newEntryIndex = [self _nextEntryIndex];
             
             if (newEntryIndex >= _entryCount) {
-                NSInteger newEntryCount = _entryCount + MAX(_entriesPerChunk, newEntryIndex - _entryCount + 1);
+                // Determine how many chunks we need to support new entry index.
+                // Number of entries should always be a multiple of _entriesPerChunk
+                NSInteger numberOfEntriesRequired = newEntryIndex + 1;
+                NSInteger newChunkCount = _entriesPerChunk > 0 ? ((numberOfEntriesRequired + _entriesPerChunk - 1) / _entriesPerChunk) : 0;
+                NSInteger newEntryCount = newChunkCount * _entriesPerChunk;
                 [self _setEntryCount:newEntryCount];
             }
         }
@@ -270,7 +294,7 @@ static NSString *const FICImageTableFormatKey = @"format";
             
             // Create context whose backing store *is* the mapped file data
             FICImageTableEntry *entryData = [self _entryDataAtIndex:newEntryIndex];
-            if (entryData) {
+            if (entryData != nil) {
                 [entryData setEntityUUIDBytes:FICUUIDBytesWithString(entityUUID)];
                 [entryData setSourceImageUUIDBytes:FICUUIDBytesWithString(sourceImageUUID)];
                 
@@ -290,7 +314,6 @@ static NSString *const FICImageTableFormatKey = @"format";
                 [_lock unlock];
                 
                 CGContextRef context = CGBitmapContextCreate([entryData bytes], pixelSize.width, pixelSize.height, bitsPerComponent, _imageRowLength, colorSpace, bitmapInfo);
-                CGColorSpaceRelease(colorSpace);
                 
                 CGContextTranslateCTM(context, 0, pixelSize.height);
                 CGContextScaleCTM(context, _screenScale, -_screenScale);
@@ -306,6 +329,8 @@ static NSString *const FICImageTableFormatKey = @"format";
             } else {
                 [_lock unlock];
             }
+            
+            CGColorSpaceRelease(colorSpace);
         } else {
             [_lock unlock];
         }
@@ -357,7 +382,7 @@ static NSString *const FICImageTableFormatKey = @"format";
                         CGImageRelease(imageRef);
                     } else {
                         NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s could not create a new CGImageRef for entity UUID %@.", __PRETTY_FUNCTION__, entityUUID];
-                        [[FICImageCache sharedImageCache] _logMessage:message];
+                        [self.imageCache _logMessage:message];
                     }
                     
                     if (image != nil && preheatData) {
@@ -447,21 +472,55 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
         
         if (result != 0) {
             NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s ftruncate returned %d, error = %d, fd = %d, filePath = %@, length = %lld", __PRETTY_FUNCTION__, result, errno, _fileDescriptor, _filePath, fileLength];
-            [[FICImageCache sharedImageCache] _logMessage:message];
+            [self.imageCache _logMessage:message];
         } else {
             _fileLength = fileLength;
             _entryCount = entryCount;
             _chunkCount = _entriesPerChunk > 0 ? ((_entryCount + _entriesPerChunk - 1) / _entriesPerChunk) : 0;
+            
+            NSDictionary *chunkDictionary = [_chunkDictionary copy];
+            for (FICImageTableChunk *chunk in [chunkDictionary allValues]) {
+                if ([chunk length] != _chunkLength) {
+                    // Issue 31: https://github.com/path/FastImageCache/issues/31
+                    // Somehow, we have a partial chunk whose length needs to be adjusted
+                    // since we changed our file length.
+                    [self _setChunk:nil index:[chunk index]];
+                }
+            }
         }
     }
+}
+
+// There's inherently a race condition between when you ask whether the data is
+// accessible and when you try to use that data. Sidestep this issue altogether
+// by using NSFileProtectionNone
+- (BOOL)canAccessEntryData {
+    BOOL result = YES;
+    if ([_fileDataProtectionMode isEqualToString:NSFileProtectionComplete]) {
+        result = [[UIApplication sharedApplication] isProtectedDataAvailable];
+    } else if ([_fileDataProtectionMode isEqualToString:NSFileProtectionCompleteUntilFirstUserAuthentication]) {
+        // For "complete until first auth", if we were previously able to access data, then we'll still be able to
+        // access it. If we haven't yet been able to access data, we'll need to try until we are successful.
+        if (_canAccessData == NO) {
+            if ([[UIApplication sharedApplication] isProtectedDataAvailable]) {
+                // we are unlocked, so we're good to go.
+                _canAccessData = YES;
+            } else {
+                // we are locked, so try to access data.
+                _canAccessData = [NSData dataWithContentsOfMappedFile:_filePath] != nil;
+            }
+        }
+    }
+    return result;
 }
 
 - (FICImageTableEntry *)_entryDataAtIndex:(NSInteger)index {
     FICImageTableEntry *entryData = nil;
     
     [_lock lock];
-    
-    if (index < _entryCount) {
+
+    BOOL canAccessData = [self canAccessEntryData];
+    if (index < _entryCount && canAccessData) {
         off_t entryOffset = index * _entryLength;
         size_t chunkIndex = (size_t)(entryOffset / _chunkLength);
         
@@ -472,22 +531,30 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
             void *mappedChunkAddress = [chunk bytes];
             void *mappedEntryAddress = mappedChunkAddress + entryOffsetInChunk;
             entryData = [[FICImageTableEntry alloc] initWithImageTableChunk:chunk bytes:mappedEntryAddress length:_entryLength];
-            [entryData setIndex:index];
             
-            [_chunkSet addObject:chunk];
+            if (entryData) {
+                [entryData setImageCache:self.imageCache];
+                [entryData setIndex:index];
+                [_chunkSet addObject:chunk];
             
-            __weak FICImageTable *weakSelf = self;
-            [entryData executeBlockOnDealloc:^{
-                [weakSelf _entryWasDeallocatedFromChunk:chunk];
-            }];
+                __weak FICImageTable *weakSelf = self;
+                [entryData executeBlockOnDealloc:^{
+                    [weakSelf _entryWasDeallocatedFromChunk:chunk];
+                }];
+            }
         }
     }
     
     [_lock unlock];
     
     if (!entryData) {
-        NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s failed to get entry for index %ld.", __PRETTY_FUNCTION__, (long)index];
-        [[FICImageCache sharedImageCache] _logMessage:message];
+        NSString *message = nil;
+        if (canAccessData) {
+            message = [NSString stringWithFormat:@"*** FIC Error: %s failed to get entry for index %ld.", __PRETTY_FUNCTION__, (long)index];
+        } else {
+            message = [NSString stringWithFormat:@"*** FIC Error: %s. Cannot get entry data because imageTable's file has data protection enabled and that data is not currently accessible.", __PRETTY_FUNCTION__];
+        }
+        [self.imageCache _logMessage:message];
     }
     
     return entryData;
@@ -523,7 +590,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
 
     if (index >= [self _maximumCount]) {
         NSString *message = [NSString stringWithFormat:@"FICImageTable - unable to evict entry from table '%@' to make room. New index %ld, desired max %d", [_imageFormat name], (long)index, [self _maximumCount]];
-        [[FICImageCache sharedImageCache] _logMessage:message];
+        [self.imageCache _logMessage:message];
     }
     
     return index;
@@ -613,7 +680,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
         BOOL fileWriteResult = [data writeToFile:[self metadataFilePath] atomically:NO];
         if (fileWriteResult == NO) {
             NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s couldn't write metadata for format %@", __PRETTY_FUNCTION__, [_imageFormat name]];
-            [[FICImageCache sharedImageCache] _logMessage:message];
+            [self.imageCache _logMessage:message];
         }
     });
 }
@@ -639,7 +706,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
             metadataDictionary = nil;
             
             NSString *message = [NSString stringWithFormat:@"*** FIC Notice: Image format %@ has changed; deleting data and starting over.", [_imageFormat name]];
-            [[FICImageCache sharedImageCache] _logMessage:message];
+            [self.imageCache _logMessage:message];
         }
         
         [_indexMap setDictionary:[metadataDictionary objectForKey:FICImageTableIndexMapKey]];
@@ -669,6 +736,8 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     [_inUseEntries removeAllObjects];
     [_MRUEntries removeAllObjects];
     [_sourceImageMap removeAllObjects];
+    [_chunkDictionary removeAllObjects];
+    [_chunkSet removeAllObjects];
     
     [self _setEntryCount:0];
     [self saveMetadata];
