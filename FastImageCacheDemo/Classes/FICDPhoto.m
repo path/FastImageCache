@@ -170,7 +170,8 @@ static UIImage * _FICDStatusBarImageFromImage(UIImage *image) {
 - (NSString *)UUID {
     if (_UUID == nil) {
         // MD5 hashing is expensive enough that we only want to do it once
-        CFUUIDBytes UUIDBytes = FICUUIDBytesFromMD5HashOfString([_sourceImageURL absoluteString]);
+        NSString *imageName = [_sourceImageURL lastPathComponent];
+        CFUUIDBytes UUIDBytes = FICUUIDBytesFromMD5HashOfString(imageName);
         _UUID = FICStringWithUUIDBytes(UUIDBytes);
     }
     
