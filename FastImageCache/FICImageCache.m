@@ -290,9 +290,13 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
         
         NSString *entityUUID = [entity UUID];
         FICImageTable *imageTable = [_imageTables objectForKey:formatName];
-        [imageTable deleteEntryForEntityUUID:entityUUID];
+        if (imageTable) {
+            [imageTable deleteEntryForEntityUUID:entityUUID];
         
-        [self _processImage:image forEntity:entity withFormatName:formatName completionBlocksDictionary:completionBlocksDictionary];
+            [self _processImage:image forEntity:entity withFormatName:formatName completionBlocksDictionary:completionBlocksDictionary];
+        } else {
+            [self _logMessage:[NSString stringWithFormat:@"*** FIC Error: %s Couldn't find image table with format name %@", __PRETTY_FUNCTION__, formatName]];
+        }
     }
 }
 
