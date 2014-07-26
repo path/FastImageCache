@@ -461,8 +461,8 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
 
 #pragma mark - Working with Entries
 
-- (int)_maximumCount {
-    return (int)MAX([_imageFormat maximumCount], _entriesPerChunk);
+- (NSInteger)_maximumCount {
+    return MAX([_imageFormat maximumCount], _entriesPerChunk);
 }
 
 - (void)_setEntryCount:(NSInteger)entryCount {
