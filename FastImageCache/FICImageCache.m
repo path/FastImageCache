@@ -426,7 +426,9 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
 
 - (void)reset {
     for (FICImageTable *imageTable in [_imageTables allValues]) {
-        [imageTable reset];
+        dispatch_async([[self class] dispatchQueue], ^{
+            [imageTable reset];
+        });
     }
 }
 
