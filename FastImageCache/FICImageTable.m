@@ -510,6 +510,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
                 _canAccessData = [NSData dataWithContentsOfMappedFile:_filePath] != nil;
             }
         }
+        result = _canAccessData
     }
     return result;
 }
