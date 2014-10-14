@@ -507,7 +507,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
                 _canAccessData = YES;
             } else {
                 // we are locked, so try to access data.
-                _canAccessData = [NSData dataWithContentsOfMappedFile:_filePath] != nil;
+                _canAccessData = [NSData dataWithContentsOfURL:[NSURL fileURLWithPath:_filePath] options:NSDataReadingMappedAlways error:NULL] != nil;
             }
         }
     }
@@ -687,7 +687,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
 
 - (void)_loadMetadata {
     NSString *metadataFilePath = [[_filePath stringByDeletingPathExtension] stringByAppendingPathExtension:FICImageTableMetadataFileExtension];
-    NSData *metadataData = [NSData dataWithContentsOfMappedFile:metadataFilePath];
+    NSData *metadataData = [NSData dataWithContentsOfURL:[NSURL fileURLWithPath:metadataFilePath] options:NSDataReadingMappedAlways error:nil];
     if (metadataData != nil) {
         NSDictionary *metadataDictionary = (NSDictionary *)[NSPropertyListSerialization propertyListWithData:metadataData options:0 format:NULL error:NULL];
         NSDictionary *formatDictionary = [metadataDictionary objectForKey:FICImageTableFormatKey];
