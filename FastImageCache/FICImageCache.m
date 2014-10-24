@@ -432,6 +432,33 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
     }
 }
 
++ (void)calculateSizeWithCompletionBlock:(FICImageTableCalculateSizeBCompletionBlock)completionBlock {
+    static dispatch_queue_t __fileQueue = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        __fileQueue = dispatch_queue_create("com.path.FastImageCache.ImageTableFileQueue", NULL);
+    });
+
+    NSArray *filesArray = [[NSFileManager defaultManager] subpathsOfDirectoryAtPath:[[FICImageTable class] directoryPath] error:nil];
+
+    dispatch_async(__fileQueue, ^{
+        NSUInteger fileCount = 0;
+        NSUInteger totalSize = 0;
+
+        for (NSString *fileName in filesArray) {
+            NSDictionary *fileDictionary = [[NSFileManager defaultManager] attributesOfItemAtPath:[[[FICImageTable class] directoryPath] stringByAppendingPathComponent:fileName] error:nil];
+            totalSize += [fileDictionary fileSize];
+            fileCount += 1;
+        }
+
+        if (completionBlock) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionBlock(fileCount, totalSize);
+            });
+        }
+    });
+}
+
 #pragma mark - Logging Errors
 
 - (void)_logMessage:(NSString *)message {
