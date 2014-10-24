@@ -17,7 +17,6 @@
 
 extern NSString *const FICImageTableEntryDataVersionKey;
 extern NSString *const FICImageTableScreenScaleKey;
-typedef void(^FICImageTableCalculateSizeBCompletionBlock)(NSUInteger fileCount, NSUInteger totalSize);
 
 /**
  `FICImageTable` is the primary class that efficiently stores and retrieves cached image data. Image tables are defined by instances of `<FICImageFormat>`. Each image table is backed by a single
