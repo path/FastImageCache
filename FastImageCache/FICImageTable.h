@@ -164,10 +164,5 @@ typedef void(^FICImageTableCalculateSizeBCompletionBlock)(NSUInteger fileCount, 
  */
 - (void)reset;
 
-/**
- * Asynchronously calculate the disk cache's size.
- */
-+ (void)calculateSizeWithCompletionBlock:(FICImageTableCalculateSizeBCompletionBlock)completionBlock;
-
 
 @end

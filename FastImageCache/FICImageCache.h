@@ -15,6 +15,8 @@
 
 typedef void (^FICImageCacheCompletionBlock)(id <FICEntity> entity, NSString *formatName, UIImage *image);
 typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
+typedef void(^FICImageTableCalculateSizeBCompletionBlock)(NSUInteger fileCount, NSUInteger totalSize);
+
 
 /**
  `FICImageCache` is the primary class for managing and interacting with the image cache. Applications using the image cache create one or more `<FICImageFormat>`
@@ -219,6 +221,20 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
  @note Resetting an image cache does not reset its image formats.
  */
 - (void)reset;
+
+/**
+ Asynchronously calculate the disk cache's size.
+
+ @note This will return the total disk usage across all instances of `FICImageCache` as they share the same storage location
+ 
+ @param completionBlock The completion block that is called after disk usage is calculated
+
+ The completion block's type is defined as follows:
+
+ typedef void(^FICImageTableCalculateSizeBCompletionBlock)(NSUInteger fileCount, NSUInteger totalSize);
+
+ */
++ (void)calculateSizeWithCompletionBlock:(FICImageTableCalculateSizeBCompletionBlock)completionBlock;
 
 @end
 
