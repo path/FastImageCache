@@ -27,6 +27,7 @@ static NSString *const FICImageCacheEntityKey = @"FICImageCacheEntityKey";
     NSMutableDictionary *_requests;
     __weak id <FICImageCacheDelegate> _delegate;
     
+    BOOL _delegateImplementsWantsSourceImageForEntityWithFormatNameCompletionBlock;
     BOOL _delegateImplementsShouldProcessAllFormatsInFamilyForEntity;
     BOOL _delegateImplementsErrorDidOccurWithMessage;
     BOOL _delegateImplementsCancelImageLoadingForEntityWithFormatName;
@@ -46,6 +47,7 @@ static NSString *const FICImageCacheEntityKey = @"FICImageCacheEntityKey";
     if (delegate != _delegate) {
         _delegate = delegate;
         
+        _delegateImplementsWantsSourceImageForEntityWithFormatNameCompletionBlock = [_delegate respondsToSelector:@selector(imageCache:wantsSourceImageForEntity:withFormatName:completionBlock:)];
         _delegateImplementsShouldProcessAllFormatsInFamilyForEntity = [_delegate respondsToSelector:@selector(imageCache:shouldProcessAllFormatsInFamily:forEntity:)];
         _delegateImplementsErrorDidOccurWithMessage = [_delegate respondsToSelector:@selector(imageCache:errorDidOccurWithMessage:)];
         _delegateImplementsCancelImageLoadingForEntityWithFormatName = [_delegate respondsToSelector:@selector(imageCache:cancelImageLoadingForEntity:withFormatName:)];
@@ -187,7 +189,7 @@ static FICImageCache *__imageCache = nil;
             }
         };
         
-        if (image == nil && _delegate != nil) {
+        if (image == nil) {
             // No image for this UUID exists in the image table. We'll need to ask the delegate to retrieve the source asset.
             NSURL *sourceImageURL = [entity sourceImageURLWithFormatName:formatName];
             
@@ -200,9 +202,19 @@ static FICImageCache *__imageCache = nil;
                     [_requests setObject:requestDictionary forKey:sourceImageURL];
                     
                     _FICAddCompletionBlockForEntity(formatName, requestDictionary, entity, completionBlock);
-                    [_delegate imageCache:self wantsSourceImageForEntity:entity withFormatName:formatName completionBlock:^(UIImage *sourceImage) {
+                    UIImage *image;
+                    if ([entity respondsToSelector:@selector(imageForFormat:)]){
+                        FICImageFormat *format = [self formatWithName:formatName];
+                        image = [entity imageForFormat:format];
+                    }
+                    
+                    if (image){
+                        [self _imageDidLoad:image forURL:sourceImageURL];
+                    } else if (_delegateImplementsWantsSourceImageForEntityWithFormatNameCompletionBlock){
+                        [_delegate imageCache:self wantsSourceImageForEntity:entity withFormatName:formatName completionBlock:^(UIImage *sourceImage) {
                         [self _imageDidLoad:sourceImage forURL:sourceImageURL];
-                    }];
+                        }];
+                    }
                 } else {
                     // We have an existing request dictionary, which means this URL is currently being fetched.
                     _FICAddCompletionBlockForEntity(formatName, requestDictionary, entity, completionBlock);
@@ -290,9 +302,13 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
         
         NSString *entityUUID = [entity UUID];
         FICImageTable *imageTable = [_imageTables objectForKey:formatName];
-        [imageTable deleteEntryForEntityUUID:entityUUID];
+        if (imageTable) {
+            [imageTable deleteEntryForEntityUUID:entityUUID];
         
-        [self _processImage:image forEntity:entity withFormatName:formatName completionBlocksDictionary:completionBlocksDictionary];
+            [self _processImage:image forEntity:entity withFormatName:formatName completionBlocksDictionary:completionBlocksDictionary];
+        } else {
+            [self _logMessage:[NSString stringWithFormat:@"*** FIC Error: %s Couldn't find image table with format name %@", __PRETTY_FUNCTION__, formatName]];
+        }
     }
 }
 
@@ -410,7 +426,9 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
 
 - (void)reset {
     for (FICImageTable *imageTable in [_imageTables allValues]) {
-        [imageTable reset];
+        dispatch_async([[self class] dispatchQueue], ^{
+            [imageTable reset];
+        });
     }
 }
 
