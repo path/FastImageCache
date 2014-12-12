@@ -58,11 +58,23 @@ extern NSString *const FICImageTableScreenScaleKey;
 + (int)pageSize;
 
 /**
+ Determines if the image tables are stored in the cache directory (which would mean they could disappear at any time)
+ @discussion Specifying NO will mean that the image tables will be persisted until they are reset or manually removed. Only use this setting if you're willing to use up lots of disk space.
+ Defaults to YES
+ */
++ (void)useCacheDirectory:(BOOL)useCacheDirectory;
+
+/**
+ Returns whether the image tables are being stored in the cache directory or not
+ 
+ @return BOOL indicating if image tables are stored in cache directory
+ */
++ (BOOL)usesCacheDirectory;
+
+/**
  Returns the file system path for the directory that stores image table files.
  
  @return The string representing the file system directory path where image table files are stored.
- 
- @warning Image table files are stored in the user's caches directory, so you should be prepared for the image tables to be deleted from the file system at any time.
  */
 + (NSString *)directoryPath;
 

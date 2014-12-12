@@ -30,6 +30,8 @@ static NSString *const FICImageTableContextMapKey = @"contextMap";
 static NSString *const FICImageTableMRUArrayKey = @"mruArray";
 static NSString *const FICImageTableFormatKey = @"format";
 
+static NSInteger FICUseCacheDirectory = 1;
+
 #pragma mark - Class Extension
 
 @interface FICImageTable () {
@@ -106,12 +108,31 @@ static NSString *const FICImageTableFormatKey = @"format";
     return __pageSize;
 }
 
++ (void)useCacheDirectory:(BOOL)useCacheDirectory {
+    if (FICUseCacheDirectory == -1) {
+        NSLog(@"Directory path was already setup. This must be set before the path is created.");
+        return;
+    }
+    
+    FICUseCacheDirectory = useCacheDirectory;
+}
+
++ (BOOL)usesCacheDirectory {
+    return FICUseCacheDirectory;
+}
+
 + (NSString *)directoryPath {
     static NSString *__directoryPath = nil;
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        NSArray *paths;
+        if (FICUseCacheDirectory == 1) {
+            paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        } else {
+            paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+        }
+        FICUseCacheDirectory = -1;
         __directoryPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"ImageTables"];
         
         NSFileManager *fileManager = [[NSFileManager alloc] init];
