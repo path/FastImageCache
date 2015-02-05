@@ -24,6 +24,14 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
  */
 @interface FICImageCache : NSObject
 
+/**
+ The namespace of the image cache.
+ 
+ @discussion Namespace is responsible for isolation of dirrerent image cache instances on file system level. Namespace should be unique across application.
+ */
+
+@property (readonly, nonatomic) NSString *nameSpace;
+
 ///----------------------------
 /// @name Managing the Delegate
 ///----------------------------
@@ -37,6 +45,25 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
 @property (nonatomic, weak) id <FICImageCacheDelegate> delegate;
 
 ///---------------------------------------
+/// @name Creating Image Cache instances
+///---------------------------------------
+
+/**
+ Returns new image cache.
+ 
+ @return A new instance of `FICImageCache`.
+ 
+ @param nameSpace The namespace that uniquely identifies current image cahce entity. If no nameSpace given, default namespace will be used.
+ 
+ @note Fast Image Cache can either be used as a singleton for convenience or can exist as multiple instances. 
+ However, all instances of `FICImageCache` will make use same dispatch queue. To separate location on disk for storing image tables namespaces are used.
+ 
+ @see [FICImageCache dispatchQueue]
+ */
+
+- (instancetype) initWithNameSpace:(NSString *)nameSpace;
+
+///---------------------------------------
 /// @name Accessing the Shared Image Cache
 ///---------------------------------------
 
@@ -45,8 +72,7 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
  
  @return A shared instance of `FICImageCache`.
  
- @note Fast Image Cache can either be used as a singleton for convenience or can exist as multiple instances. However, all instances of `FICImageCache` will make use of
- shared resources, such as the same dispatch queue and the same location on disk for storing image tables.
+ @note Shared instance always binded to default namespace.
  
  @see [FICImageCache dispatchQueue]
  */
