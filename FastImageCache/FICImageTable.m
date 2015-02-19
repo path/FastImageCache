@@ -697,8 +697,17 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     });
     
     dispatch_async(__metadataQueue, ^{
-        NSData *data = [NSJSONSerialization dataWithJSONObject:metadataDictionary options:kNilOptions error:NULL];
-        BOOL fileWriteResult = [data writeToFile:[self metadataFilePath] atomically:NO];
+        NSOutputStream *os = [[NSOutputStream alloc] initToFileAtPath:[self metadataFilePath]
+                                                               append:NO];
+        [os open];
+        NSError *writeError = nil;
+        NSUInteger bytesWritten = [NSJSONSerialization writeJSONObject:metadataDictionary
+                                                              toStream:os
+                                                               options:kNilOptions
+                                                                 error:&writeError];
+        [os close];
+        
+        BOOL fileWriteResult = bytesWritten > 0 && !writeError;
         if (fileWriteResult == NO) {
             NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s couldn't write metadata for format %@", __PRETTY_FUNCTION__, [_imageFormat name]];
             [self.imageCache _logMessage:message];
