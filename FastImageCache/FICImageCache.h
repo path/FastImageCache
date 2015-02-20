@@ -46,11 +46,31 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
  @return A shared instance of `FICImageCache`.
  
  @note Fast Image Cache can either be used as a singleton for convenience or can exist as multiple instances. However, all instances of `FICImageCache` will make use of
- shared resources, such as the same dispatch queue and the same location on disk for storing image tables.
+ shared resources, such as the same dispatch queue. However, different instances with unique identifiers will store their files in unique location on disk. It is important
+ that each instance of `FICImageCache` have a unique identifier that persists between launches. Creating multiple instances with the same identifier will cause conflicts.
  
  @see [FICImageCache dispatchQueue]
  */
 + (instancetype)sharedImageCache;
+
+/**
+ Returns an image cache isolated by the identifier.
+ 
+ @return A new instance of `FICImageCache`.
+ 
+ @note Fast Image Cache can either be used as a singleton for convenience or can exist as multiple instances. However, all instances of `FICImageCache` will make use of
+ shared resources, such as the same dispatch queue. However, different instances with unique identifiers will store their files in unique location on disk. It is important
+ that each instance of `FICImageCache` have a unique identifier that persists between launches. Creating multiple instances with the same identifier will cause conflicts.
+ 
+ @see [FICImageCache dispatchQueue]
+ */
+- (instancetype)initWithIdentifier:(NSString *)identifier NS_DESIGNATED_INITIALIZER;
+
+/** The image cache's unique identifier
+ 
+ This identifier is used to uniquely identify each cache between launches. This is nil for the sharedImageCache, which causes the cache to fall back to 1.3 behavior.
+ */
+@property (copy, readonly) NSString *identifier;
 
 /**
  Returns the shared dispatch queue used by all instances of `FICImageCache`.

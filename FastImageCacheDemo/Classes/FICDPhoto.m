@@ -17,6 +17,12 @@ NSString *const FICDPhotoSquareImage32BitBGRAFormatName = @"com.path.FastImageCa
 NSString *const FICDPhotoSquareImage32BitBGRFormatName = @"com.path.FastImageCacheDemo.FICDPhotoSquareImage32BitBGRFormatName";
 NSString *const FICDPhotoSquareImage16BitBGRFormatName = @"com.path.FastImageCacheDemo.FICDPhotoSquareImage16BitBGRFormatName";
 NSString *const FICDPhotoSquareImage8BitGrayscaleFormatName = @"com.path.FastImageCacheDemo.FICDPhotoSquareImage8BitGrayscaleFormatName";
+
+NSString *const FICDPhotoSquareImage32BitBGRACustomFormatName = @"com.path.FastImageCacheDemo.FICDPhotoSquareImage32BitBGRAFormatName.custom";
+NSString *const FICDPhotoSquareImage32BitBGRCustomFormatName = @"com.path.FastImageCacheDemo.FICDPhotoSquareImage32BitBGRFormatName.custom";
+NSString *const FICDPhotoSquareImage16BitBGRCustomFormatName = @"com.path.FastImageCacheDemo.FICDPhotoSquareImage16BitBGRFormatName.custom";
+NSString *const FICDPhotoSquareImage8BitGrayscaleCustomFormatName = @"com.path.FastImageCacheDemo.FICDPhotoSquareImage8BitGrayscaleFormatName.custom";
+
 NSString *const FICDPhotoPixelImageFormatName = @"com.path.FastImageCacheDemo.FICDPhotoPixelImageFormatName";
 
 CGSize const FICDPhotoSquareImageSize = {75, 75};
@@ -200,7 +206,7 @@ static UIImage * _FICDStatusBarImageFromImage(UIImage *image) {
             [statusBarImage drawInRect:contextBounds];
             UIGraphicsPopContext();
         } else {
-            if ([formatName isEqualToString:FICDPhotoSquareImage32BitBGRAFormatName] == NO) {
+            if (![formatName isEqualToString:FICDPhotoSquareImage32BitBGRAFormatName] && ![formatName isEqualToString:FICDPhotoSquareImage32BitBGRACustomFormatName]) {
                 // Fill with white for image formats that are opaque
                 CGContextSetFillColorWithColor(contextRef, [[UIColor whiteColor] CGColor]);
                 CGContextFillRect(contextRef, contextBounds);
@@ -209,7 +215,12 @@ static UIImage * _FICDStatusBarImageFromImage(UIImage *image) {
             UIImage *squareImage = _FICDSquareImageFromImage(image);
             
             // Clip to a rounded rect
-            CGPathRef path = _FICDCreateRoundedRectPath(contextBounds, 12);
+            CGPathRef path;
+            if ([[formatName componentsSeparatedByString:@"."] containsObject:@"custom"]) {
+                path = _FICDCreateRoundedRectPath(contextBounds, contextSize.width / 2.0);
+            } else {
+                path = _FICDCreateRoundedRectPath(contextBounds, 12);
+            }
             CGContextAddPath(contextRef, path);
             CFRelease(path);
             CGContextEOClip(contextRef);

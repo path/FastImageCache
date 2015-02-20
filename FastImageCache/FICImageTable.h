@@ -58,13 +58,31 @@ extern NSString *const FICImageTableScreenScaleKey;
 + (int)pageSize;
 
 /**
+ Returns the file system path for the directory that stores image table files. This returns the shared cache's directory.
+ 
+ @return The string representing the file system directory path where image table files are stored.
+ 
+ @warning Image table files are stored in the user's caches directory, so you should be prepared for the image tables to be deleted from the file system at any time.
+ */
++ (NSString *)directoryPath DEPRECATED_ATTRIBUTE;
+
+/**
  Returns the file system path for the directory that stores image table files.
  
  @return The string representing the file system directory path where image table files are stored.
  
  @warning Image table files are stored in the user's caches directory, so you should be prepared for the image tables to be deleted from the file system at any time.
  */
-+ (NSString *)directoryPath;
++ (NSString *)directoryPathForIdentifier:(NSString *)identifier;
+
+/**
+ Returns the file system path for the directory that stores image table files. This calls `-directoryPathForIdentifier:` with the table's cache's identifier.
+ 
+ @return The string representing the file system directory path where image table files are stored.
+ 
+ @warning Image table files are stored in the user's caches directory, so you should be prepared for the image tables to be deleted from the file system at any time.
+ */
+- (NSString *)directoryPath;
 
 ///----------------------------------
 /// @name Initializing an Image Table

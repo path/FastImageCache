@@ -7,6 +7,7 @@
 //
 
 @class FICDPhoto;
+@class FICImageCache;
 
 @protocol FICDPhotosTableViewCellDelegate;
 
@@ -16,6 +17,7 @@
 @property (nonatomic, assign) BOOL usesImageTable;
 @property (nonatomic, copy) NSArray *photos;
 @property (nonatomic, copy) NSString *imageFormatName;
+@property (nonatomic, strong) FICImageCache *imageCache;
 
 + (NSString *)reuseIdentifier;
 + (NSInteger)photosPerRow;

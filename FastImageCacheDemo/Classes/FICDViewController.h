@@ -7,7 +7,10 @@
 //
 
 @class FICDTableView;
+@class FICImageCache;
 
 @interface FICDViewController : UIViewController
+
+@property (nonatomic, strong) FICImageCache *customImageCache;
 
 @end

@@ -14,6 +14,12 @@ extern NSString *const FICDPhotoSquareImage32BitBGRAFormatName;
 extern NSString *const FICDPhotoSquareImage32BitBGRFormatName;
 extern NSString *const FICDPhotoSquareImage16BitBGRFormatName;
 extern NSString *const FICDPhotoSquareImage8BitGrayscaleFormatName;
+
+extern NSString *const FICDPhotoSquareImage32BitBGRACustomFormatName;
+extern NSString *const FICDPhotoSquareImage32BitBGRCustomFormatName;
+extern NSString *const FICDPhotoSquareImage16BitBGRCustomFormatName;
+extern NSString *const FICDPhotoSquareImage8BitGrayscaleCustomFormatName;
+
 extern NSString *const FICDPhotoPixelImageFormatName;
 
 extern CGSize const FICDPhotoSquareImageSize;

@@ -70,12 +70,26 @@
     [sharedImageCache setDelegate:self];
     [sharedImageCache setFormats:mutableImageFormats];
     
+    FICImageCache *customImageCache = [[FICImageCache alloc] initWithIdentifier:@"Custom"];
+    [customImageCache setDelegate:self];
+    [customImageCache setFormats:@[
+                                   [FICImageFormat formatWithName:FICDPhotoSquareImage32BitBGRACustomFormatName family:FICDPhotoImageFormatFamily imageSize:FICDPhotoSquareImageSize style:FICImageFormatStyle32BitBGRA
+                                                     maximumCount:squareImageFormatMaximumCount devices:squareImageFormatDevices protectionMode:FICImageFormatProtectionModeNone],
+                                   [FICImageFormat formatWithName:FICDPhotoSquareImage32BitBGRCustomFormatName family:FICDPhotoImageFormatFamily imageSize:FICDPhotoSquareImageSize style:FICImageFormatStyle32BitBGR
+                                                     maximumCount:squareImageFormatMaximumCount devices:squareImageFormatDevices protectionMode:FICImageFormatProtectionModeNone],
+                                   [FICImageFormat formatWithName:FICDPhotoSquareImage16BitBGRCustomFormatName family:FICDPhotoImageFormatFamily imageSize:FICDPhotoSquareImageSize style:FICImageFormatStyle16BitBGR
+                                                     maximumCount:squareImageFormatMaximumCount devices:squareImageFormatDevices protectionMode:FICImageFormatProtectionModeNone],
+                                   [FICImageFormat formatWithName:FICDPhotoSquareImage8BitGrayscaleCustomFormatName family:FICDPhotoImageFormatFamily imageSize:FICDPhotoSquareImageSize style:FICImageFormatStyle8BitGrayscale
+                                                     maximumCount:squareImageFormatMaximumCount devices:squareImageFormatDevices protectionMode:FICImageFormatProtectionModeNone],
+                                   ]];
+    
     // Configure the window
     CGRect windowFrame = [[UIScreen mainScreen] bounds];
     UIWindow *window = [[UIWindow alloc] initWithFrame:windowFrame];
     [self setWindow:window];
     
-    UIViewController *rootViewController = [[FICDViewController alloc] init];
+    FICDViewController *rootViewController = [[FICDViewController alloc] init];
+    rootViewController.customImageCache = customImageCache;
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
     
     [[self window] setRootViewController:navigationController];
