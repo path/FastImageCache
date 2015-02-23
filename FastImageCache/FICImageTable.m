@@ -680,6 +680,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
 
 #pragma mark - Working with Metadata
 
+static long long __metadataVersion = 0;
 - (void)saveMetadata {
     [_lock lock];
     
@@ -688,6 +689,8 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
                                         [_sourceImageMap copy], FICImageTableContextMapKey,
                                         [[_MRUEntries array] copy], FICImageTableMRUArrayKey,
                                         [_imageFormatDictionary copy], FICImageTableFormatKey, nil];
+    __metadataVersion++;
+    
     [_lock unlock];
     
     static dispatch_queue_t __metadataQueue = nil;
@@ -696,18 +699,25 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
         __metadataQueue = dispatch_queue_create("com.path.FastImageCache.ImageTableMetadataQueue", NULL);
     });
     
+    __block long long metadataVersion = __metadataVersion;
     dispatch_async(__metadataQueue, ^{
-        NSOutputStream *os = [[NSOutputStream alloc] initToFileAtPath:[self metadataFilePath]
-                                                               append:NO];
-        [os open];
         NSError *writeError = nil;
-        NSUInteger bytesWritten = [NSJSONSerialization writeJSONObject:metadataDictionary
-                                                              toStream:os
-                                                               options:kNilOptions
-                                                                 error:&writeError];
-        [os close];
         
-        BOOL fileWriteResult = bytesWritten > 0 && !writeError;
+        // Cancel serialization if a new metadata version is queued to be saved
+        if (metadataVersion != __metadataVersion) {
+            return;
+        }
+        
+        NSData *data = [NSJSONSerialization dataWithJSONObject:metadataDictionary
+                                                       options:kNilOptions
+                                                         error:&writeError];
+        
+        // Cancel disk writing if a new metadata version is queued to be saved
+        if (metadataVersion != __metadataVersion) {
+            return;
+        }
+        
+        BOOL fileWriteResult = [data writeToFile:[self metadataFilePath] atomically:NO];
         if (fileWriteResult == NO) {
             NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s couldn't write metadata for format %@", __PRETTY_FUNCTION__, [_imageFormat name]];
             [self.imageCache _logMessage:message];
