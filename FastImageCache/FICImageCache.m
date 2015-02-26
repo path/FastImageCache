@@ -78,7 +78,7 @@ static FICImageCache *__imageCache = nil;
     return __imageCacheDispatchQueue;
 }
 
-- (id)init {
+- (instancetype)init {
     return [self initWithNameSpace:@"FICDefaultNamespace"];
 }
 
