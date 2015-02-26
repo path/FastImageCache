@@ -61,7 +61,7 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
  @see [FICImageCache dispatchQueue]
  */
 
-- (instancetype) initWithNameSpace:(NSString *)nameSpace;
+- (instancetype)initWithNameSpace:(NSString *)nameSpace;
 
 ///---------------------------------------
 /// @name Accessing the Shared Image Cache
