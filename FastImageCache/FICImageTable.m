@@ -81,14 +81,14 @@ static NSString *const FICImageTableFormatKey = @"format";
 
 - (NSString *)tableFilePath {
     NSString *tableFilePath = [[_imageFormat name] stringByAppendingPathExtension:FICImageTableFileExtension];
-    tableFilePath = [[FICImageTable directoryPath] stringByAppendingPathComponent:tableFilePath];
+    tableFilePath = [[self directoryPath] stringByAppendingPathComponent:tableFilePath];
     
     return tableFilePath;
 }
 
 - (NSString *)metadataFilePath {
     NSString *metadataFilePath = [[_imageFormat name] stringByAppendingPathExtension:FICImageTableMetadataFileExtension];
-    metadataFilePath = [[FICImageTable directoryPath] stringByAppendingPathComponent:metadataFilePath];
+    metadataFilePath = [[self directoryPath] stringByAppendingPathComponent:metadataFilePath];
     
     return metadataFilePath;
 }
@@ -107,21 +107,44 @@ static NSString *const FICImageTableFormatKey = @"format";
 }
 
 + (NSString *)directoryPath {
-    static NSString *__directoryPath = nil;
-    
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-        __directoryPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"ImageTables"];
+    return [self directoryPathForIdentifier:nil];
+}
+
++ (NSString *)directoryPathForIdentifier:(NSString *)identifier {
+    if (identifier == nil) {
+        static NSString *__directoryPath = nil;
         
-        NSFileManager *fileManager = [[NSFileManager alloc] init];
-        BOOL directoryExists = [fileManager fileExistsAtPath:__directoryPath];
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+            __directoryPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"ImageTables"];
+            
+            NSFileManager *fileManager = [NSFileManager defaultManager];
+            BOOL directoryExists = [fileManager fileExistsAtPath:__directoryPath];
+            if (directoryExists == NO) {
+                [fileManager createDirectoryAtPath:__directoryPath withIntermediateDirectories:YES attributes:nil error:nil];
+            }
+        });
+        
+        return __directoryPath;
+    } else {
+        NSString *directoryPath = nil;
+        
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        directoryPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@ImageTables", identifier]];
+        
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        BOOL directoryExists = [fileManager fileExistsAtPath:directoryPath];
         if (directoryExists == NO) {
-            [fileManager createDirectoryAtPath:__directoryPath withIntermediateDirectories:YES attributes:nil error:nil];
+            [fileManager createDirectoryAtPath:directoryPath withIntermediateDirectories:YES attributes:nil error:nil];
         }
-    });
-    
-    return __directoryPath;
+        
+        return directoryPath;
+    }
+}
+
+- (NSString *)directoryPath {
+    return [FICImageTable directoryPathForIdentifier:self.imageCache.identifier];
 }
 
 #pragma mark - Object Lifecycle

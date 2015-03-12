@@ -20,9 +20,9 @@
     FICDTableView *_tableView;
     NSArray *_photos;
     
-    NSString *_imageFormatName;
     NSArray *_imageFormatStyleToolbarItems;
     
+    FICImageCache *_imageCache;
     BOOL _usesImageTable;
     BOOL _shouldReloadTableViewAfterScrollingAnimationEnds;
     BOOL _shouldResetData;
@@ -30,6 +30,7 @@
     NSInteger _callbackCount;
     UIAlertView *_noImagesAlertView;
     UILabel *_averageFPSLabel;
+    UISegmentedControl *_imageFormatStyleSegmentedControl;
 }
 
 @end
@@ -37,6 +38,34 @@
 #pragma mark
 
 @implementation FICDViewController
+
+- ( NSString *)_imageFormatName {
+    NSInteger selectedSegmentedControlIndex = [_imageFormatStyleSegmentedControl selectedSegmentIndex];
+    
+    if (_imageCache == [FICImageCache sharedImageCache]) {
+        if (selectedSegmentedControlIndex == 0) {
+            return FICDPhotoSquareImage32BitBGRAFormatName;
+        } else if (selectedSegmentedControlIndex == 1) {
+            return FICDPhotoSquareImage32BitBGRFormatName;
+        } else if (selectedSegmentedControlIndex == 2) {
+            return FICDPhotoSquareImage16BitBGRFormatName;
+        } else if (selectedSegmentedControlIndex == 3) {
+            return FICDPhotoSquareImage8BitGrayscaleFormatName;
+        }
+    } else {
+        if (selectedSegmentedControlIndex == 0) {
+            return FICDPhotoSquareImage32BitBGRACustomFormatName;
+        } else if (selectedSegmentedControlIndex == 1) {
+            return FICDPhotoSquareImage32BitBGRCustomFormatName;
+        } else if (selectedSegmentedControlIndex == 2) {
+            return FICDPhotoSquareImage16BitBGRCustomFormatName;
+        } else if (selectedSegmentedControlIndex == 3) {
+            return FICDPhotoSquareImage8BitGrayscaleCustomFormatName;
+        }
+    }
+    
+    return nil;
+}
 
 #pragma mark - Object Lifecycle
 
@@ -113,7 +142,7 @@
     UIBarButtonItem *resetBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Reset" style:UIBarButtonItemStyleBordered target:self action:@selector(_reset)];
     [navigationItem setLeftBarButtonItem:resetBarButtonItem];
     
-    UISegmentedControl *methodSegmentedControl = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Conventional", @"Image Table", nil]];
+    UISegmentedControl *methodSegmentedControl = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Conventional", @"Image Table", @"Identifier", nil]];
     [methodSegmentedControl setSelectedSegmentIndex:0];
     [methodSegmentedControl addTarget:self action:@selector(_methodSegmentedControlValueChanged:) forControlEvents:UIControlEventValueChanged];
     [methodSegmentedControl setSegmentedControlStyle:UISegmentedControlStyleBar];
@@ -149,14 +178,14 @@
             imageFormatStyleSegmentedControlTitles = [NSArray arrayWithObjects:@"32-bit BGRA", @"32-bit BGR", @"16-bit BGR", @"8-bit Grayscale", nil];
         }
         
-        UISegmentedControl *imageFormatStyleSegmentedControl = [[UISegmentedControl alloc] initWithItems:imageFormatStyleSegmentedControlTitles];
-        [imageFormatStyleSegmentedControl setSelectedSegmentIndex:0];
-        [imageFormatStyleSegmentedControl addTarget:self action:@selector(_imageFormatStyleSegmentedControlValueChanged:) forControlEvents:UIControlEventValueChanged];
-        [imageFormatStyleSegmentedControl setSegmentedControlStyle:UISegmentedControlStyleBar];
-        [imageFormatStyleSegmentedControl setApportionsSegmentWidthsByContent:userInterfaceIdiomIsPhone];
-        [imageFormatStyleSegmentedControl sizeToFit];
+        _imageFormatStyleSegmentedControl = [[UISegmentedControl alloc] initWithItems:imageFormatStyleSegmentedControlTitles];
+        [_imageFormatStyleSegmentedControl setSelectedSegmentIndex:0];
+        [_imageFormatStyleSegmentedControl addTarget:self action:@selector(_imageFormatStyleSegmentedControlValueChanged:) forControlEvents:UIControlEventValueChanged];
+        [_imageFormatStyleSegmentedControl setSegmentedControlStyle:UISegmentedControlStyleBar];
+        [_imageFormatStyleSegmentedControl setApportionsSegmentWidthsByContent:userInterfaceIdiomIsPhone];
+        [_imageFormatStyleSegmentedControl sizeToFit];
         
-        UIBarButtonItem *imageFormatStyleSegmentedControlToolbarItem = [[UIBarButtonItem alloc] initWithCustomView:imageFormatStyleSegmentedControl];
+        UIBarButtonItem *imageFormatStyleSegmentedControlToolbarItem = [[UIBarButtonItem alloc] initWithCustomView:_imageFormatStyleSegmentedControl];
         [mutableImageFormatStyleToolbarItems addObject:imageFormatStyleSegmentedControlToolbarItem];
         
         [mutableImageFormatStyleToolbarItems addObject:flexibleSpaceToolbarItem];
@@ -165,8 +194,6 @@
     }
     
     [self setToolbarItems:_imageFormatStyleToolbarItems];
-    
-    _imageFormatName = FICDPhotoSquareImage32BitBGRAFormatName;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -204,18 +231,23 @@
     }
     
     if (_shouldReloadTableViewAfterScrollingAnimationEnds == NO) {
+        _usesImageTable = _selectedMethodSegmentControlIndex > 0;
+        if (_selectedMethodSegmentControlIndex == 1) {
+            _imageCache = [FICImageCache sharedImageCache];
+        } else if (_selectedMethodSegmentControlIndex == 2) {
+            _imageCache = self.customImageCache;
+        }
+        
         // Reset the data now
         if (_shouldResetData) {
             _shouldResetData = NO;
-            [[FICImageCache sharedImageCache] reset];
+            [_imageCache reset];
             
             // Delete all cached thumbnail images as well
             for (FICDPhoto *photo in _photos) {
                 [photo deleteThumbnail];
             }
         }
-        
-        _usesImageTable = _selectedMethodSegmentControlIndex == 1;
         
         [[self navigationController] setToolbarHidden:(_usesImageTable == NO) animated:YES];
         
@@ -242,9 +274,8 @@
                 NSSet *uniquePhotos = [NSSet setWithArray:_photos];
                 for (FICDPhoto *photo in uniquePhotos) {
                     CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
-                    FICImageCache *sharedImageCache = [FICImageCache sharedImageCache];
                     
-                    if ([sharedImageCache imageExistsForEntity:photo withFormatName:_imageFormatName] == NO) {
+                    if ([_imageCache imageExistsForEntity:photo withFormatName:[self _imageFormatName]] == NO) {
                         if (_callbackCount == 0) {
                             NSLog(@"*** FIC Demo: Fast Image Cache: Generating thumbnails...");
                             
@@ -257,7 +288,7 @@
                         
                         _callbackCount++;
                         
-                        [sharedImageCache asynchronouslyRetrieveImageForEntity:photo withFormatName:_imageFormatName completionBlock:^(id<FICEntity> entity, NSString *formatName, UIImage *image) {
+                        [_imageCache asynchronouslyRetrieveImageForEntity:photo withFormatName:[self _imageFormatName] completionBlock:^(id<FICEntity> entity, NSString *formatName, UIImage *image) {
                             _callbackCount--;
                             
                             if (_callbackCount == 0) {
@@ -297,18 +328,6 @@
 }
 
 - (void)_imageFormatStyleSegmentedControlValueChanged:(UISegmentedControl *)segmentedControl {
-    NSInteger selectedSegmentedControlIndex = [segmentedControl selectedSegmentIndex];
-    
-    if (selectedSegmentedControlIndex == 0) {
-        _imageFormatName = FICDPhotoSquareImage32BitBGRAFormatName;
-    } else if (selectedSegmentedControlIndex == 1) {
-        _imageFormatName = FICDPhotoSquareImage32BitBGRFormatName;
-    } else if (selectedSegmentedControlIndex == 2) {
-        _imageFormatName = FICDPhotoSquareImage16BitBGRFormatName;
-    } else if (selectedSegmentedControlIndex == 3) {
-        _imageFormatName = FICDPhotoSquareImage8BitGrayscaleFormatName;
-    }
-    
     [self reloadTableViewAndScrollToTop:NO];
 }
 
@@ -471,7 +490,8 @@ static BOOL _FICDImageIsLight(UIImage *image) {
     }
     
     [tableViewCell setDelegate:self];
-    [tableViewCell setImageFormatName:_imageFormatName];
+    [tableViewCell setImageFormatName:[self _imageFormatName]];
+    [tableViewCell setImageCache:_imageCache];
     
     NSInteger photosPerRow = [FICDPhotosTableViewCell photosPerRow];
     NSInteger startIndex = [indexPath row] * photosPerRow;
@@ -534,7 +554,7 @@ static BOOL _FICDImageIsLight(UIImage *image) {
 #pragma mark - FICDPhotosTableViewCellDelegate
 
 - (void)photosTableViewCell:(FICDPhotosTableViewCell *)photosTableViewCell didSelectPhoto:(FICDPhoto *)photo withImageView:(UIImageView *)imageView {
-    [[FICDFullscreenPhotoDisplayController sharedDisplayController] showFullscreenPhoto:photo forImageFormatName:_imageFormatName withThumbnailImageView:imageView];
+    [[FICDFullscreenPhotoDisplayController sharedDisplayController] showFullscreenPhoto:photo forImageFormatName:[self _imageFormatName] withThumbnailImageView:imageView];
 }
 
 #pragma mark - FICDFullscreenPhotoDisplayControllerDelegate
