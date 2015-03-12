@@ -81,16 +81,24 @@ static NSString *const FICImageTableFormatKey = @"format";
 
 - (NSString *)tableFilePath {
     NSString *tableFilePath = [[_imageFormat name] stringByAppendingPathExtension:FICImageTableFileExtension];
-    tableFilePath = [[FICImageTable directoryPath] stringByAppendingPathComponent:tableFilePath];
+    tableFilePath = [[self directoryPath] stringByAppendingPathComponent:tableFilePath];
     
     return tableFilePath;
 }
 
 - (NSString *)metadataFilePath {
     NSString *metadataFilePath = [[_imageFormat name] stringByAppendingPathExtension:FICImageTableMetadataFileExtension];
-    metadataFilePath = [[FICImageTable directoryPath] stringByAppendingPathComponent:metadataFilePath];
+    metadataFilePath = [[self directoryPath] stringByAppendingPathComponent:metadataFilePath];
     
     return metadataFilePath;
+}
+
+- (NSString *) directoryPath {
+    NSString *directoryPath = [FICImageTable directoryPath];
+    if (self.imageCache.nameSpace) {
+        directoryPath = [directoryPath stringByAppendingPathComponent:self.imageCache.nameSpace];
+    }
+    return directoryPath;
 }
 
 #pragma mark - Class-Level Definitions
@@ -167,7 +175,15 @@ static NSString *const FICImageTableFormatKey = @"format";
         
         [self _loadMetadata];
         
+        NSString *directoryPath = [self directoryPath];
+        
         NSFileManager *fileManager = [[NSFileManager alloc] init];
+        
+        BOOL isDirectory;
+        if (self.imageCache.nameSpace && ![fileManager fileExistsAtPath:directoryPath isDirectory:&isDirectory]) {
+            [fileManager createDirectoryAtPath:directoryPath withIntermediateDirectories:YES attributes:nil error:nil];
+        }
+        
         if ([fileManager fileExistsAtPath:_filePath] == NO) {
             NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
             [attributes setValue:[_imageFormat protectionModeString] forKeyPath:NSFileProtectionKey];
@@ -686,7 +702,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
 }
 
 - (void)_loadMetadata {
-    NSString *metadataFilePath = [[_filePath stringByDeletingPathExtension] stringByAppendingPathExtension:FICImageTableMetadataFileExtension];
+    NSString *metadataFilePath = [self metadataFilePath];
     NSData *metadataData = [NSData dataWithContentsOfURL:[NSURL fileURLWithPath:metadataFilePath] options:NSDataReadingMappedAlways error:NULL];
     if (metadataData != nil) {
         NSDictionary *metadataDictionary = (NSDictionary *)[NSPropertyListSerialization propertyListWithData:metadataData options:0 format:NULL error:NULL];

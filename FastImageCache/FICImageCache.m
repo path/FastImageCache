@@ -78,13 +78,17 @@ static FICImageCache *__imageCache = nil;
     return __imageCacheDispatchQueue;
 }
 
-- (id)init {
+- (instancetype)init {
+    return [self initWithNameSpace:@"FICDefaultNamespace"];
+}
+
+- (instancetype)initWithNameSpace:(NSString *)nameSpace {
     self = [super init];
-    
-    if (self != nil) {
+    if (self) {
         _formats = [[NSMutableDictionary alloc] init];
         _imageTables = [[NSMutableDictionary alloc] init];
         _requests = [[NSMutableDictionary alloc] init];
+        _nameSpace = nameSpace;
     }
     return self;
 }
@@ -114,6 +118,9 @@ static FICImageCache *__imageCache = nil;
         // Remove any extraneous files in the image tables directory
         NSFileManager *fileManager = [NSFileManager defaultManager];
         NSString *directoryPath = [FICImageTable directoryPath];
+        if (self.nameSpace) {
+            directoryPath = [directoryPath stringByAppendingPathComponent:self.nameSpace];
+        }
         NSArray *fileNames = [fileManager contentsOfDirectoryAtPath:directoryPath error:nil];
         for (NSString *fileName in fileNames) {
             if ([imageTableFiles containsObject:fileName] == NO) {
