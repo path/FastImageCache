@@ -347,8 +347,8 @@ static NSString *const FICImageTableFormatKey = @"format";
         if (entryData != nil) {
             NSString *entryEntityUUID = FICStringWithUUIDBytes([entryData entityUUIDBytes]);
             NSString *entrySourceImageUUID = FICStringWithUUIDBytes([entryData sourceImageUUIDBytes]);
-            BOOL entityUUIDIsCorrect = entityUUID == nil || [entityUUID isEqualToString:entryEntityUUID];
-            BOOL sourceImageUUIDIsCorrect = sourceImageUUID == nil || [sourceImageUUID isEqualToString:entrySourceImageUUID];
+            BOOL entityUUIDIsCorrect = entityUUID == nil || [entityUUID caseInsensitiveCompare:entryEntityUUID] == NSOrderedSame;
+            BOOL sourceImageUUIDIsCorrect = sourceImageUUID == nil || [sourceImageUUID caseInsensitiveCompare:entrySourceImageUUID] == NSOrderedSame;
             
             NSNumber *indexNumber = [self _numberForEntryAtIndex:[entryData index]];
             @synchronized(indexNumber) {
