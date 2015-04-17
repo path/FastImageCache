@@ -73,7 +73,11 @@ typedef void (^FICEntityImageDrawingBlock)(CGContextRef context, CGSize contextS
  
  @note This block will always be called from the serial dispatch queue used by the image cache.
  */
+#if TARGET_OS_IPHONE
 - (FICEntityImageDrawingBlock)drawingBlockForImage:(UIImage *)image withFormatName:(NSString *)formatName;
+#else
+- (FICEntityImageDrawingBlock)drawingBlockForImage:(NSImage *)image withFormatName:(NSString *)formatName;
+#endif
 
 @optional
 /**
@@ -81,6 +85,10 @@ typedef void (^FICEntityImageDrawingBlock)(CGContextRef context, CGSize contextS
  
  @param format The image format that identifies which image table is requesting the source image.
  */
+#if TARGET_OS_IPHONE
 - (UIImage *)imageForFormat:(FICImageFormat *)format;
+#else
+- (NSImage *)imageForFormat:(FICImageFormat *)format;
+#endif
 
 @end

@@ -100,11 +100,18 @@ static FICImageCache *__imageCache = nil;
         [self _logMessage:[NSString stringWithFormat:@"*** FIC Error: %s FICImageCache has already been configured with its image formats.", __PRETTY_FUNCTION__]];
     } else {
         NSMutableSet *imageTableFiles = [NSMutableSet set];
+#if TARGET_OS_IPHONE
         FICImageFormatDevices currentDevice = [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad ? FICImageFormatDevicePad : FICImageFormatDevicePhone;
+#else
+#endif
         for (FICImageFormat *imageFormat in formats) {
             NSString *formatName = [imageFormat name];
+#if TARGET_OS_IPHONE
             FICImageFormatDevices devices = [imageFormat devices];
-            if (devices & currentDevice) {
+            if (devices & currentDevice)
+#else
+#endif
+            {
                 // Only initialize an image table for this format if it is needed on the current device.
                 FICImageTable *imageTable = [[FICImageTable alloc] initWithFormat:imageFormat imageCache:self];
                 [_imageTables setObject:imageTable forKey:formatName];
@@ -172,7 +179,11 @@ static FICImageCache *__imageCache = nil;
         imageExists = YES;
         
         dispatch_async([FICImageCache dispatchQueue], ^{
+#if TARGET_OS_IPHONE
             UIImage *image = [imageTable newImageForEntityUUID:entityUUID sourceImageUUID:sourceImageUUID preheatData:YES];
+#else
+            NSImage *image = [imageTable newImageForEntityUUID:entityUUID sourceImageUUID:sourceImageUUID preheatData:YES];
+#endif
             
             if (completionBlock != nil) {
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -181,7 +192,11 @@ static FICImageCache *__imageCache = nil;
             }
         });
     } else {
+#if TARGET_OS_IPHONE
         UIImage *image = [imageTable newImageForEntityUUID:entityUUID sourceImageUUID:sourceImageUUID preheatData:NO];
+#else
+        NSImage *image = [imageTable newImageForEntityUUID:entityUUID sourceImageUUID:sourceImageUUID preheatData:NO];
+#endif
         imageExists = image != nil;
         
         dispatch_block_t completionBlockCallingBlock = ^{
@@ -209,7 +224,11 @@ static FICImageCache *__imageCache = nil;
                     [_requests setObject:requestDictionary forKey:sourceImageURL];
                     
                     _FICAddCompletionBlockForEntity(formatName, requestDictionary, entity, completionBlock);
+#if TARGET_OS_IPHONE
                     UIImage *image;
+#else
+                    NSImage *image;
+#endif
                     if ([entity respondsToSelector:@selector(imageForFormat:)]){
                         FICImageFormat *format = [self formatWithName:formatName];
                         image = [entity imageForFormat:format];
@@ -218,9 +237,15 @@ static FICImageCache *__imageCache = nil;
                     if (image){
                         [self _imageDidLoad:image forURL:sourceImageURL];
                     } else if (_delegateImplementsWantsSourceImageForEntityWithFormatNameCompletionBlock){
+#if TARGET_OS_IPHONE
                         [_delegate imageCache:self wantsSourceImageForEntity:entity withFormatName:formatName completionBlock:^(UIImage *sourceImage) {
-                        [self _imageDidLoad:sourceImage forURL:sourceImageURL];
+                            [self _imageDidLoad:sourceImage forURL:sourceImageURL];
                         }];
+#else
+                        [_delegate imageCache:self wantsSourceImageForEntity:entity withFormatName:formatName completionBlock:^(NSImage *sourceImage) {
+                            [self _imageDidLoad:sourceImage forURL:sourceImageURL];
+                        }];
+#endif
                     }
                 } else {
                     // We have an existing request dictionary, which means this URL is currently being fetched.
@@ -240,7 +265,12 @@ static FICImageCache *__imageCache = nil;
     return imageExists;
 }
 
-- (void)_imageDidLoad:(UIImage *)image forURL:(NSURL *)URL {
+#if TARGET_OS_IPHONE
+- (void)_imageDidLoad:(UIImage *)image forURL:(NSURL *)URL
+#else
+- (void)_imageDidLoad:(NSImage *)image forURL:(NSURL *)URL
+#endif
+{
     NSDictionary *requestDictionary = [_requests objectForKey:URL];
     if (requestDictionary != nil) {
         for (NSMutableDictionary *entityDictionary in [requestDictionary allValues]) {
@@ -299,7 +329,12 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
 
 #pragma mark - Storing Images
 
-- (void)setImage:(UIImage *)image forEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName completionBlock:(FICImageCacheCompletionBlock)completionBlock {
+#if TARGET_OS_IPHONE
+- (void)setImage:(UIImage *)image forEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName completionBlock:(FICImageCacheCompletionBlock)completionBlock
+#else
+- (void)setImage:(NSImage *)image forEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName completionBlock:(FICImageCacheCompletionBlock)completionBlock
+#endif
+{
     if (image != nil && entity != nil) {
         NSDictionary *completionBlocksDictionary = nil;
         
@@ -319,7 +354,12 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
     }
 }
 
-- (void)_processImage:(UIImage *)image forEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName completionBlocksDictionary:(NSDictionary *)completionBlocksDictionary {
+#if TARGET_OS_IPHONE
+- (void)_processImage:(UIImage *)image forEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName completionBlocksDictionary:(NSDictionary *)completionBlocksDictionary
+#else
+- (void)_processImage:(NSImage *)image forEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName completionBlocksDictionary:(NSDictionary *)completionBlocksDictionary
+#endif
+{
     FICImageFormat *imageFormat = [_formats objectForKey:formatName];
     NSString *formatFamily = [imageFormat family];
     NSString *entityUUID = [entity UUID];
@@ -351,7 +391,12 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
     }
 }
 
-- (void)_processImage:(UIImage *)image forEntity:(id <FICEntity>)entity imageTable:(FICImageTable *)imageTable completionBlocks:(NSArray *)completionBlocks {
+#if TARGET_OS_IPHONE
+- (void)_processImage:(UIImage *)image forEntity:(id <FICEntity>)entity imageTable:(FICImageTable *)imageTable completionBlocks:(NSArray *)completionBlocks
+#else
+- (void)_processImage:(NSImage *)image forEntity:(id <FICEntity>)entity imageTable:(FICImageTable *)imageTable completionBlocks:(NSArray *)completionBlocks
+#endif
+{
     if (imageTable != nil) {
         if ([entity UUID] == nil) {
             [self _logMessage:[NSString stringWithFormat:@"*** FIC Error: %s entity %@ is missing its UUID.", __PRETTY_FUNCTION__, entity]];
@@ -372,7 +417,11 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
         dispatch_async([FICImageCache dispatchQueue], ^{
             [imageTable setEntryForEntityUUID:entityUUID sourceImageUUID:sourceImageUUID imageDrawingBlock:imageDrawingBlock];
 
+#if TARGET_OS_IPHONE
             UIImage *resultImage = [imageTable newImageForEntityUUID:entityUUID sourceImageUUID:sourceImageUUID preheatData:NO];
+#else
+            NSImage *resultImage = [imageTable newImageForEntityUUID:entityUUID sourceImageUUID:sourceImageUUID preheatData:NO];
+#endif
             
             if (completionBlocks != nil) {
                 dispatch_async(dispatch_get_main_queue(), ^{

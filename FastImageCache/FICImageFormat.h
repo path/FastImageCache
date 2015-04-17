@@ -10,10 +10,12 @@
 
 @class FICImageTable;
 
+#if TARGET_OS_IPHONE
 typedef NS_OPTIONS(NSUInteger, FICImageFormatDevices) {
     FICImageFormatDevicePhone = 1 << UIUserInterfaceIdiomPhone,
     FICImageFormatDevicePad = 1 << UIUserInterfaceIdiomPad,
 };
+#endif
 
 typedef NS_ENUM(NSUInteger, FICImageFormatStyle) {
     FICImageFormatStyle32BitBGRA,
@@ -91,12 +93,14 @@ typedef NS_ENUM(NSUInteger, FICImageFormatProtectionMode) {
  */
 @property (nonatomic, assign) NSInteger maximumCount;
 
+#if TARGET_OS_IPHONE
 /**
  A bitmask of type `<FICImageFormatDevices>` that defines which devices are managed by an image table.
  
  @discussion If the current device is not included in a particular image format, the image cache will not store image data for that device.
  */
 @property (nonatomic, assign) FICImageFormatDevices devices;
+#endif
 
 /**
  The size, in pixels, of the images stored in the image table created by this format. This takes into account the screen scale.
@@ -177,6 +181,10 @@ typedef NS_ENUM(NSUInteger, FICImageFormatProtectionMode) {
  
  @return An autoreleased instance of `FICImageFormat` or one of its subclasses, if any exist.
  */
+#if TARGET_OS_IPHONE
 + (instancetype)formatWithName:(NSString *)name family:(NSString *)family imageSize:(CGSize)imageSize style:(FICImageFormatStyle)style maximumCount:(NSInteger)maximumCount devices:(FICImageFormatDevices)devices protectionMode:(FICImageFormatProtectionMode)protectionMode;
+#else
++ (instancetype)formatWithName:(NSString *)name family:(NSString *)family imageSize:(CGSize)imageSize style:(FICImageFormatStyle)style maximumCount:(NSInteger)maximumCount;
+#endif
 
 @end
