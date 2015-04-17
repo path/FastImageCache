@@ -12,13 +12,13 @@
 		0C3E6AB91AE0859F00121378 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C3E6AB81AE0859F00121378 /* Images.xcassets */; };
 		0C3E6ABC1AE0859F00121378 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0C3E6ABA1AE0859F00121378 /* MainMenu.xib */; };
 		0C3E6AC81AE0859F00121378 /* FastImageCacheOSXDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C3E6AC71AE0859F00121378 /* FastImageCacheOSXDemoTests.m */; };
-		0C3E6AE11AE085AC00121378 /* FICImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C3E6AD51AE085AC00121378 /* FICImageCache.m */; };
-		0C3E6AE21AE085AC00121378 /* FICImageFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C3E6AD71AE085AC00121378 /* FICImageFormat.m */; };
-		0C3E6AE31AE085AC00121378 /* FICImageTable.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C3E6AD91AE085AC00121378 /* FICImageTable.m */; };
-		0C3E6AE41AE085AC00121378 /* FICImageTableChunk.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C3E6ADB1AE085AC00121378 /* FICImageTableChunk.m */; };
-		0C3E6AE51AE085AC00121378 /* FICImageTableEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C3E6ADD1AE085AC00121378 /* FICImageTableEntry.m */; };
-		0C3E6AE61AE085AC00121378 /* FICUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C3E6AE01AE085AC00121378 /* FICUtilities.m */; };
 		0C3E6AE91AE08A7B00121378 /* FICDPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C3E6AE81AE08A7B00121378 /* FICDPhoto.m */; };
+		A79EA5DE1AE0B187008B64D1 /* FICImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = A79EA5D21AE0B187008B64D1 /* FICImageCache.m */; };
+		A79EA5DF1AE0B187008B64D1 /* FICImageFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = A79EA5D41AE0B187008B64D1 /* FICImageFormat.m */; };
+		A79EA5E01AE0B187008B64D1 /* FICImageTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A79EA5D61AE0B187008B64D1 /* FICImageTable.m */; };
+		A79EA5E11AE0B187008B64D1 /* FICImageTableChunk.m in Sources */ = {isa = PBXBuildFile; fileRef = A79EA5D81AE0B187008B64D1 /* FICImageTableChunk.m */; };
+		A79EA5E21AE0B187008B64D1 /* FICImageTableEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = A79EA5DA1AE0B187008B64D1 /* FICImageTableEntry.m */; };
+		A79EA5E31AE0B187008B64D1 /* FICUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = A79EA5DD1AE0B187008B64D1 /* FICUtilities.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,23 +42,23 @@
 		0C3E6AC11AE0859F00121378 /* FastImageCacheOSXDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FastImageCacheOSXDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C3E6AC61AE0859F00121378 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0C3E6AC71AE0859F00121378 /* FastImageCacheOSXDemoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FastImageCacheOSXDemoTests.m; sourceTree = "<group>"; };
-		0C3E6AD21AE085AC00121378 /* FICEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICEntity.h; sourceTree = "<group>"; };
-		0C3E6AD31AE085AC00121378 /* FICImageCache+FICErrorLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FICImageCache+FICErrorLogging.h"; sourceTree = "<group>"; };
-		0C3E6AD41AE085AC00121378 /* FICImageCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImageCache.h; sourceTree = "<group>"; };
-		0C3E6AD51AE085AC00121378 /* FICImageCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICImageCache.m; sourceTree = "<group>"; };
-		0C3E6AD61AE085AC00121378 /* FICImageFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImageFormat.h; sourceTree = "<group>"; };
-		0C3E6AD71AE085AC00121378 /* FICImageFormat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICImageFormat.m; sourceTree = "<group>"; };
-		0C3E6AD81AE085AC00121378 /* FICImageTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImageTable.h; sourceTree = "<group>"; };
-		0C3E6AD91AE085AC00121378 /* FICImageTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICImageTable.m; sourceTree = "<group>"; };
-		0C3E6ADA1AE085AC00121378 /* FICImageTableChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImageTableChunk.h; sourceTree = "<group>"; };
-		0C3E6ADB1AE085AC00121378 /* FICImageTableChunk.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICImageTableChunk.m; sourceTree = "<group>"; };
-		0C3E6ADC1AE085AC00121378 /* FICImageTableEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImageTableEntry.h; sourceTree = "<group>"; };
-		0C3E6ADD1AE085AC00121378 /* FICImageTableEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICImageTableEntry.m; sourceTree = "<group>"; };
-		0C3E6ADE1AE085AC00121378 /* FICImports.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImports.h; sourceTree = "<group>"; };
-		0C3E6ADF1AE085AC00121378 /* FICUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICUtilities.h; sourceTree = "<group>"; };
-		0C3E6AE01AE085AC00121378 /* FICUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICUtilities.m; sourceTree = "<group>"; };
 		0C3E6AE71AE08A7B00121378 /* FICDPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICDPhoto.h; sourceTree = "<group>"; };
 		0C3E6AE81AE08A7B00121378 /* FICDPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICDPhoto.m; sourceTree = "<group>"; };
+		A79EA5CF1AE0B187008B64D1 /* FICEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICEntity.h; sourceTree = "<group>"; };
+		A79EA5D01AE0B187008B64D1 /* FICImageCache+FICErrorLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FICImageCache+FICErrorLogging.h"; sourceTree = "<group>"; };
+		A79EA5D11AE0B187008B64D1 /* FICImageCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImageCache.h; sourceTree = "<group>"; };
+		A79EA5D21AE0B187008B64D1 /* FICImageCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICImageCache.m; sourceTree = "<group>"; };
+		A79EA5D31AE0B187008B64D1 /* FICImageFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImageFormat.h; sourceTree = "<group>"; };
+		A79EA5D41AE0B187008B64D1 /* FICImageFormat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICImageFormat.m; sourceTree = "<group>"; };
+		A79EA5D51AE0B187008B64D1 /* FICImageTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImageTable.h; sourceTree = "<group>"; };
+		A79EA5D61AE0B187008B64D1 /* FICImageTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICImageTable.m; sourceTree = "<group>"; };
+		A79EA5D71AE0B187008B64D1 /* FICImageTableChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImageTableChunk.h; sourceTree = "<group>"; };
+		A79EA5D81AE0B187008B64D1 /* FICImageTableChunk.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICImageTableChunk.m; sourceTree = "<group>"; };
+		A79EA5D91AE0B187008B64D1 /* FICImageTableEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImageTableEntry.h; sourceTree = "<group>"; };
+		A79EA5DA1AE0B187008B64D1 /* FICImageTableEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICImageTableEntry.m; sourceTree = "<group>"; };
+		A79EA5DB1AE0B187008B64D1 /* FICImports.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImports.h; sourceTree = "<group>"; };
+		A79EA5DC1AE0B187008B64D1 /* FICUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICUtilities.h; sourceTree = "<group>"; };
+		A79EA5DD1AE0B187008B64D1 /* FICUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICUtilities.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,7 +82,6 @@
 		0C3E6AA51AE0859F00121378 = {
 			isa = PBXGroup;
 			children = (
-				0C3E6AD11AE085AC00121378 /* FastImageCache */,
 				0C3E6AB01AE0859F00121378 /* FastImageCacheOSXDemo */,
 				0C3E6AC41AE0859F00121378 /* FastImageCacheOSXDemoTests */,
 				0C3E6AAF1AE0859F00121378 /* Products */,
@@ -101,6 +100,7 @@
 		0C3E6AB01AE0859F00121378 /* FastImageCacheOSXDemo */ = {
 			isa = PBXGroup;
 			children = (
+				A79EA5CE1AE0B187008B64D1 /* FastImageCache */,
 				0C3E6AE71AE08A7B00121378 /* FICDPhoto.h */,
 				0C3E6AE81AE08A7B00121378 /* FICDPhoto.m */,
 				0C3E6AB31AE0859F00121378 /* AppDelegate.h */,
@@ -138,27 +138,27 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		0C3E6AD11AE085AC00121378 /* FastImageCache */ = {
+		A79EA5CE1AE0B187008B64D1 /* FastImageCache */ = {
 			isa = PBXGroup;
 			children = (
-				0C3E6AD21AE085AC00121378 /* FICEntity.h */,
-				0C3E6AD31AE085AC00121378 /* FICImageCache+FICErrorLogging.h */,
-				0C3E6AD41AE085AC00121378 /* FICImageCache.h */,
-				0C3E6AD51AE085AC00121378 /* FICImageCache.m */,
-				0C3E6AD61AE085AC00121378 /* FICImageFormat.h */,
-				0C3E6AD71AE085AC00121378 /* FICImageFormat.m */,
-				0C3E6AD81AE085AC00121378 /* FICImageTable.h */,
-				0C3E6AD91AE085AC00121378 /* FICImageTable.m */,
-				0C3E6ADA1AE085AC00121378 /* FICImageTableChunk.h */,
-				0C3E6ADB1AE085AC00121378 /* FICImageTableChunk.m */,
-				0C3E6ADC1AE085AC00121378 /* FICImageTableEntry.h */,
-				0C3E6ADD1AE085AC00121378 /* FICImageTableEntry.m */,
-				0C3E6ADE1AE085AC00121378 /* FICImports.h */,
-				0C3E6ADF1AE085AC00121378 /* FICUtilities.h */,
-				0C3E6AE01AE085AC00121378 /* FICUtilities.m */,
+				A79EA5CF1AE0B187008B64D1 /* FICEntity.h */,
+				A79EA5D01AE0B187008B64D1 /* FICImageCache+FICErrorLogging.h */,
+				A79EA5D11AE0B187008B64D1 /* FICImageCache.h */,
+				A79EA5D21AE0B187008B64D1 /* FICImageCache.m */,
+				A79EA5D31AE0B187008B64D1 /* FICImageFormat.h */,
+				A79EA5D41AE0B187008B64D1 /* FICImageFormat.m */,
+				A79EA5D51AE0B187008B64D1 /* FICImageTable.h */,
+				A79EA5D61AE0B187008B64D1 /* FICImageTable.m */,
+				A79EA5D71AE0B187008B64D1 /* FICImageTableChunk.h */,
+				A79EA5D81AE0B187008B64D1 /* FICImageTableChunk.m */,
+				A79EA5D91AE0B187008B64D1 /* FICImageTableEntry.h */,
+				A79EA5DA1AE0B187008B64D1 /* FICImageTableEntry.m */,
+				A79EA5DB1AE0B187008B64D1 /* FICImports.h */,
+				A79EA5DC1AE0B187008B64D1 /* FICUtilities.h */,
+				A79EA5DD1AE0B187008B64D1 /* FICUtilities.m */,
 			);
 			name = FastImageCache;
-			path = ../FastImageCache;
+			path = ../../FastImageCache;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -260,14 +260,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C3E6AE91AE08A7B00121378 /* FICDPhoto.m in Sources */,
-				0C3E6AE11AE085AC00121378 /* FICImageCache.m in Sources */,
-				0C3E6AE41AE085AC00121378 /* FICImageTableChunk.m in Sources */,
-				0C3E6AE51AE085AC00121378 /* FICImageTableEntry.m in Sources */,
-				0C3E6AE31AE085AC00121378 /* FICImageTable.m in Sources */,
-				0C3E6AE21AE085AC00121378 /* FICImageFormat.m in Sources */,
+				A79EA5E31AE0B187008B64D1 /* FICUtilities.m in Sources */,
 				0C3E6AB71AE0859F00121378 /* main.m in Sources */,
 				0C3E6AB51AE0859F00121378 /* AppDelegate.m in Sources */,
-				0C3E6AE61AE085AC00121378 /* FICUtilities.m in Sources */,
+				A79EA5E21AE0B187008B64D1 /* FICImageTableEntry.m in Sources */,
+				A79EA5E01AE0B187008B64D1 /* FICImageTable.m in Sources */,
+				A79EA5E11AE0B187008B64D1 /* FICImageTableChunk.m in Sources */,
+				A79EA5DE1AE0B187008B64D1 /* FICImageCache.m in Sources */,
+				A79EA5DF1AE0B187008B64D1 /* FICImageFormat.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -454,6 +454,7 @@
 				0C3E6ACD1AE0859F00121378 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0C3E6ACE1AE0859F00121378 /* Build configuration list for PBXNativeTarget "FastImageCacheOSXDemoTests" */ = {
 			isa = XCConfigurationList;
@@ -462,6 +463,7 @@
 				0C3E6AD01AE0859F00121378 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

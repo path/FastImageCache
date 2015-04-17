@@ -176,9 +176,7 @@ static NSString *const FICImageTableFormatKey = @"format";
         _sourceImageMap = [[NSMutableDictionary alloc] init];
         
         _filePath = [[self tableFilePath] copy];
-        
-        NSLog(@"_filePath=%@", _filePath);
-        
+   
         [self _loadMetadata];
         
         NSString *directoryPath = [self directoryPath];

@@ -6,11 +6,11 @@
 //  See LICENSE for full license agreement.
 //
 
+#import <Cocoa/Cocoa.h>
 #import "FICEntity.h"
 
-
 @interface FICDPhoto : NSObject <FICEntity>
-@property (nonatomic, copy) NSURL *sourceImageURL;
+@property(copy) NSURL *sourceImageURL;
 @property(retain) NSImage *image;
 
 @end

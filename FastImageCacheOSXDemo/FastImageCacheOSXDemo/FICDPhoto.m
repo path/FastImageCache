@@ -40,8 +40,7 @@ CGSize const FICDPhotoPixelImageSize = {1, 1};
 - (NSString *)UUID {
     if (_UUID == nil) {
         // MD5 hashing is expensive enough that we only want to do it once
-        NSString *imageName = [_sourceImageURL lastPathComponent];
-        CFUUIDBytes UUIDBytes = FICUUIDBytesFromMD5HashOfString(imageName);
+        CFUUIDBytes UUIDBytes = FICUUIDBytesFromMD5HashOfString([_sourceImageURL absoluteString]);
         _UUID = FICStringWithUUIDBytes(UUIDBytes);
     }
     

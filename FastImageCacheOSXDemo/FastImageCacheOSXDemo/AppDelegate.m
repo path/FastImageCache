@@ -12,7 +12,7 @@
 
 #define IMAGE_FAMILY_NAME          @"fastimageFamily.v1"
 #define IMAGE_SMALL_FORMAT_NAME    @"fastimage_small.v1"
-#define IMAGE_SIZE_SMALL           180
+#define IMAGE_SIZE_SMALL           80
 
 static void *ImageDownloaderKVOContext = &ImageDownloaderKVOContext;
 
@@ -104,42 +104,36 @@ static void *ImageDownloaderKVOContext = &ImageDownloaderKVOContext;
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row;
 {
-    FICDPhoto *item = tableData[row];
+    __block FICDPhoto *item = tableData[row];
     NSTableCellView *cellView = [tableView makeViewWithIdentifier:[tableColumn identifier] owner:self];
-    if (cellView) {
-        cellView.textField.stringValue = [NSString stringWithFormat:@"row %ld", row];
-        cellView.imageView.image = nil;
-        [cellView.imageView setHidden:YES];
-        
-        
-        FICImageCache *sharedImageCache = [FICImageCache sharedImageCache];
-        
-        BOOL imageExists = NO;
-        
-//        if ([sharedImageCache imageExistsForEntity:item withFormatName:IMAGE_SMALL_FORMAT_NAME]) {
-//            imageExists = [sharedImageCache retrieveImageForEntity:item withFormatName:IMAGE_SMALL_FORMAT_NAME completionBlock:^(id <FICEntity> entity, NSString *formatName, NSImage *image) {
-//                item.image = image;
-//            }];
-//        }
-        if (!imageExists) {
-            [item addObserver:self forKeyPath:@"image" options:0 context:ImageDownloaderKVOContext];
-            
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                // Fetch the desired source image by making a network request
-                NSImage *sourceImage = [[NSImage alloc] initWithContentsOfURL:item.sourceImageURL];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    NSLog(@"sourceImage=%@", sourceImage);
-                    [[FICImageCache sharedImageCache] setImage:sourceImage forEntity:item withFormatName:IMAGE_SMALL_FORMAT_NAME completionBlock:^(id <FICEntity> entity, NSString *formatName, NSImage *image) {
-                        NSLog(@"cachedImage=%@", image);
-                        item.image = image;
-                    }];
-                });
-            });
-            
-            [_observedVisibleItems addObject:item];
-        }
-        
+    cellView.textField.stringValue = [NSString stringWithFormat:@"row %ld", row];
+
+    FICImageCache *sharedImageCache = [FICImageCache sharedImageCache];
+    BOOL imageExists = NO;
+    if ([sharedImageCache imageExistsForEntity:item withFormatName:IMAGE_SMALL_FORMAT_NAME]) {
+        __block NSTableCellView *thisCellView = cellView;
+        imageExists = [sharedImageCache retrieveImageForEntity:item withFormatName:IMAGE_SMALL_FORMAT_NAME completionBlock:^(id <FICEntity> entity, NSString *formatName, NSImage *image) {
+            item.image = image;
+            [thisCellView.imageView setImage:item.image];
+        }];
     }
+    if (imageExists == NO && [_observedVisibleItems containsObject:item] == NO) {
+        
+        [item addObserver:self forKeyPath:@"image" options:0 context:ImageDownloaderKVOContext];
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            // Fetch the desired source image by making a network request
+            NSImage *sourceImage = [[NSImage alloc] initWithContentsOfURL:item.sourceImageURL];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[FICImageCache sharedImageCache] setImage:sourceImage forEntity:item withFormatName:IMAGE_SMALL_FORMAT_NAME completionBlock:^(id <FICEntity> entity, NSString *formatName, NSImage *image) {
+                    item.image = image;
+                }];
+            });
+        });
+        
+        [_observedVisibleItems addObject:item];
+    }
+    
     return cellView;
 }
 
@@ -158,8 +152,6 @@ static void *ImageDownloaderKVOContext = &ImageDownloaderKVOContext;
             NSTableCellView *cellView = [self.tableView viewAtColumn:0 row:row makeIfNecessary:NO];
             if (cellView) {
                 [cellView.imageView setImage:item.image];
-                [cellView.imageView setNeedsDisplay:YES];
-                NSLog(@"cellView.imageView=%@", cellView.imageView);
             }
             else{
                 NSLog(@"cellView=nil");
