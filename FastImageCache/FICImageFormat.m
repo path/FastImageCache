@@ -30,7 +30,9 @@ static NSString *const FICImageFormatProtectionModeKey = @"protectionMode";
     CGSize _pixelSize;
     FICImageFormatStyle _style;
     NSInteger _maximumCount;
+#if TARGET_OS_IPHONE
     FICImageFormatDevices _devices;
+#endif
     FICImageFormatProtectionMode _protectionMode;
 }
 
@@ -46,7 +48,9 @@ static NSString *const FICImageFormatProtectionModeKey = @"protectionMode";
 @synthesize pixelSize = _pixelSize;
 @synthesize style = _style;
 @synthesize maximumCount = _maximumCount;
+#if TARGET_OS_IPHONE
 @synthesize devices = _devices;
+#endif
 @synthesize protectionMode = _protectionMode;
 
 #pragma mark - Property Accessors
@@ -55,8 +59,11 @@ static NSString *const FICImageFormatProtectionModeKey = @"protectionMode";
     BOOL currentSizeEqualToNewSize = CGSizeEqualToSize(imageSize, _imageSize);
     if (currentSizeEqualToNewSize == NO) {
         _imageSize = imageSize;
-        
+#if TARGET_OS_IPHONE
         CGFloat screenScale = [[UIScreen mainScreen] scale];
+#else
+        CGFloat screenScale = [[NSScreen mainScreen] backingScaleFactor];
+#endif
         _pixelSize = CGSizeMake(screenScale * _imageSize.width, screenScale * _imageSize.height);
     }
 }
@@ -127,6 +134,7 @@ static NSString *const FICImageFormatProtectionModeKey = @"protectionMode";
     return isGrayscale;
 }
 
+#if TARGET_OS_IPHONE
 - (NSString *)protectionModeString {
     NSString *protectionModeString = nil;
     switch (_protectionMode) {
@@ -142,10 +150,16 @@ static NSString *const FICImageFormatProtectionModeKey = @"protectionMode";
     }
     return protectionModeString;
 }
+#endif
 
 #pragma mark - Object Lifecycle
 
-+ (instancetype)formatWithName:(NSString *)name family:(NSString *)family imageSize:(CGSize)imageSize style:(FICImageFormatStyle)style maximumCount:(NSInteger)maximumCount devices:(FICImageFormatDevices)devices protectionMode:(FICImageFormatProtectionMode)protectionMode {
+#if TARGET_OS_IPHONE
++ (instancetype)formatWithName:(NSString *)name family:(NSString *)family imageSize:(CGSize)imageSize style:(FICImageFormatStyle)style maximumCount:(NSInteger)maximumCount devices:(FICImageFormatDevices)devices protectionMode:(FICImageFormatProtectionMode)protectionMode;
+#else
++ (instancetype)formatWithName:(NSString *)name family:(NSString *)family imageSize:(CGSize)imageSize style:(FICImageFormatStyle)style maximumCount:(NSInteger)maximumCount;
+#endif
+{
     FICImageFormat *imageFormat = [[FICImageFormat alloc] init];
     
     [imageFormat setName:name];
@@ -153,8 +167,11 @@ static NSString *const FICImageFormatProtectionModeKey = @"protectionMode";
     [imageFormat setImageSize:imageSize];
     [imageFormat setStyle:style];
     [imageFormat setMaximumCount:maximumCount];
+        
+#if TARGET_OS_IPHONE
     [imageFormat setDevices:devices];
     [imageFormat setProtectionMode:protectionMode];
+#endif
     
     return imageFormat;
 }
@@ -170,10 +187,15 @@ static NSString *const FICImageFormatProtectionModeKey = @"protectionMode";
     [dictionaryRepresentation setValue:[NSNumber numberWithUnsignedInteger:_imageSize.height] forKey:FICImageFormatHeightKey];
     [dictionaryRepresentation setValue:[NSNumber numberWithInt:_style] forKey:FICImageFormatStyleKey];
     [dictionaryRepresentation setValue:[NSNumber numberWithUnsignedInteger:_maximumCount] forKey:FICImageFormatMaximumCountKey];
+#if TARGET_OS_IPHONE
     [dictionaryRepresentation setValue:[NSNumber numberWithInt:_devices] forKey:FICImageFormatDevicesKey];
+#endif
     [dictionaryRepresentation setValue:[NSNumber numberWithUnsignedInteger:_protectionMode] forKey:FICImageFormatProtectionModeKey];
-
+#if TARGET_OS_IPHONE
     [dictionaryRepresentation setValue:[NSNumber numberWithFloat:[[UIScreen mainScreen] scale]] forKey:FICImageTableScreenScaleKey];
+#else
+    [dictionaryRepresentation setValue:[NSNumber numberWithFloat:[[NSScreen mainScreen] backingScaleFactor]] forKey:FICImageTableScreenScaleKey];
+#endif
     [dictionaryRepresentation setValue:[NSNumber numberWithUnsignedInteger:[FICImageTableEntry metadataVersion]] forKey:FICImageTableEntryDataVersionKey];
     
     return dictionaryRepresentation;
@@ -191,7 +213,9 @@ static NSString *const FICImageFormatProtectionModeKey = @"protectionMode";
     [imageFormatCopy setImageSize:[self imageSize]];
     [imageFormatCopy setStyle:[self style]];
     [imageFormatCopy setMaximumCount:[self maximumCount]];
+#if TARGET_OS_IPHONE
     [imageFormatCopy setDevices:[self devices]];
+#endif
     [imageFormatCopy setProtectionMode:[self protectionMode]];
     
     return imageFormatCopy;

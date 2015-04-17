@@ -153,7 +153,11 @@ static NSString *const FICImageTableFormatKey = @"format";
         _imageFormat = [imageFormat copy];
         _imageFormatDictionary = [imageFormat dictionaryRepresentation];
         
+#if TARGET_OS_IPHONE
         _screenScale = [[UIScreen mainScreen] scale];
+#else
+        _screenScale = [[NSScreen mainScreen] backingScaleFactor];
+#endif
         
         CGSize pixelSize = [_imageFormat pixelSize];
         NSInteger bytesPerPixel = [_imageFormat bytesPerPixel];
@@ -172,7 +176,7 @@ static NSString *const FICImageTableFormatKey = @"format";
         _sourceImageMap = [[NSMutableDictionary alloc] init];
         
         _filePath = [[self tableFilePath] copy];
-        
+   
         [self _loadMetadata];
         
         NSString *directoryPath = [self directoryPath];
@@ -186,12 +190,18 @@ static NSString *const FICImageTableFormatKey = @"format";
         
         if ([fileManager fileExistsAtPath:_filePath] == NO) {
             NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
+#if TARGET_OS_IPHONE
             [attributes setValue:[_imageFormat protectionModeString] forKeyPath:NSFileProtectionKey];
+#else
+#endif
             [fileManager createFileAtPath:_filePath contents:nil attributes:attributes];
         }
-       
+
+#if TARGET_OS_IPHONE
         NSDictionary *attributes = [fileManager attributesOfItemAtPath:_filePath error:NULL];
         _fileDataProtectionMode = [attributes objectForKey:NSFileProtectionKey];
+#else
+#endif
         
         _fileDescriptor = open([_filePath fileSystemRepresentation], O_RDWR | O_CREAT, 0666);
         
@@ -353,8 +363,19 @@ static NSString *const FICImageTableFormatKey = @"format";
     }
 }
 
-- (UIImage *)newImageForEntityUUID:(NSString *)entityUUID sourceImageUUID:(NSString *)sourceImageUUID preheatData:(BOOL)preheatData {
+
+#if TARGET_OS_IPHONE
+- (UIImage *)newImageForEntityUUID:(NSString *)entityUUID sourceImageUUID:(NSString *)sourceImageUUID preheatData:(BOOL)preheatData;
+#else
+- (NSImage *)newImageForEntityUUID:(NSString *)entityUUID sourceImageUUID:(NSString *)sourceImageUUID preheatData:(BOOL)preheatData;
+#endif
+{
+    
+#if TARGET_OS_IPHONE
     UIImage *image = nil;
+#else
+    NSImage *image = nil;
+#endif
     
     if (entityUUID != nil && sourceImageUUID != nil) {
         [_lock lock];
@@ -394,7 +415,11 @@ static NSString *const FICImageTableFormatKey = @"format";
                     CGColorSpaceRelease(colorSpace);
                     
                     if (imageRef != NULL) {
+#if TARGET_OS_IPHONE
                         image = [[UIImage alloc] initWithCGImage:imageRef scale:_screenScale orientation:UIImageOrientationUp];
+#else
+                        image = [[NSImage alloc] initWithCGImage:imageRef size:pixelSize];
+#endif
                         CGImageRelease(imageRef);
                     } else {
                         NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s could not create a new CGImageRef for entity UUID %@.", __PRETTY_FUNCTION__, entityUUID];
@@ -512,6 +537,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
 // by using NSFileProtectionNone
 - (BOOL)canAccessEntryData {
     BOOL result = YES;
+#if TARGET_OS_IPHONE
     if ([_fileDataProtectionMode isEqualToString:NSFileProtectionComplete]) {
         result = [[UIApplication sharedApplication] isProtectedDataAvailable];
     } else if ([_fileDataProtectionMode isEqualToString:NSFileProtectionCompleteUntilFirstUserAuthentication]) {
@@ -527,6 +553,9 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
             }
         }
     }
+#else
+#warning imp canAccessEntryData for OSX
+#endif
     return result;
 }
 

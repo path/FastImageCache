@@ -123,7 +123,11 @@ extern NSString *const FICImageTableScreenScaleKey;
  @note If either the entity UUID or the source image UUID doesn't match the corresponding UUIDs in the entry data, then something has changed. The entry data is deleted for the
  provided entity UUID, and `nil` is returned.
  */
+#if TARGET_OS_IPHONE
 - (UIImage *)newImageForEntityUUID:(NSString *)entityUUID sourceImageUUID:(NSString *)sourceImageUUID preheatData:(BOOL)preheatData;
+#else
+- (NSImage *)newImageForEntityUUID:(NSString *)entityUUID sourceImageUUID:(NSString *)sourceImageUUID preheatData:(BOOL)preheatData;
+#endif
 
 /**
  Deletes image entry data in the image table.

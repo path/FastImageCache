@@ -1,0 +1,471 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0C3E6AB51AE0859F00121378 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C3E6AB41AE0859F00121378 /* AppDelegate.m */; };
+		0C3E6AB71AE0859F00121378 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C3E6AB61AE0859F00121378 /* main.m */; };
+		0C3E6AB91AE0859F00121378 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C3E6AB81AE0859F00121378 /* Images.xcassets */; };
+		0C3E6ABC1AE0859F00121378 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0C3E6ABA1AE0859F00121378 /* MainMenu.xib */; };
+		0C3E6AC81AE0859F00121378 /* FastImageCacheOSXDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C3E6AC71AE0859F00121378 /* FastImageCacheOSXDemoTests.m */; };
+		0C3E6AE91AE08A7B00121378 /* FICDPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C3E6AE81AE08A7B00121378 /* FICDPhoto.m */; };
+		A79EA5DE1AE0B187008B64D1 /* FICImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = A79EA5D21AE0B187008B64D1 /* FICImageCache.m */; };
+		A79EA5DF1AE0B187008B64D1 /* FICImageFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = A79EA5D41AE0B187008B64D1 /* FICImageFormat.m */; };
+		A79EA5E01AE0B187008B64D1 /* FICImageTable.m in Sources */ = {isa = PBXBuildFile; fileRef = A79EA5D61AE0B187008B64D1 /* FICImageTable.m */; };
+		A79EA5E11AE0B187008B64D1 /* FICImageTableChunk.m in Sources */ = {isa = PBXBuildFile; fileRef = A79EA5D81AE0B187008B64D1 /* FICImageTableChunk.m */; };
+		A79EA5E21AE0B187008B64D1 /* FICImageTableEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = A79EA5DA1AE0B187008B64D1 /* FICImageTableEntry.m */; };
+		A79EA5E31AE0B187008B64D1 /* FICUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = A79EA5DD1AE0B187008B64D1 /* FICUtilities.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		0C3E6AC21AE0859F00121378 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0C3E6AA61AE0859F00121378 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0C3E6AAD1AE0859F00121378;
+			remoteInfo = FastImageCacheOSXDemo;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0C3E6AAE1AE0859F00121378 /* FastImageCacheOSXDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FastImageCacheOSXDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0C3E6AB21AE0859F00121378 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0C3E6AB31AE0859F00121378 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		0C3E6AB41AE0859F00121378 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		0C3E6AB61AE0859F00121378 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		0C3E6AB81AE0859F00121378 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		0C3E6ABB1AE0859F00121378 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		0C3E6AC11AE0859F00121378 /* FastImageCacheOSXDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FastImageCacheOSXDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0C3E6AC61AE0859F00121378 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0C3E6AC71AE0859F00121378 /* FastImageCacheOSXDemoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FastImageCacheOSXDemoTests.m; sourceTree = "<group>"; };
+		0C3E6AE71AE08A7B00121378 /* FICDPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICDPhoto.h; sourceTree = "<group>"; };
+		0C3E6AE81AE08A7B00121378 /* FICDPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICDPhoto.m; sourceTree = "<group>"; };
+		A79EA5CF1AE0B187008B64D1 /* FICEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICEntity.h; sourceTree = "<group>"; };
+		A79EA5D01AE0B187008B64D1 /* FICImageCache+FICErrorLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FICImageCache+FICErrorLogging.h"; sourceTree = "<group>"; };
+		A79EA5D11AE0B187008B64D1 /* FICImageCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImageCache.h; sourceTree = "<group>"; };
+		A79EA5D21AE0B187008B64D1 /* FICImageCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICImageCache.m; sourceTree = "<group>"; };
+		A79EA5D31AE0B187008B64D1 /* FICImageFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImageFormat.h; sourceTree = "<group>"; };
+		A79EA5D41AE0B187008B64D1 /* FICImageFormat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICImageFormat.m; sourceTree = "<group>"; };
+		A79EA5D51AE0B187008B64D1 /* FICImageTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImageTable.h; sourceTree = "<group>"; };
+		A79EA5D61AE0B187008B64D1 /* FICImageTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICImageTable.m; sourceTree = "<group>"; };
+		A79EA5D71AE0B187008B64D1 /* FICImageTableChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImageTableChunk.h; sourceTree = "<group>"; };
+		A79EA5D81AE0B187008B64D1 /* FICImageTableChunk.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICImageTableChunk.m; sourceTree = "<group>"; };
+		A79EA5D91AE0B187008B64D1 /* FICImageTableEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImageTableEntry.h; sourceTree = "<group>"; };
+		A79EA5DA1AE0B187008B64D1 /* FICImageTableEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICImageTableEntry.m; sourceTree = "<group>"; };
+		A79EA5DB1AE0B187008B64D1 /* FICImports.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImports.h; sourceTree = "<group>"; };
+		A79EA5DC1AE0B187008B64D1 /* FICUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICUtilities.h; sourceTree = "<group>"; };
+		A79EA5DD1AE0B187008B64D1 /* FICUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICUtilities.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0C3E6AAB1AE0859F00121378 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0C3E6ABE1AE0859F00121378 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0C3E6AA51AE0859F00121378 = {
+			isa = PBXGroup;
+			children = (
+				0C3E6AB01AE0859F00121378 /* FastImageCacheOSXDemo */,
+				0C3E6AC41AE0859F00121378 /* FastImageCacheOSXDemoTests */,
+				0C3E6AAF1AE0859F00121378 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		0C3E6AAF1AE0859F00121378 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0C3E6AAE1AE0859F00121378 /* FastImageCacheOSXDemo.app */,
+				0C3E6AC11AE0859F00121378 /* FastImageCacheOSXDemoTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0C3E6AB01AE0859F00121378 /* FastImageCacheOSXDemo */ = {
+			isa = PBXGroup;
+			children = (
+				A79EA5CE1AE0B187008B64D1 /* FastImageCache */,
+				0C3E6AE71AE08A7B00121378 /* FICDPhoto.h */,
+				0C3E6AE81AE08A7B00121378 /* FICDPhoto.m */,
+				0C3E6AB31AE0859F00121378 /* AppDelegate.h */,
+				0C3E6AB41AE0859F00121378 /* AppDelegate.m */,
+				0C3E6AB81AE0859F00121378 /* Images.xcassets */,
+				0C3E6ABA1AE0859F00121378 /* MainMenu.xib */,
+				0C3E6AB11AE0859F00121378 /* Supporting Files */,
+			);
+			path = FastImageCacheOSXDemo;
+			sourceTree = "<group>";
+		};
+		0C3E6AB11AE0859F00121378 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				0C3E6AB21AE0859F00121378 /* Info.plist */,
+				0C3E6AB61AE0859F00121378 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		0C3E6AC41AE0859F00121378 /* FastImageCacheOSXDemoTests */ = {
+			isa = PBXGroup;
+			children = (
+				0C3E6AC71AE0859F00121378 /* FastImageCacheOSXDemoTests.m */,
+				0C3E6AC51AE0859F00121378 /* Supporting Files */,
+			);
+			path = FastImageCacheOSXDemoTests;
+			sourceTree = "<group>";
+		};
+		0C3E6AC51AE0859F00121378 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				0C3E6AC61AE0859F00121378 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		A79EA5CE1AE0B187008B64D1 /* FastImageCache */ = {
+			isa = PBXGroup;
+			children = (
+				A79EA5CF1AE0B187008B64D1 /* FICEntity.h */,
+				A79EA5D01AE0B187008B64D1 /* FICImageCache+FICErrorLogging.h */,
+				A79EA5D11AE0B187008B64D1 /* FICImageCache.h */,
+				A79EA5D21AE0B187008B64D1 /* FICImageCache.m */,
+				A79EA5D31AE0B187008B64D1 /* FICImageFormat.h */,
+				A79EA5D41AE0B187008B64D1 /* FICImageFormat.m */,
+				A79EA5D51AE0B187008B64D1 /* FICImageTable.h */,
+				A79EA5D61AE0B187008B64D1 /* FICImageTable.m */,
+				A79EA5D71AE0B187008B64D1 /* FICImageTableChunk.h */,
+				A79EA5D81AE0B187008B64D1 /* FICImageTableChunk.m */,
+				A79EA5D91AE0B187008B64D1 /* FICImageTableEntry.h */,
+				A79EA5DA1AE0B187008B64D1 /* FICImageTableEntry.m */,
+				A79EA5DB1AE0B187008B64D1 /* FICImports.h */,
+				A79EA5DC1AE0B187008B64D1 /* FICUtilities.h */,
+				A79EA5DD1AE0B187008B64D1 /* FICUtilities.m */,
+			);
+			name = FastImageCache;
+			path = ../../FastImageCache;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0C3E6AAD1AE0859F00121378 /* FastImageCacheOSXDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0C3E6ACB1AE0859F00121378 /* Build configuration list for PBXNativeTarget "FastImageCacheOSXDemo" */;
+			buildPhases = (
+				0C3E6AAA1AE0859F00121378 /* Sources */,
+				0C3E6AAB1AE0859F00121378 /* Frameworks */,
+				0C3E6AAC1AE0859F00121378 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FastImageCacheOSXDemo;
+			productName = FastImageCacheOSXDemo;
+			productReference = 0C3E6AAE1AE0859F00121378 /* FastImageCacheOSXDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+		0C3E6AC01AE0859F00121378 /* FastImageCacheOSXDemoTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0C3E6ACE1AE0859F00121378 /* Build configuration list for PBXNativeTarget "FastImageCacheOSXDemoTests" */;
+			buildPhases = (
+				0C3E6ABD1AE0859F00121378 /* Sources */,
+				0C3E6ABE1AE0859F00121378 /* Frameworks */,
+				0C3E6ABF1AE0859F00121378 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0C3E6AC31AE0859F00121378 /* PBXTargetDependency */,
+			);
+			name = FastImageCacheOSXDemoTests;
+			productName = FastImageCacheOSXDemoTests;
+			productReference = 0C3E6AC11AE0859F00121378 /* FastImageCacheOSXDemoTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0C3E6AA61AE0859F00121378 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0620;
+				TargetAttributes = {
+					0C3E6AAD1AE0859F00121378 = {
+						CreatedOnToolsVersion = 6.2;
+					};
+					0C3E6AC01AE0859F00121378 = {
+						CreatedOnToolsVersion = 6.2;
+						TestTargetID = 0C3E6AAD1AE0859F00121378;
+					};
+				};
+			};
+			buildConfigurationList = 0C3E6AA91AE0859F00121378 /* Build configuration list for PBXProject "FastImageCacheOSXDemo" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 0C3E6AA51AE0859F00121378;
+			productRefGroup = 0C3E6AAF1AE0859F00121378 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0C3E6AAD1AE0859F00121378 /* FastImageCacheOSXDemo */,
+				0C3E6AC01AE0859F00121378 /* FastImageCacheOSXDemoTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0C3E6AAC1AE0859F00121378 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0C3E6AB91AE0859F00121378 /* Images.xcassets in Resources */,
+				0C3E6ABC1AE0859F00121378 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0C3E6ABF1AE0859F00121378 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0C3E6AAA1AE0859F00121378 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0C3E6AE91AE08A7B00121378 /* FICDPhoto.m in Sources */,
+				A79EA5E31AE0B187008B64D1 /* FICUtilities.m in Sources */,
+				0C3E6AB71AE0859F00121378 /* main.m in Sources */,
+				0C3E6AB51AE0859F00121378 /* AppDelegate.m in Sources */,
+				A79EA5E21AE0B187008B64D1 /* FICImageTableEntry.m in Sources */,
+				A79EA5E01AE0B187008B64D1 /* FICImageTable.m in Sources */,
+				A79EA5E11AE0B187008B64D1 /* FICImageTableChunk.m in Sources */,
+				A79EA5DE1AE0B187008B64D1 /* FICImageCache.m in Sources */,
+				A79EA5DF1AE0B187008B64D1 /* FICImageFormat.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0C3E6ABD1AE0859F00121378 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0C3E6AC81AE0859F00121378 /* FastImageCacheOSXDemoTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0C3E6AC31AE0859F00121378 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0C3E6AAD1AE0859F00121378 /* FastImageCacheOSXDemo */;
+			targetProxy = 0C3E6AC21AE0859F00121378 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		0C3E6ABA1AE0859F00121378 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0C3E6ABB1AE0859F00121378 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		0C3E6AC91AE0859F00121378 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		0C3E6ACA1AE0859F00121378 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		0C3E6ACC1AE0859F00121378 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = FastImageCacheOSXDemo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		0C3E6ACD1AE0859F00121378 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = FastImageCacheOSXDemo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		0C3E6ACF1AE0859F00121378 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = FastImageCacheOSXDemoTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FastImageCacheOSXDemo.app/Contents/MacOS/FastImageCacheOSXDemo";
+			};
+			name = Debug;
+		};
+		0C3E6AD01AE0859F00121378 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = FastImageCacheOSXDemoTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FastImageCacheOSXDemo.app/Contents/MacOS/FastImageCacheOSXDemo";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0C3E6AA91AE0859F00121378 /* Build configuration list for PBXProject "FastImageCacheOSXDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0C3E6AC91AE0859F00121378 /* Debug */,
+				0C3E6ACA1AE0859F00121378 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0C3E6ACB1AE0859F00121378 /* Build configuration list for PBXNativeTarget "FastImageCacheOSXDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0C3E6ACC1AE0859F00121378 /* Debug */,
+				0C3E6ACD1AE0859F00121378 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0C3E6ACE1AE0859F00121378 /* Build configuration list for PBXNativeTarget "FastImageCacheOSXDemoTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0C3E6ACF1AE0859F00121378 /* Debug */,
+				0C3E6AD01AE0859F00121378 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0C3E6AA61AE0859F00121378 /* Project object */;
+}
