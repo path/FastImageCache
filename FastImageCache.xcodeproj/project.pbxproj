@@ -20,6 +20,9 @@
 		8178CE551AE293E3004E3649 /* FICImageTableEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 8178CE481AE293E3004E3649 /* FICImageTableEntry.m */; };
 		8178CE561AE293E3004E3649 /* FICUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 8178CE4B1AE293E3004E3649 /* FICUtilities.m */; };
 		8178CE571AE293E3004E3649 /* FICUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 8178CE4B1AE293E3004E3649 /* FICUtilities.m */; };
+		8178CE5B1AE2A667004E3649 /* ImageCacheTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8178CE5A1AE2A667004E3649 /* ImageCacheTests.m */; };
+		8178CE5E1AE2B25D004E3649 /* TestEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 8178CE5D1AE2B25D004E3649 /* TestEntity.m */; };
+		8178CE611AE2BBB6004E3649 /* TestImageProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 8178CE601AE2BBB6004E3649 /* TestImageProvider.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +66,11 @@
 		8178CE491AE293E3004E3649 /* FICImports.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImports.h; sourceTree = "<group>"; };
 		8178CE4A1AE293E3004E3649 /* FICUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICUtilities.h; sourceTree = "<group>"; };
 		8178CE4B1AE293E3004E3649 /* FICUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICUtilities.m; sourceTree = "<group>"; };
+		8178CE5A1AE2A667004E3649 /* ImageCacheTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageCacheTests.m; sourceTree = "<group>"; };
+		8178CE5C1AE2B25D004E3649 /* TestEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestEntity.h; sourceTree = "<group>"; };
+		8178CE5D1AE2B25D004E3649 /* TestEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestEntity.m; sourceTree = "<group>"; };
+		8178CE5F1AE2BBB6004E3649 /* TestImageProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestImageProvider.h; sourceTree = "<group>"; };
+		8178CE601AE2BBB6004E3649 /* TestImageProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestImageProvider.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,6 +135,7 @@
 		8178CE321AE293C0004E3649 /* FastImageCacheTests */ = {
 			isa = PBXGroup;
 			children = (
+				8178CE5A1AE2A667004E3649 /* ImageCacheTests.m */,
 				8178CE331AE293C0004E3649 /* Supporting Files */,
 			);
 			path = FastImageCacheTests;
@@ -135,6 +144,10 @@
 		8178CE331AE293C0004E3649 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8178CE5C1AE2B25D004E3649 /* TestEntity.h */,
+				8178CE5D1AE2B25D004E3649 /* TestEntity.m */,
+				8178CE5F1AE2BBB6004E3649 /* TestImageProvider.h */,
+				8178CE601AE2BBB6004E3649 /* TestImageProvider.m */,
 				8178CE341AE293C0004E3649 /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -242,8 +255,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				8178CE511AE293E3004E3649 /* FICImageTable.m in Sources */,
+				8178CE5B1AE2A667004E3649 /* ImageCacheTests.m in Sources */,
+				8178CE611AE2BBB6004E3649 /* TestImageProvider.m in Sources */,
 				8178CE531AE293E3004E3649 /* FICImageTableChunk.m in Sources */,
 				8178CE4D1AE293E3004E3649 /* FICImageCache.m in Sources */,
+				8178CE5E1AE2B25D004E3649 /* TestEntity.m in Sources */,
 				8178CE571AE293E3004E3649 /* FICUtilities.m in Sources */,
 				8178CE551AE293E3004E3649 /* FICImageTableEntry.m in Sources */,
 				8178CE4F1AE293E3004E3649 /* FICImageFormat.m in Sources */,
@@ -408,6 +424,7 @@
 				8178CE391AE293C0004E3649 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		8178CE3A1AE293C0004E3649 /* Build configuration list for PBXNativeTarget "FastImageCacheTests" */ = {
 			isa = XCConfigurationList;
@@ -416,6 +433,7 @@
 				8178CE3C1AE293C0004E3649 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
