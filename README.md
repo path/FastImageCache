@@ -378,7 +378,7 @@ When this happens, Fast Image Cache cleans up its internal bookkeeping, and any 
 
 ### Working with Image Format Families
 
-The advantage of classifying image formats into families is that the image cache's delegate can tell the image cache to process entity source images for **all** image formats in a family when **any** image format in that family is processed.
+The advantage of classifying image formats into families is that the image cache's delegate can tell the image cache to process entity source images for **all** image formats in a family when **any** image format in that family is processed. By default, all image formats are processed for a given family unless you implement this delegate and return otherwise. 
 
 ```objective-c
 - (BOOL)imageCache:(FICImageCache *)imageCache shouldProcessAllFormatsInFamily:(NSString *)formatFamily forEntity:(id<FICEntity>)entity {
