@@ -30,6 +30,8 @@ static NSString *const FICImageTableContextMapKey = @"contextMap";
 static NSString *const FICImageTableMRUArrayKey = @"mruArray";
 static NSString *const FICImageTableFormatKey = @"format";
 
+static NSInteger FICUseCacheDirectory = 1;
+
 #pragma mark - Class Extension
 
 @interface FICImageTable () {
@@ -114,12 +116,31 @@ static NSString *const FICImageTableFormatKey = @"format";
     return __pageSize;
 }
 
++ (void)useCacheDirectory:(BOOL)useCacheDirectory {
+    if (FICUseCacheDirectory == -1) {
+        NSLog(@"Directory path was already setup. This must be set before the path is created.");
+        return;
+    }
+    
+    FICUseCacheDirectory = useCacheDirectory;
+}
+
++ (BOOL)usesCacheDirectory {
+    return FICUseCacheDirectory;
+}
+
 + (NSString *)directoryPath {
     static NSString *__directoryPath = nil;
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        NSArray *paths;
+        if (FICUseCacheDirectory == 1) {
+            paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        } else {
+            paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+        }
+        FICUseCacheDirectory = -1;
         __directoryPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"ImageTables"];
         
         NSFileManager *fileManager = [[NSFileManager alloc] init];
@@ -675,6 +696,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
 
 #pragma mark - Working with Metadata
 
+static long long __metadataVersion = 0;
 - (void)saveMetadata {
     [_lock lock];
     
@@ -683,6 +705,8 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
                                         [_sourceImageMap copy], FICImageTableContextMapKey,
                                         [[_MRUEntries array] copy], FICImageTableMRUArrayKey,
                                         [_imageFormatDictionary copy], FICImageTableFormatKey, nil];
+    __metadataVersion++;
+    
     [_lock unlock];
     
     static dispatch_queue_t __metadataQueue = nil;
@@ -691,8 +715,24 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
         __metadataQueue = dispatch_queue_create("com.path.FastImageCache.ImageTableMetadataQueue", NULL);
     });
     
+    __block long long metadataVersion = __metadataVersion;
     dispatch_async(__metadataQueue, ^{
-        NSData *data = [NSPropertyListSerialization dataWithPropertyList:metadataDictionary format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
+        NSError *writeError = nil;
+        
+        // Cancel serialization if a new metadata version is queued to be saved
+        if (metadataVersion != __metadataVersion) {
+            return;
+        }
+        
+        NSData *data = [NSJSONSerialization dataWithJSONObject:metadataDictionary
+                                                       options:kNilOptions
+                                                         error:&writeError];
+        
+        // Cancel disk writing if a new metadata version is queued to be saved
+        if (metadataVersion != __metadataVersion) {
+            return;
+        }
+        
         BOOL fileWriteResult = [data writeToFile:[self metadataFilePath] atomically:NO];
         if (fileWriteResult == NO) {
             NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s couldn't write metadata for format %@", __PRETTY_FUNCTION__, [_imageFormat name]];
@@ -705,7 +745,14 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     NSString *metadataFilePath = [self metadataFilePath];
     NSData *metadataData = [NSData dataWithContentsOfURL:[NSURL fileURLWithPath:metadataFilePath] options:NSDataReadingMappedAlways error:NULL];
     if (metadataData != nil) {
-        NSDictionary *metadataDictionary = (NSDictionary *)[NSPropertyListSerialization propertyListWithData:metadataData options:0 format:NULL error:NULL];
+        NSDictionary *metadataDictionary = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:metadataData options:kNilOptions error:NULL];
+        
+        if (!metadataDictionary) {
+            // The image table was likely previously stored as a .plist
+            // We'll read it into memory as a .plist and later store it (during -saveMetadata) using NSJSONSerialization for performance reasons
+            metadataDictionary = (NSDictionary *)[NSPropertyListSerialization propertyListWithData:metadataData options:0 format:NULL error:NULL];
+        }
+        
         NSDictionary *formatDictionary = [metadataDictionary objectForKey:FICImageTableFormatKey];
         if ([formatDictionary isEqualToDictionary:_imageFormatDictionary] == NO) {
             // Something about this image format has changed, so the existing metadata is no longer valid. The image table file
