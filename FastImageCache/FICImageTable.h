@@ -17,6 +17,7 @@
 
 extern NSString *const FICImageTableEntryDataVersionKey;
 extern NSString *const FICImageTableScreenScaleKey;
+typedef void(^FICImageTableCalculateSizeBCompletionBlock)(NSUInteger fileCount, NSUInteger totalSize);
 
 /**
  `FICImageTable` is the primary class that efficiently stores and retrieves cached image data. Image tables are defined by instances of `<FICImageFormat>`. Each image table is backed by a single
@@ -162,5 +163,11 @@ extern NSString *const FICImageTableScreenScaleKey;
  Resets the image table by deleting all its data and metadata.
  */
 - (void)reset;
+
+/**
+ * Asynchronously calculate the disk cache's size.
+ */
++ (void)calculateSizeWithCompletionBlock:(FICImageTableCalculateSizeBCompletionBlock)completionBlock;
+
 
 @end
