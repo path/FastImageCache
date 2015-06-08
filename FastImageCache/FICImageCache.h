@@ -148,7 +148,7 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
  
  @param entity The entity that uniquely identifies the source image.
  
- @param formatName The format name that uniquely identifies which image table to look in for the cached image.
+ @param formatName The format name that uniquely identifies which image table to look in for the cached image. Must not be nil.
  
  @param completionBlock The completion block that is called when the requested image is available or if an error occurs.
  
@@ -175,7 +175,7 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
  
  @param entity The entity that uniquely identifies the source image.
  
- @param formatName The format name that uniquely identifies which image table to look in for the cached image.
+ @param formatName The format name that uniquely identifies which image table to look in for the cached image. Must not be nil.
  
  @param completionBlock The completion block that is called when the requested image is available or if an error occurs.
  
