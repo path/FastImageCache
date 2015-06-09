@@ -12,6 +12,7 @@
 #import "FICImageTableChunk.h"
 #import "FICImageTableEntry.h"
 #import "FICUtilities.h"
+#import <libkern/OSAtomic.h>
 
 #import "FICImageCache+FICErrorLogging.h"
 
@@ -62,7 +63,8 @@ static NSString *const FICImageTableFormatKey = @"format";
     NSMutableOrderedSet *_MRUEntries;
     NSCountedSet *_inUseEntries;
     NSDictionary *_imageFormatDictionary;
-    
+    int32_t _metadataVersion;
+
     NSString *_fileDataProtectionMode;
     BOOL _canAccessData;
 }
@@ -683,6 +685,9 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
                                         [_sourceImageMap copy], FICImageTableContextMapKey,
                                         [[_MRUEntries array] copy], FICImageTableMRUArrayKey,
                                         [_imageFormatDictionary copy], FICImageTableFormatKey, nil];
+
+    __block int32_t metadataVersion = OSAtomicIncrement32(&_metadataVersion);
+
     [_lock unlock];
     
     static dispatch_queue_t __metadataQueue = nil;
@@ -692,7 +697,18 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     });
     
     dispatch_async(__metadataQueue, ^{
+        // Cancel serialization if a new metadata version is queued to be saved
+        if (metadataVersion != _metadataVersion) {
+            return;
+        }
+
         NSData *data = [NSPropertyListSerialization dataWithPropertyList:metadataDictionary format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
+
+        // Cancel disk writing if a new metadata version is queued to be saved
+        if (metadataVersion != _metadataVersion) {
+            return;
+        }
+
         BOOL fileWriteResult = [data writeToFile:[self metadataFilePath] atomically:NO];
         if (fileWriteResult == NO) {
             NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s couldn't write metadata for format %@", __PRETTY_FUNCTION__, [_imageFormat name]];
