@@ -88,20 +88,21 @@ static UIImage * _FICDSquareImageFromImage(UIImage *image) {
     if (imageSize.width == imageSize.height) {
         squareImage = image;
     } else {
-        // Compute square crop rect
-        CGFloat smallerDimension = MIN(imageSize.width, imageSize.height);
-        CGRect cropRect = CGRectMake(0, 0, smallerDimension, smallerDimension);
+        // crop by AspectFill
+        CGFloat dim = MIN(imageSize.width, imageSize.height);
         
-        // Center the crop rect either vertically or horizontally, depending on which dimension is smaller
-        if (imageSize.width <= imageSize.height) {
-            cropRect.origin = CGPointMake(0, rintf((imageSize.height - smallerDimension) / 2.0));
-        } else {
-            cropRect.origin = CGPointMake(rintf((imageSize.width - smallerDimension) / 2.0), 0);
-        }
+        // Performance tips: You can scale the squareImage's size because your
+        // thumbnail may not need such high resolution.
+        // Image scale operation can be done within [UIImage drawInRect:] method
+        CGSize targetSize = CGSizeMake(dim, dim);
+        CGFloat xOffset = (targetSize.width - imageSize.width) / 2;
+        CGFloat yOffset = (targetSize.height - imageSize.height) / 2;
+        CGRect thumbnailRect = CGRectMake(xOffset, yOffset, imageSize.width, imageSize.height);
         
-        CGImageRef croppedImageRef = CGImageCreateWithImageInRect([image CGImage], cropRect);
-        squareImage = [UIImage imageWithCGImage:croppedImageRef];
-        CGImageRelease(croppedImageRef);
+        UIGraphicsBeginImageContext(targetSize);
+        [image drawInRect:thumbnailRect];
+        squareImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
     }
     
     return squareImage;
