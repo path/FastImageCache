@@ -8,8 +8,6 @@
 
 #import "FICImports.h"
 
-@class FICImageTable;
-
 /**
  `FICImageTableChunk` represents a contiguous portion of image table file data.
  */

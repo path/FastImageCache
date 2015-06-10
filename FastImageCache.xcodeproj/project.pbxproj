@@ -1,0 +1,441 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8178CE2F1AE293C0004E3649 /* libFastImageCache.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8178CE231AE293C0004E3649 /* libFastImageCache.a */; };
+		8178CE4C1AE293E3004E3649 /* FICImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 8178CE3F1AE293E3004E3649 /* FICImageCache.m */; };
+		8178CE4D1AE293E3004E3649 /* FICImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 8178CE3F1AE293E3004E3649 /* FICImageCache.m */; };
+		8178CE4E1AE293E3004E3649 /* FICImageFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = 8178CE421AE293E3004E3649 /* FICImageFormat.m */; };
+		8178CE4F1AE293E3004E3649 /* FICImageFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = 8178CE421AE293E3004E3649 /* FICImageFormat.m */; };
+		8178CE501AE293E3004E3649 /* FICImageTable.m in Sources */ = {isa = PBXBuildFile; fileRef = 8178CE441AE293E3004E3649 /* FICImageTable.m */; };
+		8178CE511AE293E3004E3649 /* FICImageTable.m in Sources */ = {isa = PBXBuildFile; fileRef = 8178CE441AE293E3004E3649 /* FICImageTable.m */; };
+		8178CE521AE293E3004E3649 /* FICImageTableChunk.m in Sources */ = {isa = PBXBuildFile; fileRef = 8178CE461AE293E3004E3649 /* FICImageTableChunk.m */; };
+		8178CE531AE293E3004E3649 /* FICImageTableChunk.m in Sources */ = {isa = PBXBuildFile; fileRef = 8178CE461AE293E3004E3649 /* FICImageTableChunk.m */; };
+		8178CE541AE293E3004E3649 /* FICImageTableEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 8178CE481AE293E3004E3649 /* FICImageTableEntry.m */; };
+		8178CE551AE293E3004E3649 /* FICImageTableEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 8178CE481AE293E3004E3649 /* FICImageTableEntry.m */; };
+		8178CE561AE293E3004E3649 /* FICUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 8178CE4B1AE293E3004E3649 /* FICUtilities.m */; };
+		8178CE571AE293E3004E3649 /* FICUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 8178CE4B1AE293E3004E3649 /* FICUtilities.m */; };
+		8178CE5B1AE2A667004E3649 /* ImageCacheTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8178CE5A1AE2A667004E3649 /* ImageCacheTests.m */; };
+		8178CE5E1AE2B25D004E3649 /* TestEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 8178CE5D1AE2B25D004E3649 /* TestEntity.m */; };
+		8178CE611AE2BBB6004E3649 /* TestImageProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 8178CE601AE2BBB6004E3649 /* TestImageProvider.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		8178CE301AE293C0004E3649 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8178CE1B1AE293C0004E3649 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8178CE221AE293C0004E3649;
+			remoteInfo = FastImageCache;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8178CE211AE293C0004E3649 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		8178CE231AE293C0004E3649 /* libFastImageCache.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libFastImageCache.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		8178CE2E1AE293C0004E3649 /* FastImageCacheTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FastImageCacheTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8178CE341AE293C0004E3649 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8178CE3D1AE293E3004E3649 /* FICEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICEntity.h; sourceTree = "<group>"; };
+		8178CE3E1AE293E3004E3649 /* FICImageCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImageCache.h; sourceTree = "<group>"; };
+		8178CE3F1AE293E3004E3649 /* FICImageCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICImageCache.m; sourceTree = "<group>"; };
+		8178CE401AE293E3004E3649 /* FICImageCache+FICErrorLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FICImageCache+FICErrorLogging.h"; sourceTree = "<group>"; };
+		8178CE411AE293E3004E3649 /* FICImageFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImageFormat.h; sourceTree = "<group>"; };
+		8178CE421AE293E3004E3649 /* FICImageFormat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICImageFormat.m; sourceTree = "<group>"; };
+		8178CE431AE293E3004E3649 /* FICImageTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImageTable.h; sourceTree = "<group>"; };
+		8178CE441AE293E3004E3649 /* FICImageTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICImageTable.m; sourceTree = "<group>"; };
+		8178CE451AE293E3004E3649 /* FICImageTableChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImageTableChunk.h; sourceTree = "<group>"; };
+		8178CE461AE293E3004E3649 /* FICImageTableChunk.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICImageTableChunk.m; sourceTree = "<group>"; };
+		8178CE471AE293E3004E3649 /* FICImageTableEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImageTableEntry.h; sourceTree = "<group>"; };
+		8178CE481AE293E3004E3649 /* FICImageTableEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICImageTableEntry.m; sourceTree = "<group>"; };
+		8178CE491AE293E3004E3649 /* FICImports.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICImports.h; sourceTree = "<group>"; };
+		8178CE4A1AE293E3004E3649 /* FICUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICUtilities.h; sourceTree = "<group>"; };
+		8178CE4B1AE293E3004E3649 /* FICUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICUtilities.m; sourceTree = "<group>"; };
+		8178CE5A1AE2A667004E3649 /* ImageCacheTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageCacheTests.m; sourceTree = "<group>"; };
+		8178CE5C1AE2B25D004E3649 /* TestEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestEntity.h; sourceTree = "<group>"; };
+		8178CE5D1AE2B25D004E3649 /* TestEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestEntity.m; sourceTree = "<group>"; };
+		8178CE5F1AE2BBB6004E3649 /* TestImageProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestImageProvider.h; sourceTree = "<group>"; };
+		8178CE601AE2BBB6004E3649 /* TestImageProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestImageProvider.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8178CE201AE293C0004E3649 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8178CE2B1AE293C0004E3649 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8178CE2F1AE293C0004E3649 /* libFastImageCache.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		8178CE1A1AE293C0004E3649 = {
+			isa = PBXGroup;
+			children = (
+				8178CE251AE293C0004E3649 /* FastImageCache */,
+				8178CE321AE293C0004E3649 /* FastImageCacheTests */,
+				8178CE241AE293C0004E3649 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8178CE241AE293C0004E3649 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8178CE231AE293C0004E3649 /* libFastImageCache.a */,
+				8178CE2E1AE293C0004E3649 /* FastImageCacheTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8178CE251AE293C0004E3649 /* FastImageCache */ = {
+			isa = PBXGroup;
+			children = (
+				8178CE3D1AE293E3004E3649 /* FICEntity.h */,
+				8178CE3E1AE293E3004E3649 /* FICImageCache.h */,
+				8178CE3F1AE293E3004E3649 /* FICImageCache.m */,
+				8178CE401AE293E3004E3649 /* FICImageCache+FICErrorLogging.h */,
+				8178CE411AE293E3004E3649 /* FICImageFormat.h */,
+				8178CE421AE293E3004E3649 /* FICImageFormat.m */,
+				8178CE431AE293E3004E3649 /* FICImageTable.h */,
+				8178CE441AE293E3004E3649 /* FICImageTable.m */,
+				8178CE451AE293E3004E3649 /* FICImageTableChunk.h */,
+				8178CE461AE293E3004E3649 /* FICImageTableChunk.m */,
+				8178CE471AE293E3004E3649 /* FICImageTableEntry.h */,
+				8178CE481AE293E3004E3649 /* FICImageTableEntry.m */,
+				8178CE491AE293E3004E3649 /* FICImports.h */,
+				8178CE4A1AE293E3004E3649 /* FICUtilities.h */,
+				8178CE4B1AE293E3004E3649 /* FICUtilities.m */,
+			);
+			path = FastImageCache;
+			sourceTree = "<group>";
+		};
+		8178CE321AE293C0004E3649 /* FastImageCacheTests */ = {
+			isa = PBXGroup;
+			children = (
+				8178CE5A1AE2A667004E3649 /* ImageCacheTests.m */,
+				8178CE331AE293C0004E3649 /* Supporting Files */,
+			);
+			path = FastImageCacheTests;
+			sourceTree = "<group>";
+		};
+		8178CE331AE293C0004E3649 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				8178CE5C1AE2B25D004E3649 /* TestEntity.h */,
+				8178CE5D1AE2B25D004E3649 /* TestEntity.m */,
+				8178CE5F1AE2BBB6004E3649 /* TestImageProvider.h */,
+				8178CE601AE2BBB6004E3649 /* TestImageProvider.m */,
+				8178CE341AE293C0004E3649 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8178CE221AE293C0004E3649 /* FastImageCache */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8178CE371AE293C0004E3649 /* Build configuration list for PBXNativeTarget "FastImageCache" */;
+			buildPhases = (
+				8178CE1F1AE293C0004E3649 /* Sources */,
+				8178CE201AE293C0004E3649 /* Frameworks */,
+				8178CE211AE293C0004E3649 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FastImageCache;
+			productName = FastImageCache;
+			productReference = 8178CE231AE293C0004E3649 /* libFastImageCache.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		8178CE2D1AE293C0004E3649 /* FastImageCacheTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8178CE3A1AE293C0004E3649 /* Build configuration list for PBXNativeTarget "FastImageCacheTests" */;
+			buildPhases = (
+				8178CE2A1AE293C0004E3649 /* Sources */,
+				8178CE2B1AE293C0004E3649 /* Frameworks */,
+				8178CE2C1AE293C0004E3649 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8178CE311AE293C0004E3649 /* PBXTargetDependency */,
+			);
+			name = FastImageCacheTests;
+			productName = FastImageCacheTests;
+			productReference = 8178CE2E1AE293C0004E3649 /* FastImageCacheTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8178CE1B1AE293C0004E3649 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0630;
+				ORGANIZATIONNAME = Path;
+				TargetAttributes = {
+					8178CE221AE293C0004E3649 = {
+						CreatedOnToolsVersion = 6.3;
+					};
+					8178CE2D1AE293C0004E3649 = {
+						CreatedOnToolsVersion = 6.3;
+					};
+				};
+			};
+			buildConfigurationList = 8178CE1E1AE293C0004E3649 /* Build configuration list for PBXProject "FastImageCache" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 8178CE1A1AE293C0004E3649;
+			productRefGroup = 8178CE241AE293C0004E3649 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8178CE221AE293C0004E3649 /* FastImageCache */,
+				8178CE2D1AE293C0004E3649 /* FastImageCacheTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8178CE2C1AE293C0004E3649 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8178CE1F1AE293C0004E3649 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8178CE541AE293E3004E3649 /* FICImageTableEntry.m in Sources */,
+				8178CE561AE293E3004E3649 /* FICUtilities.m in Sources */,
+				8178CE4C1AE293E3004E3649 /* FICImageCache.m in Sources */,
+				8178CE521AE293E3004E3649 /* FICImageTableChunk.m in Sources */,
+				8178CE4E1AE293E3004E3649 /* FICImageFormat.m in Sources */,
+				8178CE501AE293E3004E3649 /* FICImageTable.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8178CE2A1AE293C0004E3649 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8178CE511AE293E3004E3649 /* FICImageTable.m in Sources */,
+				8178CE5B1AE2A667004E3649 /* ImageCacheTests.m in Sources */,
+				8178CE611AE2BBB6004E3649 /* TestImageProvider.m in Sources */,
+				8178CE531AE293E3004E3649 /* FICImageTableChunk.m in Sources */,
+				8178CE4D1AE293E3004E3649 /* FICImageCache.m in Sources */,
+				8178CE5E1AE2B25D004E3649 /* TestEntity.m in Sources */,
+				8178CE571AE293E3004E3649 /* FICUtilities.m in Sources */,
+				8178CE551AE293E3004E3649 /* FICImageTableEntry.m in Sources */,
+				8178CE4F1AE293E3004E3649 /* FICImageFormat.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		8178CE311AE293C0004E3649 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8178CE221AE293C0004E3649 /* FastImageCache */;
+			targetProxy = 8178CE301AE293C0004E3649 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		8178CE351AE293C0004E3649 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		8178CE361AE293C0004E3649 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		8178CE381AE293C0004E3649 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		8178CE391AE293C0004E3649 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		8178CE3B1AE293C0004E3649 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = FastImageCacheTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		8178CE3C1AE293C0004E3649 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = FastImageCacheTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8178CE1E1AE293C0004E3649 /* Build configuration list for PBXProject "FastImageCache" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8178CE351AE293C0004E3649 /* Debug */,
+				8178CE361AE293C0004E3649 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8178CE371AE293C0004E3649 /* Build configuration list for PBXNativeTarget "FastImageCache" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8178CE381AE293C0004E3649 /* Debug */,
+				8178CE391AE293C0004E3649 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8178CE3A1AE293C0004E3649 /* Build configuration list for PBXNativeTarget "FastImageCacheTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8178CE3B1AE293C0004E3649 /* Debug */,
+				8178CE3C1AE293C0004E3649 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8178CE1B1AE293C0004E3649 /* Project object */;
+}
