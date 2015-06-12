@@ -30,6 +30,7 @@ static NSString *const FICImageCacheEntityKey = @"FICImageCacheEntityKey";
     BOOL _delegateImplementsWantsSourceImageForEntityWithFormatNameCompletionBlock;
     BOOL _delegateImplementsShouldProcessAllFormatsInFamilyForEntity;
     BOOL _delegateImplementsErrorDidOccurWithMessage;
+    BOOL _delegateImplementsDiagnosticMessage;
     BOOL _delegateImplementsCancelImageLoadingForEntityWithFormatName;
 }
 
@@ -50,6 +51,7 @@ static NSString *const FICImageCacheEntityKey = @"FICImageCacheEntityKey";
         _delegateImplementsWantsSourceImageForEntityWithFormatNameCompletionBlock = [_delegate respondsToSelector:@selector(imageCache:wantsSourceImageForEntity:withFormatName:completionBlock:)];
         _delegateImplementsShouldProcessAllFormatsInFamilyForEntity = [_delegate respondsToSelector:@selector(imageCache:shouldProcessAllFormatsInFamily:forEntity:)];
         _delegateImplementsErrorDidOccurWithMessage = [_delegate respondsToSelector:@selector(imageCache:errorDidOccurWithMessage:)];
+        _delegateImplementsDiagnosticMessage = [_delegate respondsToSelector:@selector(imageCache:diagnosticMessage:)];
         _delegateImplementsCancelImageLoadingForEntityWithFormatName = [_delegate respondsToSelector:@selector(imageCache:cancelImageLoadingForEntity:withFormatName:)];
     }
 }
@@ -475,6 +477,12 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
 - (void)_logMessage:(NSString *)message {
     if (_delegateImplementsErrorDidOccurWithMessage) {
         [_delegate imageCache:self errorDidOccurWithMessage:message];
+    }
+}
+
+- (void)_logDiagnosticMessage:(NSString *)message {
+    if (_delegateImplementsDiagnosticMessage) {
+        [_delegate imageCache:self diagnosticMessage:message];
     }
 }
 

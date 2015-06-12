@@ -29,4 +29,16 @@
  */
 - (void)_logMessage:(NSString *)message;
 
+/**
+ Passes a diagnostic message to the image cache.
+ 
+ @param message A string representing the error message.
+ 
+ @discussion Rather than logging directly to standard output, Fast Image Cache classes passes diagnostic logging to the shared `<FICImageCache>` instance. `<FICImageCache>` then allows its delegate to handle the
+ message.
+ 
+ @see [FICImageCacheDelegate imageCache:diagnosticMessage:]
+ */
+- (void)_logDiagnosticMessage:(NSString *)message;
+
 @end

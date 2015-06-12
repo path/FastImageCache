@@ -110,7 +110,11 @@
     void *pageAlignedAddress = (void *)(pageIndex * pageSize);
     size_t bytesBeforeData = address - pageAlignedAddress;
     size_t bytesToFlush = (bytesBeforeData + _length);
+    
+    NSTimeInterval start = [NSDate timeIntervalSinceReferenceDate];
     int result = msync(pageAlignedAddress, bytesToFlush, MS_SYNC);
+    NSTimeInterval end = [NSDate timeIntervalSinceReferenceDate];
+    [self.imageCache _logDiagnosticMessage:[NSString stringWithFormat:@"*** FIC Diagnostic: %s msync took %.3fs bytesBeforeData=%zu bytesToFlush=%zu", __PRETTY_FUNCTION__, (end - start) * 1000.0, bytesBeforeData, bytesToFlush]];
     
     if (result) {
         NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s msync(%p, %ld) returned %d errno=%d", __PRETTY_FUNCTION__, pageAlignedAddress, bytesToFlush, result, errno];
