@@ -6,6 +6,8 @@
 //  See LICENSE for full license agreement.
 //
 
+#import <UIKit/UIKit.h>
+
 @class FICDViewController;
 
 @interface FICDAppDelegate : UIResponder <UIApplicationDelegate>

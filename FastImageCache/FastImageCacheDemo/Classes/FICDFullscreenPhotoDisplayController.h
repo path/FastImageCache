@@ -6,6 +6,9 @@
 //  See LICENSE for full license agreement.
 //
 
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+
 @class FICDPhoto;
 
 @protocol FICDFullscreenPhotoDisplayControllerDelegate;
