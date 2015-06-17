@@ -14,7 +14,5 @@ FOUNDATION_EXPORT double FastImageCacheVersionNumber;
 //! Project version string for FastImageCache.
 FOUNDATION_EXPORT const unsigned char FastImageCacheVersionString[];
 
-// In this header, you should import all the public headers of your framework using statements like #import <FastImageCache/PublicHeader.h>
-
 #import <FastImageCache/FICImageCache.h>
 #import <FastImageCache/FICEntity.h>
