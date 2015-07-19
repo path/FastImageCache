@@ -1,6 +1,7 @@
 ![Fast Image Cache Logo](https://s3.amazonaws.com/fast-image-cache/readme-resources/logo.png)
 
 ---
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
 Fast Image Cache is an efficient, persistent, and—above all—fast way to store and retrieve images in your iOS application. Part of any good iOS application's user experience is fast, smooth scrolling, and Fast Image Cache helps make this easier.
 
