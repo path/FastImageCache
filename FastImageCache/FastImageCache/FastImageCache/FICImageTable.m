@@ -519,10 +519,16 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     if ([_fileDataProtectionMode isEqualToString:NSFileProtectionCompleteUntilFirstUserAuthentication] && _canAccessData)
         return YES;
     
+    // -[UIApplication isProtectedDataAvailable] checks whether the keybag is locked or not
     UIApplication *application = [UIApplication performSelector:@selector(sharedApplication)];
     if (application) {
         _canAccessData = [application isProtectedDataAvailable];
-    } else {
+    }
+    
+    // We have to fallback to a direct check on the file if either:
+    // - The application doesn't exist (happens in some extensions)
+    // - The keybag is locked, but the file might still be accessible because the mode is "until first user authentication"
+    if (!application || (!_canAccessData && [_fileDataProtectionMode isEqualToString:NSFileProtectionCompleteUntilFirstUserAuthentication])) {
         int fd;
         _canAccessData = ((fd = open([_filePath fileSystemRepresentation], O_RDONLY)) != -1);
         if (_canAccessData)
