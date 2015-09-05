@@ -513,23 +513,29 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
 // accessible and when you try to use that data. Sidestep this issue altogether
 // by using NSFileProtectionNone
 - (BOOL)canAccessEntryData {
-    BOOL result = YES;
-    if ([_fileDataProtectionMode isEqualToString:NSFileProtectionComplete]) {
-        result = [[UIApplication sharedApplication] isProtectedDataAvailable];
-    } else if ([_fileDataProtectionMode isEqualToString:NSFileProtectionCompleteUntilFirstUserAuthentication]) {
-        // For "complete until first auth", if we were previously able to access data, then we'll still be able to
-        // access it. If we haven't yet been able to access data, we'll need to try until we are successful.
-        if (_canAccessData == NO) {
-            if ([[UIApplication sharedApplication] isProtectedDataAvailable]) {
-                // we are unlocked, so we're good to go.
-                _canAccessData = YES;
-            } else {
-                // we are locked, so try to access data.
-                _canAccessData = [NSData dataWithContentsOfURL:[NSURL fileURLWithPath:_filePath] options:NSDataReadingMappedAlways error:NULL] != nil;
-            }
-        }
+    if ([_fileDataProtectionMode isEqualToString:NSFileProtectionNone])
+        return YES;
+    
+    if ([_fileDataProtectionMode isEqualToString:NSFileProtectionCompleteUntilFirstUserAuthentication] && _canAccessData)
+        return YES;
+    
+    // -[UIApplication isProtectedDataAvailable] checks whether the keybag is locked or not
+    UIApplication *application = [UIApplication performSelector:@selector(sharedApplication)];
+    if (application) {
+        _canAccessData = [application isProtectedDataAvailable];
     }
-    return result;
+    
+    // We have to fallback to a direct check on the file if either:
+    // - The application doesn't exist (happens in some extensions)
+    // - The keybag is locked, but the file might still be accessible because the mode is "until first user authentication"
+    if (!application || (!_canAccessData && [_fileDataProtectionMode isEqualToString:NSFileProtectionCompleteUntilFirstUserAuthentication])) {
+        int fd;
+        _canAccessData = ((fd = open([_filePath fileSystemRepresentation], O_RDONLY)) != -1);
+        if (_canAccessData)
+            close(fd);
+    }
+    
+    return _canAccessData;
 }
 
 - (FICImageTableEntry *)_entryDataAtIndex:(NSInteger)index {
