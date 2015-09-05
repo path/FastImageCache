@@ -32,7 +32,6 @@
 		B2E567DD1B316E1000906840 /* FICDPhotosTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B2E567D51B316E1000906840 /* FICDPhotosTableViewCell.m */; };
 		B2E567DE1B316E1000906840 /* FICDTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = B2E567D71B316E1000906840 /* FICDTableView.m */; };
 		B2E567DF1B316E1000906840 /* FICDViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B2E567D91B316E1000906840 /* FICDViewController.m */; };
-		B2E567E21B316E1700906840 /* README in Resources */ = {isa = PBXBuildFile; fileRef = B2E567E11B316E1700906840 /* README */; };
 		B2E567E41B316E2200906840 /* fetch_demo_images.sh in Resources */ = {isa = PBXBuildFile; fileRef = B2E567E31B316E2200906840 /* fetch_demo_images.sh */; };
 		B2E567E61B316E3700906840 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B2E567E51B316E3700906840 /* Assets.xcassets */; };
 		B2E567E71B316E5F00906840 /* FICUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B2E567931B316D9600906840 /* FICUtilities.m */; };
@@ -41,6 +40,7 @@
 		B2E567EA1B316E6600906840 /* FICImageTable.m in Sources */ = {isa = PBXBuildFile; fileRef = B2E5678C1B316D9600906840 /* FICImageTable.m */; };
 		B2E567EB1B316E6600906840 /* FICImageTableChunk.m in Sources */ = {isa = PBXBuildFile; fileRef = B2E5678E1B316D9600906840 /* FICImageTableChunk.m */; };
 		B2E567EC1B316E6600906840 /* FICImageTableEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = B2E567901B316D9600906840 /* FICImageTableEntry.m */; };
+		BFD6BFFB1B68FD5D005292DC /* Demo Images in Resources */ = {isa = PBXBuildFile; fileRef = BFD6BFFA1B68FD5D005292DC /* Demo Images */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -90,10 +90,10 @@
 		B2E567D71B316E1000906840 /* FICDTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICDTableView.m; sourceTree = "<group>"; };
 		B2E567D81B316E1000906840 /* FICDViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FICDViewController.h; sourceTree = "<group>"; };
 		B2E567D91B316E1000906840 /* FICDViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FICDViewController.m; sourceTree = "<group>"; };
-		B2E567E11B316E1700906840 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		B2E567E31B316E2200906840 /* fetch_demo_images.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = fetch_demo_images.sh; sourceTree = "<group>"; };
 		B2E567E51B316E3700906840 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B2E567ED1B316EBF00906840 /* FastImageCacheDemo-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FastImageCacheDemo-Prefix.pch"; sourceTree = "<group>"; };
+		BFD6BFFA1B68FD5D005292DC /* Demo Images */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Demo Images"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -203,8 +203,8 @@
 			isa = PBXGroup;
 			children = (
 				B2E567E31B316E2200906840 /* fetch_demo_images.sh */,
+				BFD6BFFA1B68FD5D005292DC /* Demo Images */,
 				B2E567CD1B316E1000906840 /* Classes */,
-				B2E567E01B316E1600906840 /* Demo Images */,
 				B2E567A91B316DCA00906840 /* Supporting Files */,
 			);
 			path = FastImageCacheDemo;
@@ -238,14 +238,6 @@
 				B2E567D91B316E1000906840 /* FICDViewController.m */,
 			);
 			path = Classes;
-			sourceTree = "<group>";
-		};
-		B2E567E01B316E1600906840 /* Demo Images */ = {
-			isa = PBXGroup;
-			children = (
-				B2E567E11B316E1700906840 /* README */,
-			);
-			path = "Demo Images";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -384,8 +376,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B2E567E41B316E2200906840 /* fetch_demo_images.sh in Resources */,
+				BFD6BFFB1B68FD5D005292DC /* Demo Images in Resources */,
 				B2E567E61B316E3700906840 /* Assets.xcassets in Resources */,
-				B2E567E21B316E1700906840 /* README in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -635,6 +627,7 @@
 				B2E567801B316D5800906840 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B2E567811B316D5800906840 /* Build configuration list for PBXNativeTarget "FastImageCacheTests" */ = {
 			isa = XCConfigurationList;
@@ -643,6 +636,7 @@
 				B2E567831B316D5800906840 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B2E567C71B316DCB00906840 /* Build configuration list for PBXNativeTarget "FastImageCacheDemo" */ = {
 			isa = XCConfigurationList;
@@ -651,6 +645,7 @@
 				B2E567C91B316DCB00906840 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
