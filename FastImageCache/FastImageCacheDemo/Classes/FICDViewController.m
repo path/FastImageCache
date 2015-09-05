@@ -110,13 +110,12 @@
     // Configure the navigation item
     UINavigationItem *navigationItem = [self navigationItem];
     
-    UIBarButtonItem *resetBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Reset" style:UIBarButtonItemStyleBordered target:self action:@selector(_reset)];
+    UIBarButtonItem *resetBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Reset" style:UIBarButtonItemStylePlain target:self action:@selector(_reset)];
     [navigationItem setLeftBarButtonItem:resetBarButtonItem];
     
     UISegmentedControl *methodSegmentedControl = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Conventional", @"Image Table", nil]];
     [methodSegmentedControl setSelectedSegmentIndex:0];
     [methodSegmentedControl addTarget:self action:@selector(_methodSegmentedControlValueChanged:) forControlEvents:UIControlEventValueChanged];
-    [methodSegmentedControl setSegmentedControlStyle:UISegmentedControlStyleBar];
     [methodSegmentedControl sizeToFit];
     [navigationItem setTitleView:methodSegmentedControl];
     
@@ -152,7 +151,6 @@
         UISegmentedControl *imageFormatStyleSegmentedControl = [[UISegmentedControl alloc] initWithItems:imageFormatStyleSegmentedControlTitles];
         [imageFormatStyleSegmentedControl setSelectedSegmentIndex:0];
         [imageFormatStyleSegmentedControl addTarget:self action:@selector(_imageFormatStyleSegmentedControlValueChanged:) forControlEvents:UIControlEventValueChanged];
-        [imageFormatStyleSegmentedControl setSegmentedControlStyle:UISegmentedControlStyleBar];
         [imageFormatStyleSegmentedControl setApportionsSegmentWidthsByContent:userInterfaceIdiomIsPhone];
         [imageFormatStyleSegmentedControl sizeToFit];
         
