@@ -25,7 +25,6 @@ static NSString *const FICImageCacheEntityKey = @"FICImageCacheEntityKey";
     NSMutableDictionary *_formats;
     NSMutableDictionary *_imageTables;
     NSMutableDictionary *_requests;
-    __weak id <FICImageCacheDelegate> _delegate;
     
     BOOL _delegateImplementsWantsSourceImageForEntityWithFormatNameCompletionBlock;
     BOOL _delegateImplementsShouldProcessAllFormatsInFamilyForEntity;
