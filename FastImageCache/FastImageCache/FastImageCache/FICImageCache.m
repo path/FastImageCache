@@ -54,18 +54,15 @@ static NSString *const FICImageCacheEntityKey = @"FICImageCacheEntityKey";
     }
 }
 
-static FICImageCache *__imageCache = nil;
-
 #pragma mark - Object Lifecycle
 
 + (instancetype)sharedImageCache {
-    if (__imageCache == nil) {
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            __imageCache = [[[self class] alloc] init];
-        });
-    }
-    
+    static dispatch_once_t onceToken;
+    static FICImageCache *__imageCache = nil;
+    dispatch_once(&onceToken, ^{
+        __imageCache = [[[self class] alloc] init];
+    });
+
     return __imageCache;
 }
 
