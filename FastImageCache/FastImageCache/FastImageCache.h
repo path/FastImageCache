@@ -16,3 +16,4 @@ FOUNDATION_EXPORT const unsigned char FastImageCacheVersionString[];
 
 #import <FastImageCache/FICImageCache.h>
 #import <FastImageCache/FICEntity.h>
+#import <FastImageCache/FICUtilities.h>
