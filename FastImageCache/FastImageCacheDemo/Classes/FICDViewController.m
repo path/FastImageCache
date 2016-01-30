@@ -485,9 +485,7 @@ static BOOL _FICDImageIsLight(UIImage *image) {
 #pragma mark - UITableViewDelegate
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    CGFloat rowHeight = [FICDPhotosTableViewCell rowHeightForInterfaceOrientation:[self interfaceOrientation]];
-    
-    return rowHeight;
+    return [FICDPhotosTableViewCell rowHeight];
 }
 
 - (void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(NSIndexPath*)indexPath {
@@ -551,7 +549,7 @@ static BOOL _FICDImageIsLight(UIImage *image) {
             [self _updateStatusBarStyleForColorAveragedImage:colorAveragedImage];
         }
     } else {
-        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:YES];
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
     }
 }
 

@@ -22,7 +22,7 @@
 + (NSString *)reuseIdentifier;
 + (NSInteger)photosPerRow;
 + (CGFloat)outerPadding;
-+ (CGFloat)rowHeightForInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation;
++ (CGFloat)rowHeight;
 
 @end
 

@@ -103,7 +103,7 @@
     return outerPadding;
 }
 
-+ (CGFloat)rowHeightForInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
++ (CGFloat)rowHeight {
     CGFloat rowHeight = ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) ? 84 : 79;
     
     return rowHeight;
