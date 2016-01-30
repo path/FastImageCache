@@ -432,15 +432,16 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     if (entityUUID != nil) {
         [_lock lock];
         
+        NSInteger MRUIndex = [_MRUEntries indexOfObject:entityUUID];
+        if (MRUIndex != NSNotFound) {
+            [_MRUEntries removeObjectAtIndex:MRUIndex];
+        }
+        
         NSInteger index = [self _indexOfEntryForEntityUUID:entityUUID];
         if (index != NSNotFound) {
             [_sourceImageMap removeObjectForKey:entityUUID];
             [_indexMap removeObjectForKey:entityUUID];
             [_occupiedIndexes removeIndex:index];
-            NSInteger index = [_MRUEntries indexOfObject:entityUUID];
-            if (index != NSNotFound) {
-                [_MRUEntries removeObjectAtIndex:index];
-            }
             [self saveMetadata];
         }
         
