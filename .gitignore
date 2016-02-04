@@ -19,5 +19,5 @@ profile
 DerivedData
 
 # Demo Images
-FastImageCacheDemo/Demo Images/*.jpg
+FastImageCache/FastImageCacheDemo/Demo Images/*.jpg
 Carthage
