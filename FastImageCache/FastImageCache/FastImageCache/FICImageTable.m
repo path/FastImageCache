@@ -233,10 +233,6 @@ static NSString *const FICImageTableFormatKey = @"format";
     return self;
 }
 
-- (instancetype)init {
-    return [self initWithFormat:nil imageCache:nil];
-}
-
 - (void)dealloc {
     if (_fileDescriptor >= 0) {
         close(_fileDescriptor);

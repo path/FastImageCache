@@ -13,8 +13,10 @@
 @protocol FICEntity;
 @protocol FICImageCacheDelegate;
 
-typedef void (^FICImageCacheCompletionBlock)(id <FICEntity> entity, NSString *formatName, UIImage *image);
-typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
+typedef void (^FICImageCacheCompletionBlock)(id <FICEntity> _Nullable entity, NSString * _Nonnull formatName, UIImage * _Nullable image);
+typedef void (^FICImageRequestCompletionBlock)(UIImage * _Nullable sourceImage);
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  `FICImageCache` is the primary class for managing and interacting with the image cache. Applications using the image cache create one or more `<FICImageFormat>`
@@ -98,7 +100,7 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
  
  @note Once the image formats have been set, subsequent calls to this method will do nothing.
  */
-- (void)setFormats:(NSArray *)formats;
+- (void)setFormats:(NSArray<FICImageFormat*> *)formats;
 
 /**
  Returns an image format previously associated with the image cache.
@@ -107,7 +109,7 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
  
  @return An image format with the name `formatName` or `nil` if no format with that name exists.
  */
-- (FICImageFormat *)formatWithName:(NSString *)formatName;
+- (nullable FICImageFormat *)formatWithName:(NSString *)formatName;
 
 /**
  Returns all the image formats of the same family previously associated with the image cache.
@@ -116,7 +118,7 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
  
  @return An array of `<FICImageFormat>` objects whose family is `family` or `nil` if no format belongs to that family.
  */
-- (NSArray *)formatsWithFamily:(NSString *)family;
+- (nullable NSArray<FICImageFormat *> *)formatsWithFamily:(NSString *)family;
 
 ///-----------------------------------------------
 /// @name Storing, Retrieving, and Deleting Images
@@ -141,7 +143,7 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
      
      typedef void (^FICImageCacheCompletionBlock)(id <FICEntity> entity, NSString *formatName, UIImage *image)
  */
-- (void)setImage:(UIImage *)image forEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName completionBlock:(FICImageCacheCompletionBlock)completionBlock;
+- (void)setImage:(UIImage *)image forEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName completionBlock:(nullable FICImageCacheCompletionBlock)completionBlock;
 
 /**
  Attempts to synchronously retrieve an image from the image cache.
@@ -168,7 +170,7 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
  @note You can always rely on the completion block being called. If an error occurs for any reason, the `image` parameter of the completion block will be `nil`. See
  <[FICImageCacheDelegate imageCache:errorDidOccurWithMessage:]> for information about being notified when errors occur.
  */
-- (BOOL)retrieveImageForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName completionBlock:(FICImageCacheCompletionBlock)completionBlock;
+- (BOOL)retrieveImageForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName completionBlock:(nullable FICImageCacheCompletionBlock)completionBlock;
 
 /**
  Asynchronously retrieves an image from the image cache.
@@ -193,7 +195,7 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
  
  @see [FICImageCache retrieveImageForEntity:withFormatName:completionBlock:]
  */
-- (BOOL)asynchronouslyRetrieveImageForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName completionBlock:(FICImageCacheCompletionBlock)completionBlock;
+- (BOOL)asynchronouslyRetrieveImageForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName completionBlock:(nullable FICImageCacheCompletionBlock)completionBlock;
 
 /**
  Deletes an image from the image cache.
@@ -281,7 +283,7 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
  the URL returned by <[FICEntity sourceImageURLWithFormatName:]>, deserializing the image data when the request completes, and finally calling this method's completion
  block to provide the image cache with the source image.
  */
-- (void)imageCache:(FICImageCache *)imageCache wantsSourceImageForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName completionBlock:(FICImageRequestCompletionBlock)completionBlock;
+- (void)imageCache:(FICImageCache *)imageCache wantsSourceImageForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName completionBlock:(nullable FICImageRequestCompletionBlock)completionBlock;
 
 /**
  This method is called on the delegate when the image cache has received an image retrieval cancellation request.
@@ -332,3 +334,5 @@ typedef void (^FICImageRequestCompletionBlock)(UIImage *sourceImage);
 - (void)imageCache:(FICImageCache *)imageCache errorDidOccurWithMessage:(NSString *)errorMessage;
 
 @end
+
+NS_ASSUME_NONNULL_END
