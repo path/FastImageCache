@@ -214,18 +214,20 @@ static NSString *const FICImageCacheEntityKey = @"FICImageCacheEntityKey";
                 }
 
                 if (needsToFetch) {
-                    UIImage *image;
-                    if ([entity respondsToSelector:@selector(imageForFormat:)]){
-                        FICImageFormat *format = [self formatWithName:formatName];
-                        image = [entity imageForFormat:format];
-                    }
-                    
-                    if (image){
-                        [self _imageDidLoad:image forURL:sourceImageURL];
-                    } else if (_delegateImplementsWantsSourceImageForEntityWithFormatNameCompletionBlock){
-                        [_delegate imageCache:self wantsSourceImageForEntity:entity withFormatName:formatName completionBlock:^(UIImage *sourceImage) {
-                            [self _imageDidLoad:sourceImage forURL:sourceImageURL];
-                        }];
+                    @autoreleasepool {
+                        UIImage *image;
+                        if ([entity respondsToSelector:@selector(imageForFormat:)]){
+                            FICImageFormat *format = [self formatWithName:formatName];
+                            image = [entity imageForFormat:format];
+                        }
+                        
+                        if (image){
+                            [self _imageDidLoad:image forURL:sourceImageURL];
+                        } else if (_delegateImplementsWantsSourceImageForEntityWithFormatNameCompletionBlock){
+                            [_delegate imageCache:self wantsSourceImageForEntity:entity withFormatName:formatName completionBlock:^(UIImage *sourceImage) {
+                                [self _imageDidLoad:sourceImage forURL:sourceImageURL];
+                            }];
+                        }
                     }
                 }
             } else {

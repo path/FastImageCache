@@ -233,10 +233,6 @@ static NSString *const FICImageTableFormatKey = @"format";
     return self;
 }
 
-- (instancetype)init {
-    return [self initWithFormat:nil imageCache:nil];
-}
-
 - (void)dealloc {
     if (_fileDescriptor >= 0) {
         close(_fileDescriptor);
@@ -685,43 +681,47 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
 #pragma mark - Working with Metadata
 
 - (void)saveMetadata {
-    [_lock lock];
-    
-    NSDictionary *metadataDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-                                        [_indexMap copy], FICImageTableIndexMapKey,
-                                        [_sourceImageMap copy], FICImageTableContextMapKey,
-                                        [[_MRUEntries array] copy], FICImageTableMRUArrayKey,
-                                        [_imageFormatDictionary copy], FICImageTableFormatKey, nil];
+    @autoreleasepool {
+        [_lock lock];
+        
+        NSDictionary *metadataDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+                                            [_indexMap copy], FICImageTableIndexMapKey,
+                                            [_sourceImageMap copy], FICImageTableContextMapKey,
+                                            [[_MRUEntries array] copy], FICImageTableMRUArrayKey,
+                                            [_imageFormatDictionary copy], FICImageTableFormatKey, nil];
 
-    __block int32_t metadataVersion = OSAtomicIncrement32(&_metadataVersion);
+        __block int32_t metadataVersion = OSAtomicIncrement32(&_metadataVersion);
 
-    [_lock unlock];
-    
-    static dispatch_queue_t __metadataQueue = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        __metadataQueue = dispatch_queue_create("com.path.FastImageCache.ImageTableMetadataQueue", NULL);
-    });
-    
-    dispatch_async(__metadataQueue, ^{
-        // Cancel serialization if a new metadata version is queued to be saved
-        if (metadataVersion != _metadataVersion) {
-            return;
-        }
+        [_lock unlock];
+        
+        static dispatch_queue_t __metadataQueue = nil;
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            __metadataQueue = dispatch_queue_create("com.path.FastImageCache.ImageTableMetadataQueue", NULL);
+        });
+        
+        dispatch_async(__metadataQueue, ^{
+            // Cancel serialization if a new metadata version is queued to be saved
+            if (metadataVersion != _metadataVersion) {
+                return;
+            }
 
-        NSData *data = [NSJSONSerialization dataWithJSONObject:metadataDictionary options:kNilOptions error:NULL];
+            @autoreleasepool {
+                NSData *data = [NSJSONSerialization dataWithJSONObject:metadataDictionary options:kNilOptions error:NULL];
 
-        // Cancel disk writing if a new metadata version is queued to be saved
-        if (metadataVersion != _metadataVersion) {
-            return;
-        }
+                // Cancel disk writing if a new metadata version is queued to be saved
+                if (metadataVersion != _metadataVersion) {
+                    return;
+                }
 
-        BOOL fileWriteResult = [data writeToFile:[self metadataFilePath] atomically:NO];
-        if (fileWriteResult == NO) {
-            NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s couldn't write metadata for format %@", __PRETTY_FUNCTION__, [_imageFormat name]];
-            [self.imageCache _logMessage:message];
-        }
-    });
+                BOOL fileWriteResult = [data writeToFile:[self metadataFilePath] atomically:NO];
+                if (fileWriteResult == NO) {
+                    NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s couldn't write metadata for format %@", __PRETTY_FUNCTION__, [_imageFormat name]];
+                    [self.imageCache _logMessage:message];
+                }
+            }
+        });
+    }
 }
 
 - (void)_loadMetadata {
