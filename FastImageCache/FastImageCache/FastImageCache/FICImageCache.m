@@ -163,8 +163,8 @@ static NSString *const FICImageCacheEntityKey = @"FICImageCacheEntityKey";
     BOOL imageExists = NO;
     
     FICImageTable *imageTable = [_imageTables objectForKey:formatName];
-    NSString *entityUUID = [entity UUID];
-    NSString *sourceImageUUID = [entity sourceImageUUID];
+    NSString *entityUUID = [entity FIC_UUID];
+    NSString *sourceImageUUID = [entity FIC_sourceImageUUID];
     
     if (loadSynchronously == NO && [imageTable entryExistsForEntityUUID:entityUUID sourceImageUUID:sourceImageUUID]) {
         imageExists = YES;
@@ -196,7 +196,7 @@ static NSString *const FICImageCacheEntityKey = @"FICImageCacheEntityKey";
         
         if (image == nil) {
             // No image for this UUID exists in the image table. We'll need to ask the delegate to retrieve the source asset.
-            NSURL *sourceImageURL = [entity sourceImageURLWithFormatName:formatName];
+            NSURL *sourceImageURL = [entity FIC_sourceImageURLWithFormatName:formatName];
             
             if (sourceImageURL != nil) {
                 // We check to see if this image is already being fetched.
@@ -216,9 +216,9 @@ static NSString *const FICImageCacheEntityKey = @"FICImageCacheEntityKey";
                 if (needsToFetch) {
                     @autoreleasepool {
                         UIImage *image;
-                        if ([entity respondsToSelector:@selector(imageForFormat:)]){
+                        if ([entity respondsToSelector:@selector(FIC_imageForFormat:)]){
                             FICImageFormat *format = [self formatWithName:formatName];
-                            image = [entity imageForFormat:format];
+                            image = [entity FIC_imageForFormat:format];
                         }
                         
                         if (image){
@@ -274,7 +274,7 @@ static NSString *const FICImageCacheEntityKey = @"FICImageCacheEntityKey";
 }
 
 static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDictionary *entityRequestsDictionary, id <FICEntity> entity, FICImageCacheCompletionBlock completionBlock) {
-    NSString *entityUUID = [entity UUID];
+    NSString *entityUUID = [entity FIC_UUID];
     NSMutableDictionary *requestDictionary = [entityRequestsDictionary objectForKey:entityUUID];
     NSMutableDictionary *completionBlocks = nil;
     
@@ -315,7 +315,7 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
             completionBlocksDictionary = [NSDictionary dictionaryWithObject:[NSArray arrayWithObject:[completionBlock copy]] forKey:formatName];
         }
         
-        NSString *entityUUID = [entity UUID];
+        NSString *entityUUID = [entity FIC_UUID];
         FICImageTable *imageTable = [_imageTables objectForKey:formatName];
         if (imageTable) {
             [imageTable deleteEntryForEntityUUID:entityUUID];
@@ -338,21 +338,21 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
 
 - (void)_processImage:(UIImage *)image forEntity:(id <FICEntity>)entity imageTable:(FICImageTable *)imageTable completionBlocks:(NSArray *)completionBlocks {
     if (imageTable != nil) {
-        if ([entity UUID] == nil) {
+        if ([entity FIC_UUID] == nil) {
             [self _logMessage:[NSString stringWithFormat:@"*** FIC Error: %s entity %@ is missing its UUID.", __PRETTY_FUNCTION__, entity]];
             return;
         }
         
-        if ([entity sourceImageUUID] == nil) {
+        if ([entity FIC_sourceImageUUID] == nil) {
             [self _logMessage:[NSString stringWithFormat:@"*** FIC Error: %s entity %@ is missing its source image UUID.", __PRETTY_FUNCTION__, entity]];
             return;
         }
         
-        NSString *entityUUID = [entity UUID];
-        NSString *sourceImageUUID = [entity sourceImageUUID];
+        NSString *entityUUID = [entity FIC_UUID];
+        NSString *sourceImageUUID = [entity FIC_sourceImageUUID];
         FICImageFormat *imageFormat = [imageTable imageFormat];
         NSString *imageFormatName = [imageFormat name];
-        FICEntityImageDrawingBlock imageDrawingBlock = [entity drawingBlockForImage:image withFormatName:imageFormatName];
+        FICEntityImageDrawingBlock imageDrawingBlock = [entity FIC_drawingBlockForImage:image withFormatName:imageFormatName];
         
         dispatch_async([FICImageCache dispatchQueue], ^{
             [imageTable setEntryForEntityUUID:entityUUID sourceImageUUID:sourceImageUUID imageDrawingBlock:imageDrawingBlock];
@@ -412,7 +412,7 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
             }
 
             // If the image already exists, keep going
-            if ([table entryExistsForEntityUUID:entity.UUID sourceImageUUID:entity.sourceImageUUID]) {
+            if ([table entryExistsForEntityUUID:entity.FIC_UUID sourceImageUUID:entity.FIC_sourceImageUUID]) {
                 continue;
             }
 
@@ -427,8 +427,8 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
 
 - (BOOL)imageExistsForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName {
     FICImageTable *imageTable = [_imageTables objectForKey:formatName];
-    NSString *entityUUID = [entity UUID];
-    NSString *sourceImageUUID = [entity sourceImageUUID];
+    NSString *entityUUID = [entity FIC_UUID];
+    NSString *sourceImageUUID = [entity FIC_sourceImageUUID];
     
     BOOL imageExists = [imageTable entryExistsForEntityUUID:entityUUID sourceImageUUID:sourceImageUUID];
 
@@ -439,13 +439,13 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
 
 - (void)deleteImageForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName {
     FICImageTable *imageTable = [_imageTables objectForKey:formatName];
-    NSString *entityUUID = [entity UUID];    
+    NSString *entityUUID = [entity FIC_UUID];
     [imageTable deleteEntryForEntityUUID:entityUUID];
 }
 
 - (void)cancelImageRetrievalForEntity:(id <FICEntity>)entity withFormatName:(NSString *)formatName {
-    NSURL *sourceImageURL = [entity sourceImageURLWithFormatName:formatName];
-    NSString *entityUUID = [entity UUID];
+    NSURL *sourceImageURL = [entity FIC_sourceImageURLWithFormatName:formatName];
+    NSString *entityUUID = [entity FIC_UUID];
 
     BOOL cancelImageLoadingForEntity = NO;
     @synchronized (_requests) {
