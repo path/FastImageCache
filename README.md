@@ -162,8 +162,8 @@ For easy project integration, Fast Image Cache is available as a [CocoaPod](http
 
 - Clone this repository, or [download the latest archive of `master`](https://github.com/path/FastImageCache/archive/master.zip).
 - From the `FastImageCache` root directory, copy the source files from the inner [`FastImageCache`](./FastImageCache) subdirectory to your Xcode project.
-- Import [`FICImageCache.h`](./FastImageCache/FICImageCache.h) wherever you use the image cache.
-- Import [`FICEntity.h`](./FastImageCache/FICEntity.h) for each class that conforms to [`FICEntity`](https://s3.amazonaws.com/fast-image-cache/documentation/Protocols/FICEntity.html).
+- Import [`FICImageCache.h`](./FastImageCache/FastImageCache/FastImageCache/FICImageCache.h) wherever you use the image cache.
+- Import [`FICEntity.h`](./FastImageCache/FastImageCache/FastImageCache/FICEntity.h) for each class that conforms to [`FICEntity`](https://s3.amazonaws.com/fast-image-cache/documentation/Protocols/FICEntity.html).
 
 ### Initial Configuration
 
@@ -408,7 +408,7 @@ HTML documentation can be [found here](https://s3.amazonaws.com/fast-image-cache
 
 Included with this repository is a demo app Xcode project. It demonstrates the difference between the conventional approach for loading and displaying images and the Fast Image Cache approach. See the [requirements for running the demo app Xcode project](#requirements).
 
-> **Note**: The demo application must either be supplied with JPEG images, or the included [`fetch_demo_images.sh`](./FastImageCacheDemo/fetch_demo_images.sh) script in the [`FastImageCacheDemo`](./FastImageCacheDemo) directory must be run.
+> **Note**: The demo application must either be supplied with JPEG images, or the included [`fetch_demo_images.sh`](./FastImageCache/FastImageCacheDemo/fetch_demo_images.sh) script in the [`FastImageCacheDemo`](./FastImageCache/FastImageCacheDemo) directory must be run.
 
 ### Video
 
