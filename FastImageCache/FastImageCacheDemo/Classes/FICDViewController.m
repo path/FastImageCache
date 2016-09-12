@@ -95,6 +95,7 @@
         [_tableView setDelegate:self];
         [_tableView setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
         [_tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
+        [_tableView registerClass:[FICDPhotosTableViewCell class] forCellReuseIdentifier:[FICDPhotosTableViewCell reuseIdentifier]];
         
         CGFloat tableViewCellOuterPadding = [FICDPhotosTableViewCell outerPadding];
         [_tableView setContentInset:UIEdgeInsetsMake(0, 0, tableViewCellOuterPadding, 0)];
@@ -461,13 +462,9 @@ static BOOL _FICDImageIsLight(UIImage *image) {
 - (UITableViewCell*)tableView:(UITableView*)table cellForRowAtIndexPath:(NSIndexPath*)indexPath {
     NSString *reuseIdentifier = [FICDPhotosTableViewCell reuseIdentifier];
     
-    FICDPhotosTableViewCell *tableViewCell = (FICDPhotosTableViewCell *)[table dequeueReusableCellWithIdentifier:reuseIdentifier];
-    if (tableViewCell == nil) {
-        tableViewCell = [[FICDPhotosTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier];
-        [tableViewCell setBackgroundColor:[table backgroundColor]];
-        [tableViewCell setSelectionStyle:UITableViewCellSelectionStyleNone];
-    }
-    
+    FICDPhotosTableViewCell *tableViewCell = (FICDPhotosTableViewCell *)[table dequeueReusableCellWithIdentifier:reuseIdentifier forIndexPath:indexPath];
+    tableViewCell.selectionStyle = UITableViewCellSeparatorStyleNone;
+
     [tableViewCell setDelegate:self];
     [tableViewCell setImageFormatName:_imageFormatName];
     

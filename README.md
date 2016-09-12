@@ -74,7 +74,7 @@ Consider the workflow that occurs when loading an image from disk and displaying
 
 <sup>1</sup> `60FPS` ≈ `0.01666s per frame` = `16.7ms per frame`. This means that any main-thread work that takes longer than 16ms will cause your application to drop animation frames.
 
-<sup>2</sup> The documentation for [`CALayer`](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&ved=0CCwQFjAA&url=https%3A%2F%2Fdeveloper.apple.com%2Flibrary%2Fios%2Fdocumentation%2Fgraphicsimaging%2Freference%2FCALayer_class%2FIntroduction%2FIntroduction.html&ei=P29XUpj2LeahiALptICgCQ&usg=AFQjCNGwJuHcQV4593kuookUcvNZYTvx5w&sig2=zi1audY4ZsNE_xLeESVD_Q)'s [`contents`](https://developer.apple.com/library/ios/documentation/graphicsimaging/reference/CALayer_class/Introduction/Introduction.html#//apple_ref/doc/uid/TP40004500-CH1-SW24) property states that "assigning a value to this property causes the layer to use your image rather than [creating] a separate backing store." However, the meaning of "use your image" is still vague. Profiling an application using [Instruments](https://developer.apple.com/library/ios/documentation/DeveloperTools/Conceptual/InstrumentsUserGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40004652-CH1-SW1) often reveals calls to `CA::Render::copy_image`, even when the Core Animation Instrument has indicated that none of the images have been copied. One reason that Core Animation will require a copy of an image is improper [byte alignment](#byte-alignment). 
+<sup>2</sup> The documentation for [`CALayer`](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&ved=0CCwQFjAA&url=https%3A%2F%2Fdeveloper.apple.com%2Flibrary%2Fios%2Fdocumentation%2Fgraphicsimaging%2Freference%2FCALayer_class%2FIntroduction%2FIntroduction.html&ei=P29XUpj2LeahiALptICgCQ&usg=AFQjCNGwJuHcQV4593kuookUcvNZYTvx5w&sig2=zi1audY4ZsNE_xLeESVD_Q)'s [`contents`](https://developer.apple.com/library/ios/documentation/graphicsimaging/reference/CALayer_class/Introduction/Introduction.html#//apple_ref/doc/uid/TP40004500-CH1-SW24) property states that "assigning a value to this property causes the layer to use your image rather than [creating] a separate backing store." However, the meaning of "use your image" is still vague. Profiling an application using [Instruments](https://developer.apple.com/library/prerelease/content/documentation/DeveloperTools/Conceptual/InstrumentsUserGuide/) often reveals calls to `CA::Render::copy_image`, even when the Core Animation Instrument has indicated that none of the images have been copied. One reason that Core Animation will require a copy of an image is improper [byte alignment](#byte-alignment). 
 
 <sup>3</sup> As of iOS 7, Apple does not make their hardware JPEG decoder available for third-party applications to use. As a result, only a slower, software decoder is used for this step.
 
@@ -162,8 +162,8 @@ For easy project integration, Fast Image Cache is available as a [CocoaPod](http
 
 - Clone this repository, or [download the latest archive of `master`](https://github.com/path/FastImageCache/archive/master.zip).
 - From the `FastImageCache` root directory, copy the source files from the inner [`FastImageCache`](./FastImageCache) subdirectory to your Xcode project.
-- Import [`FICImageCache.h`](./FastImageCache/FICImageCache.h) wherever you use the image cache.
-- Import [`FICEntity.h`](./FastImageCache/FICEntity.h) for each class that conforms to [`FICEntity`](https://s3.amazonaws.com/fast-image-cache/documentation/Protocols/FICEntity.html).
+- Import [`FICImageCache.h`](./FastImageCache/FastImageCache/FastImageCache/FICImageCache.h) wherever you use the image cache.
+- Import [`FICEntity.h`](./FastImageCache/FastImageCache/FastImageCache/FICEntity.h) for each class that conforms to [`FICEntity`](https://s3.amazonaws.com/fast-image-cache/documentation/Protocols/FICEntity.html).
 
 ### Initial Configuration
 
@@ -408,7 +408,7 @@ HTML documentation can be [found here](https://s3.amazonaws.com/fast-image-cache
 
 Included with this repository is a demo app Xcode project. It demonstrates the difference between the conventional approach for loading and displaying images and the Fast Image Cache approach. See the [requirements for running the demo app Xcode project](#requirements).
 
-> **Note**: The demo application must either be supplied with JPEG images, or the included [`fetch_demo_images.sh`](./FastImageCacheDemo/fetch_demo_images.sh) script in the [`FastImageCacheDemo`](./FastImageCacheDemo) directory must be run.
+> **Note**: The demo application must either be supplied with JPEG images, or the included [`fetch_demo_images.sh`](./FastImageCache/FastImageCacheDemo/fetch_demo_images.sh) script in the [`FastImageCacheDemo`](./FastImageCache/FastImageCacheDemo) directory must be run.
 
 ### Video
 

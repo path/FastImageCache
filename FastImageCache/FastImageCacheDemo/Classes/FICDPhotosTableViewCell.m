@@ -19,7 +19,7 @@
     NSArray *_photos;
     NSString *_imageFormatName;
     
-    NSMutableArray *_imageViews;
+    NSArray *_imageViews;
     UITapGestureRecognizer *_tapGestureRecognizer;
 }
 
@@ -39,42 +39,28 @@
 - (void)setPhotos:(NSArray *)photos {
     if (photos != _photos) {
         _photos = [photos copy];
-        
-        // Either create the image views for this cell or clear them out if they already exist
-        if (_imageViews == nil) {
-            NSInteger photosPerRow = [[self class] photosPerRow];
-            _imageViews = [[NSMutableArray alloc] initWithCapacity:photosPerRow];
-            
-            for (NSInteger i = 0; i < photosPerRow; i++) {
-                UIImageView *imageView = [[UIImageView alloc] init];
-                [imageView setContentMode:UIViewContentModeScaleAspectFill];
-                [_imageViews addObject:imageView];
-            }
-        } else {
-            for (UIImageView *imageView in _imageViews) {
-                [imageView setImage:nil];
-                [imageView removeFromSuperview];
-            }
-        }
-        
-        NSInteger photosCount = [_photos count];
-        for (NSInteger i = 0; i < photosCount; i++) {
-            FICDPhoto *photo = [_photos objectAtIndex:i];
+
+        for (NSInteger i = 0; i < [_imageViews count]; i++) {
             UIImageView *imageView = [_imageViews objectAtIndex:i];
-            
-            if (_usesImageTable) {
-                [[FICImageCache sharedImageCache] retrieveImageForEntity:photo withFormatName:_imageFormatName completionBlock:^(id<FICEntity> entity, NSString *formatName, UIImage *image) {
-                    // This completion block may be called much later. We should check to make sure this cell hasn't been reused for different photos before displaying the image that has loaded.
-                    if (photos == [self photos]) {
-                        [imageView setImage:image];
-                    }
-                }];
+
+            if (i < [_photos count]) {
+                FICDPhoto *photo = [_photos objectAtIndex:i];
+
+                if (_usesImageTable) {
+                    [[FICImageCache sharedImageCache] retrieveImageForEntity:photo withFormatName:_imageFormatName completionBlock:^(id<FICEntity> entity, NSString *formatName, UIImage *image) {
+                        // This completion block may be called much later. We should check to make sure this cell hasn't been reused for different photos before displaying the image that has loaded.
+                        if (photos == [self photos]) {
+                            [imageView setImage:image];
+                        }
+                    }];
+                } else {
+                    [imageView setImage:[photo thumbnailImage]];
+                }
             } else {
-                [imageView setImage:[photo thumbnailImage]];
+                // Last row might not be full
+                [imageView setImage:nil];
             }
         }
-        
-        [self setNeedsLayout];
     }
 }
 
@@ -117,6 +103,18 @@
     if (self != nil) {
         _tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_tapGestureRecognizerStateDidChange)];
         [self addGestureRecognizer:_tapGestureRecognizer];
+
+        NSInteger photosPerRow = [[self class] photosPerRow];
+        NSMutableArray *imageViews = [[NSMutableArray alloc] initWithCapacity:photosPerRow];
+
+        for (NSInteger i = 0; i < photosPerRow; i++) {
+            UIImageView *imageView = [[UIImageView alloc] init];
+            [imageView setContentMode:UIViewContentModeScaleAspectFill];
+            [imageViews addObject:imageView];
+            [self.contentView addSubview:imageView];
+        }
+
+        _imageViews = [imageViews copy];
     }
     
     return self;
@@ -139,14 +137,12 @@
     CGFloat outerPadding = [[self class] outerPadding];
     
     CGRect imageViewFrame = CGRectMake(outerPadding, outerPadding, FICDPhotoSquareImageSize.width, FICDPhotoSquareImageSize.height);
-    
-    UIView *contentView = [self contentView];
+
     NSInteger count = [_photos count];
     
     for (NSInteger i = 0; i < count; i++) {
         UIImageView *imageView = [_imageViews objectAtIndex:i];
         [imageView setFrame:imageViewFrame];
-        [contentView addSubview:imageView];
 
         imageViewFrame.origin.x += imageViewFrame.size.width + innerPadding;
     }
