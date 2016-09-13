@@ -9,6 +9,8 @@
 #import "FICImports.h"
 @class FICImageFormat;
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef void (^FICEntityImageDrawingBlock)(CGContextRef context, CGSize contextSize);
 
 /**
@@ -52,7 +54,8 @@ typedef void (^FICEntityImageDrawingBlock)(CGContextRef context, CGSize contextS
  @see FICImageFormat
  @see [FICImageCacheDelegate imageCache:wantsSourceImageForEntity:withFormatName:completionBlock:]
  */
-- (NSURL *)fic_sourceImageURLWithFormatName:(NSString *)formatName;
+- (nullable NSURL *)fic_sourceImageURLWithFormatName:(NSString *)formatName;
+
 
 /**
  Returns the drawing block for a specific image and format name.
@@ -73,7 +76,7 @@ typedef void (^FICEntityImageDrawingBlock)(CGContextRef context, CGSize contextS
  
  @note This block will always be called from the serial dispatch queue used by the image cache.
  */
-- (FICEntityImageDrawingBlock)fic_drawingBlockForImage:(UIImage *)image withFormatName:(NSString *)formatName;
+- (nullable FICEntityImageDrawingBlock)fic_drawingBlockForImage:(UIImage *)image withFormatName:(NSString *)formatName;
 
 @optional
 /**
@@ -81,6 +84,8 @@ typedef void (^FICEntityImageDrawingBlock)(CGContextRef context, CGSize contextS
  
  @param format The image format that identifies which image table is requesting the source image.
  */
-- (UIImage *)fic_imageForFormat:(FICImageFormat *)format;
+- (nullable UIImage *)fic_imageForFormat:(FICImageFormat *)format;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -8,6 +8,8 @@
 
 #import "FICImports.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class FICImageTableChunk;
 @class FICImageCache;
 
@@ -83,7 +85,7 @@ typedef struct {
  
  @return A new image table entry.
  */
-- (instancetype)initWithImageTableChunk:(FICImageTableChunk *)imageTableChunk bytes:(void *)bytes length:(size_t)length;
+- (nullable instancetype)initWithImageTableChunk:(FICImageTableChunk *)imageTableChunk bytes:(void *)bytes length:(size_t)length;
 
 /**
  Adds a block to be executed when this image table entry is deallocated.
@@ -122,3 +124,5 @@ typedef struct {
 + (NSInteger)metadataVersion;
 
 @end
+
+NS_ASSUME_NONNULL_END

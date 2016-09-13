@@ -15,6 +15,8 @@
 @class FICImageTableEntry;
 @class FICImage;
 
+NS_ASSUME_NONNULL_BEGIN
+
 extern NSString *const FICImageTableEntryDataVersionKey;
 extern NSString *const FICImageTableScreenScaleKey;
 
@@ -81,7 +83,9 @@ extern NSString *const FICImageTableScreenScaleKey;
  
  @warning `FICImageTable` raises an exception if `imageFormat` is `nil`. `FICImageTable`'s implementation of `-init` simply calls through to this initializer, passing `nil` for `imageFormat`.
  */
-- (instancetype)initWithFormat:(FICImageFormat *)imageFormat imageCache:(FICImageCache *)imageCache;
+- (nullable instancetype)initWithFormat:(FICImageFormat *)imageFormat imageCache:(FICImageCache *)imageCache NS_DESIGNATED_INITIALIZER;
+-(instancetype) init __attribute__((unavailable("Invoke the designated initializer initWithFormat:imageCache: instead")));
++(instancetype) new __attribute__((unavailable("Invoke the designated initializer initWithFormat:imageCache: instead")));
 
 ///------------------------------------------------
 /// @name Storing, Retrieving, and Deleting Entries
@@ -123,7 +127,7 @@ extern NSString *const FICImageTableScreenScaleKey;
  @note If either the entity UUID or the source image UUID doesn't match the corresponding UUIDs in the entry data, then something has changed. The entry data is deleted for the
  provided entity UUID, and `nil` is returned.
  */
-- (UIImage *)newImageForEntityUUID:(NSString *)entityUUID sourceImageUUID:(NSString *)sourceImageUUID preheatData:(BOOL)preheatData;
+- (nullable UIImage *)newImageForEntityUUID:(NSString *)entityUUID sourceImageUUID:(NSString *)sourceImageUUID preheatData:(BOOL)preheatData;
 
 /**
  Deletes image entry data in the image table.
@@ -164,3 +168,5 @@ extern NSString *const FICImageTableScreenScaleKey;
 - (void)reset;
 
 @end
+
+NS_ASSUME_NONNULL_END
