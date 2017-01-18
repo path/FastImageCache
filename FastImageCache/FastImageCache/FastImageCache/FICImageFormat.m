@@ -143,6 +143,22 @@ static NSString *const FICImageFormatProtectionModeKey = @"protectionMode";
     return protectionModeString;
 }
 
+- (NSDataWritingOptions)protectionModeOption {
+    NSDataWritingOptions protectionModeOption = NSDataWritingFileProtectionNone;
+    switch (_protectionMode) {
+        case FICImageFormatProtectionModeNone:
+            protectionModeOption = NSDataWritingFileProtectionNone;
+            break;
+        case FICImageFormatProtectionModeComplete:
+            protectionModeOption = NSDataWritingFileProtectionComplete;
+            break;
+        case FICImageFormatProtectionModeCompleteUntilFirstUserAuthentication:
+            protectionModeOption = NSDataWritingFileProtectionCompleteUntilFirstUserAuthentication;
+            break;
+    }
+    return protectionModeOption;
+}
+
 #pragma mark - Object Lifecycle
 
 + (instancetype)formatWithName:(NSString *)name family:(NSString *)family imageSize:(CGSize)imageSize style:(FICImageFormatStyle)style maximumCount:(NSInteger)maximumCount devices:(FICImageFormatDevices)devices protectionMode:(FICImageFormatProtectionMode)protectionMode {

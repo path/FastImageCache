@@ -147,6 +147,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, assign, readonly) NSString *protectionModeString;
 
+@property (nonatomic, assign, readonly) NSDataWritingOptions protectionModeOption;
+
 /**
  The dictionary representation of this image format.
  

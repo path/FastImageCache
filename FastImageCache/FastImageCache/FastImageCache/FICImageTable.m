@@ -714,7 +714,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
                     return;
                 }
 
-                BOOL fileWriteResult = [data writeToFile:[self metadataFilePath] atomically:NO];
+                BOOL fileWriteResult = [data writeToFile:[self metadataFilePath] options:[_imageFormat protectionModeOption] error:nil];
                 if (fileWriteResult == NO) {
                     NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s couldn't write metadata for format %@", __PRETTY_FUNCTION__, [_imageFormat name]];
                     [self.imageCache _logMessage:message];
