@@ -31,6 +31,8 @@ static NSString *const FICImageTableContextMapKey = @"contextMap";
 static NSString *const FICImageTableMRUArrayKey = @"mruArray";
 static NSString *const FICImageTableFormatKey = @"format";
 
+static BOOL FICProtectedDataAvailable = NO;
+
 #pragma mark - Class Extension
 
 @interface FICImageTable () {
@@ -134,6 +136,29 @@ static NSString *const FICImageTableFormatKey = @"format";
     return __directoryPath;
 }
 
++ (void)initialize {
+    [self registerForProtectedDataNotifications];
+}
+
++ (void)registerForProtectedDataNotifications {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIApplication *application = [UIApplication performSelector:@selector(sharedApplication)];
+        if (application) {
+            FICProtectedDataAvailable = [application isProtectedDataAvailable];
+        }
+    });
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(protectedDataWillBecomeUnavailable:) name:UIApplicationProtectedDataWillBecomeUnavailable object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(protectedDataDidBecomeAvailable:) name:UIApplicationProtectedDataDidBecomeAvailable object:nil];
+}
+
++ (void)protectedDataWillBecomeUnavailable:(id)sender {
+    FICProtectedDataAvailable = NO;
+}
++ (void)protectedDataDidBecomeAvailable:(id)sender {
+    FICProtectedDataAvailable = YES;
+}
+
+
 #pragma mark - Object Lifecycle
 
 - (instancetype)initWithFormat:(FICImageFormat *)imageFormat imageCache:(FICImageCache *)imageCache {
@@ -227,7 +252,7 @@ static NSString *const FICImageTableFormatKey = @"format";
             [self.imageCache _logMessage:message];
 
             self = nil;
-        }    
+        }
     }
     
     return self;
@@ -518,10 +543,8 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
     
     // -[UIApplication isProtectedDataAvailable] checks whether the keybag is locked or not
     UIApplication *application = [UIApplication performSelector:@selector(sharedApplication)];
-    if (application) {
-        _canAccessData = [application isProtectedDataAvailable];
-    }
-    
+    _canAccessData = FICProtectedDataAvailable;
+
     // We have to fallback to a direct check on the file if either:
     // - The application doesn't exist (happens in some extensions)
     // - The keybag is locked, but the file might still be accessible because the mode is "until first user authentication"
